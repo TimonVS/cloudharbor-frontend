@@ -1,0 +1,14 @@
+{
+  "name": "cloudharbor-frontend",
+  "version": "0.0.1",
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://timonvs@bitbucket.org/cloudharbor/frontend.git"
+  },
+  "author": "",
+  "license": "",
+  "dependencies": {
+    "gulp": "^3.8.11"
+  }
+}

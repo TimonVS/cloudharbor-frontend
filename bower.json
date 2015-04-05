@@ -1,0 +1,19 @@
+{
+  "name": "cloudharbor-frontend",
+  "version": "0.0.0",
+  "authors": [
+    "Timon van Spronsen <timonvanspronsen@outlook.com>"
+  ],
+  "license": "-",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "materialize": "~0.96.0",
+    "angular": "~1.3.15"
+  }
+}
