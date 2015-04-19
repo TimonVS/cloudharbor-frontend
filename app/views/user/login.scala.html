@@ -1,9 +1,10 @@
-@(title: String)(content: Html)
+@(loginForm: Form[UserData])
+@import b3.vertical.fieldConstructor
 
 <!DOCTYPE html>
-<html lang="en" ng-app="chApp" class="no-js">
+<html>
     <head>
-        <title>Cloudharbor - @title</title>
+        <title>Cloudharbor - Login</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
         <link rel='stylesheet' href='@routes.WebJarAssets.at(WebJarAssets.locate("css/bootstrap.min.css"))'>
@@ -11,7 +12,12 @@
     </head>
     <body>
         <div class="container">
-            @content
+            <h3>Login into Cloudharbor</h3>
+            @b3.form(routes.Auth.authenticate()) {
+                @b3.text( loginForm("username"), '_label -> "Username", 'placeholder -> "Your username" )
+                @b3.password( loginForm("password"), '_label -> "Password", 'placeholder -> "Password" )
+                @b3.submit('class -> "btn btn-default"){ Sign in }
+            }
         </div>
     </body>
 

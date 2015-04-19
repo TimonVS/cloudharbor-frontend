@@ -1,0 +1,22 @@
+@(createUserForm: Form[UserRegistrationData])(implicit flash: Flash)
+@import b3.vertical.fieldConstructor
+
+@main("Create user"){
+    <h3>Create a user</h3>
+    @flash.get("succes").map { success =>
+        <div class="alert alert-success" role="alert">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span class="sr-only">Success:</span>
+            @success
+        </div>
+    }
+    @b3.form(routes.Auth.createUserPost()) {
+        @b3.text( createUserForm("username"), '_label -> "Username", 'placeholder -> "Username" )
+        @b3.password( createUserForm("password"), '_label -> "Password", 'placeholder -> "Password" )
+        @b3.text( createUserForm("email"), '_label -> "E-mail", 'placeholder -> "E-Mail" )
+        @b3.text( createUserForm("firstName"), '_label -> "First Name", 'placeholder -> "First Name" )
+        @b3.text( createUserForm("prefix"), '_label -> "Prefix", 'placeholder -> "Prefix (opt)" )
+        @b3.text( createUserForm("lastName"), '_label -> "Last name", 'placeholder -> "lastName" )
+        @b3.submit('class -> "btn btn-default"){ Create user }
+    }
+}

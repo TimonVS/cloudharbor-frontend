@@ -3,7 +3,30 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index
+GET         /                                  controllers.Application.index
+
+# Authentication
+GET         /login                             controllers.Auth.login
+GET         /logout                            controllers.Auth.logout
+POST        /authenticate                      controllers.Auth.authenticate
+GET         /user/create                       controllers.Auth.createUser
+POST        /user/create                       controllers.Auth.createUserPost
+
+# Management
+GET         /management/overview               controllers.Management.overview
+
+# CloudServices
+GET         /cloudservices/overview/:id        controllers.CloudServices.overview(id: Int)
+GET         /cloudservices/:id                 controllers.CloudServices.show(id: String)
+GET         /cloudservices/add/account         controllers.CloudServices.addCloudServiceAccount
+POST        /cloudservices/add/account         controllers.CloudServices.authenticateCloudServiceInfo
+GET         /cloudservices/add/server          controllers.CloudServices.addCloudService
+POST        /cloudservices/add/server          controllers.CloudServices.authenticateCloudService
+GET         /cloudservice/stop/:id             controllers.CloudServices.powerOff(id: String)
+GET         /cloudservice/start/:id            controllers.CloudServices.powerOn(id: String)
+GET         /cloudservice/delete/:id           controllers.CloudServices.delete(id: String)
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET         /assets/*file                      controllers.Assets.at(path="/public", file)
+# Map web jar assets from sbt to the /webjars URL path (includes bootstrap & angularjs
+GET         /webjars/*file                     controllers.WebJarAssets.at(file)

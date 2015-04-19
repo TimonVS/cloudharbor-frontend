@@ -1,0 +1,21 @@
+@(cloudServiceForm: Form[CloudServerData], regions: Seq[(String, String)], sizes: Seq[(String, String)])(implicit flash: Flash)
+@import b3.vertical.fieldConstructor
+
+@main("Add a server"){
+    <h4>Add a Digital Ocean server:</h4>
+    @if(!flash.isEmpty){
+        <div class="alert alert-danger" role="alert">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span class="sr-only">Error:</span>
+            @flash.get("error")
+        </div>
+    }
+    @b3.form(routes.CloudServices.authenticateCloudService()) {
+            @b3.text( cloudServiceForm("name"), '_label -> "Name", 'placeholder -> "Server name" )
+            @b3.select( cloudServiceForm("region"), options = regions, '_label -> "Select a region" )
+            @b3.select( cloudServiceForm("size"), options = sizes, '_label -> "Select a size" )
+            @b3.checkbox( cloudServiceForm("backUps"), '_text -> "Enable backups", 'value -> false )
+            @b3.checkbox( cloudServiceForm("ipv6"), '_text -> "Enable ipv6", 'value -> false )
+            @b3.submit('class -> "btn btn-default"){ Add server }
+    }
+}
