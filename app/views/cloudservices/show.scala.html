@@ -1,0 +1,43 @@
+@(cloudServer: CloudServer)(implicit flash: Flash)
+
+@main("Server " + cloudServer.name){
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="pull-right">
+                <a class="btn btn-success" href="@routes.CloudServices.powerOn(cloudServer.id.toString)" role="button">Power On</a>
+                <a class="btn btn-warning" href="@routes.CloudServices.powerOff(cloudServer.id.toString)" role="button">Power Off</a>
+                <a class="btn btn-danger" href="@routes.CloudServices.delete(cloudServer.id.toString)" role="button">Delete</a>
+            </div>
+            <h2 class="panel-title">@cloudServer.name</h2>
+            @flash.get("succes").map { success =>
+                <div class="alert alert-success" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Success:</span>
+                    @success
+                </div>
+            }
+            @flash.get("error").map { error =>
+                <div class="alert alert-danger" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Error:</span>
+                    @error
+                </div>
+            }
+        </div>
+        <div class="panel-body">
+            <table class="table table-bordered">
+                <tr><th>Id</th><td>@cloudServer.id</td></tr>
+                <tr><th>Name</th><td>@cloudServer.name</td></tr>
+                <tr><th>Locked</th><td>@cloudServer.locked</td></tr>
+                <tr><th>Status</th><td>@cloudServer.status</td></tr>
+                <tr><th>Memory</th><td>@cloudServer.memory</td></tr>
+                <tr><th>Virtual CPUs</th><td>@cloudServer.vcpus</td></tr>
+                <tr><th>Disk</th><td>@cloudServer.disk</td></tr>
+                <tr><th>Image Name</th><td>@cloudServer.imageName</td></tr>
+                <tr><th>Operating System</th><td>@cloudServer.operatingSystem</td></tr>
+                <tr><th>Ip-address</th><td>@cloudServer.ipAddress.getOrElse("Not available")</td></tr>
+                <tr><th>Region</th><td>@cloudServer.regionName</td></tr>
+            </table>
+        </div>
+    </div>
+}
