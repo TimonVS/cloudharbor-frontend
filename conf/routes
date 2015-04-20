@@ -16,6 +16,7 @@ POST        /user/create                       controllers.Auth.createUserPost
 GET         /management/overview               controllers.Management.overview
 
 # CloudServices
+GET         /cloudservices/overview            controllers.CloudServices.overviewDefault
 GET         /cloudservices/overview/:id        controllers.CloudServices.overview(id: Int)
 GET         /cloudservices/:id                 controllers.CloudServices.show(id: String)
 GET         /cloudservices/add/account         controllers.CloudServices.addCloudServiceAccount

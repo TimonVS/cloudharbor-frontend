@@ -43,6 +43,11 @@ object CloudServices extends Controller with Secured{
       "ipv6" -> boolean
     )(CloudServerData.apply)(CloudServerData.unapply)
   )
+
+  def overviewDefault = withAuth{ user => implicit request =>
+    Redirect(routes.CloudServices.overview(user.id))
+  }
+
   def overview(userId: Int) = withAuth { user =>
     implicit request =>
       val cloudServiceOpt = CloudService.findByUserId(user.id)
