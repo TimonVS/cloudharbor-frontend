@@ -92,7 +92,7 @@ object CloudServices extends Controller with Secured{
     val addForm: Form[ApiData] = cloudService
       .map(cs => addCloudServiceInfoForm.fill(ApiData(cs.apiKey)))
       .getOrElse(addCloudServiceInfoForm)
-    
+
     Ok(views.html.cloudservices.addCloudServiceInfo(addForm))
   }
 
@@ -194,7 +194,13 @@ object CloudServices extends Controller with Secured{
     addCloudServiceInfoForm.bindFromRequest().fold(
       forumWithErrors => BadRequest(views.html.cloudservices.addCloudServiceInfo(forumWithErrors)),
       data => {
-        val cloudServiceInfo = CloudService.create(user.id, data.apiKey)
+        val cloudServiceOpt = CloudService.findByUserId(user.id)
+        val cloudServiceInfo = cloudServiceOpt.map { cs =>
+          cs.copy(apiKey = data.apiKey).save()
+        }.getOrElse{
+            CloudService.create(user.id, data.apiKey)
+        }
+
         Redirect(routes.CloudServices.overview(user.id))
       }
     )
