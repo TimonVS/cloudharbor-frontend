@@ -115,7 +115,7 @@ object CloudServices extends Controller with Secured{
 
           val result = Await.result(post, Duration.create(3.0, TimeUnit.SECONDS))
 
-          if(result.status != 202) Redirect(routes.CloudServices.addCloudService())
+          if(result.status != ACCEPTED) Redirect(routes.CloudServices.addCloudService())
               .flashing("error" -> (result.json \ "message").as[String])
           else Redirect(routes.CloudServices.overview(user.id))
 
@@ -133,9 +133,9 @@ object CloudServices extends Controller with Secured{
       )
     val flash = {
       val result = Await.result(getResult, Duration.create(3.0, TimeUnit.SECONDS))
-      if(result.status == 201){
+      if(result.status == CREATED){
         ("succes" -> "Server powered off")
-      }else if(result.status == 422){
+      }else if(result.status == UNPROCESSABLE_ENTITY){
         (result.json \ "message").asOpt[String].map{ message =>
           ("error" -> message)
         }.getOrElse{
@@ -158,9 +158,9 @@ object CloudServices extends Controller with Secured{
       )
     val flash = {
       val result = Await.result(getResult, Duration.create(3.0, TimeUnit.SECONDS))
-      if(result.status == 201){
+      if(result.status == CREATED){
         ("succes" -> "Server started")
-      }else if(result.status == 422){
+      }else if(result.status == UNPROCESSABLE_ENTITY){
         (result.json \ "message").asOpt[String].map{ message =>
           ("error" -> message)
         }.getOrElse{
@@ -180,7 +180,7 @@ object CloudServices extends Controller with Secured{
       .delete()
     val flash = {
       val result = Await.result(getResult, Duration.create(3.0, TimeUnit.SECONDS))
-      if(result.status == 204){
+      if(result.status == NO_CONTENT){
         ("succes" -> "Server deleted")
       }else{
         ("error" -> (result.json \ "message").as[String])
