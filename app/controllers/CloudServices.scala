@@ -88,7 +88,12 @@ object CloudServices extends Controller with Secured{
   }
 
   def addCloudServiceAccount = withAuth{ user => implicit request =>
-    Ok(views.html.cloudservices.addCloudServiceInfo(addCloudServiceInfoForm))
+    val cloudService = CloudService.findByUserId(user.id)
+    val addForm: Form[ApiData] = cloudService
+      .map(cs => addCloudServiceInfoForm.fill(ApiData(cs.apiKey)))
+      .getOrElse(addCloudServiceInfoForm)
+    
+    Ok(views.html.cloudservices.addCloudServiceInfo(addForm))
   }
 
   def authenticateCloudService = withAuth { user => implicit request =>
