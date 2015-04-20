@@ -194,25 +194,24 @@ object CloudServices extends Controller with Secured{
     addCloudServiceInfoForm.bindFromRequest().fold(
       forumWithErrors => BadRequest(views.html.cloudservices.addCloudServiceInfo(forumWithErrors)),
       data => {
-        val cloudServiceOpt = CloudService.findByUserId(user.id)
-        val cloudServiceInfo = cloudServiceOpt.map { cs =>
-          cs.copy(apiKey = data.apiKey).save()
-        }.getOrElse {
-          CloudService.create(user.id, data.apiKey)
-        }
-
         val request = WS.url("https://api.digitalocean.com/v2/account")
-          .withHeaders("Authorization" -> ("Bearer " + cloudServiceInfo.apiKey))
+          .withHeaders("Authorization" -> ("Bearer " + data.apiKey))
           .get()
 
         val result = Await.result(request, Duration.create(3.0, TimeUnit.SECONDS))
 
         val works = if(result.status == OK) true else false
 
-        if (works)
+        if (works) {
+          val cloudServiceOpt = CloudService.findByUserId(user.id)
+          val cloudServiceInfo = cloudServiceOpt.map { cs =>
+            cs.copy(apiKey = data.apiKey).save()
+          }.getOrElse {
+            CloudService.create(user.id, data.apiKey)
+          }
           Redirect(routes.CloudServices.overview(user.id))
-        else
-          Redirect(routes.CloudServices.addCloudServiceAccount()).flashing("error" -> "Api-key did not work!")
+        }
+        else Redirect(routes.CloudServices.addCloudServiceAccount()).flashing("error" -> "Api-key did not work!")
       }
     )
   }
