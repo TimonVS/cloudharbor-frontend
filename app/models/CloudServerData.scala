@@ -8,5 +8,8 @@ case class CloudServerData(name: String,
                             region: String,
                             size: String,
                             backUps: Boolean,
-                            ipv6: Boolean)
+                            ipv6: Boolean,
+                            ssh: Boolean,
+                            sshName: Option[String],
+                            sshPublicKey: Option[String])
 
