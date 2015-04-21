@@ -11,6 +11,18 @@ case class User(
   firstName: String,
   prefix: Option[String] = None,
   lastName: String) {
+  def update(data: UserRegistrationData): User = {
+    val dataPassword = data.password.getOrElse(this.password)
+    this.copy(
+      username = data.username,
+      password = BCrypt.hashpw(dataPassword, BCrypt.gensalt(12)),
+      email = data.email,
+      firstName = data.firstName,
+      prefix = data.prefix,
+      lastName = data.lastName
+    )
+  }
+
 
   def save()(implicit session: DBSession = User.autoSession): User = User.save(this)(session)
 

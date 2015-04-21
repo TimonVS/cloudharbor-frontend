@@ -5,9 +5,24 @@ package models
  * case class for holding the user registration form data
  */
 case class UserRegistrationData(username: String,
-                                password: String,
+                                password: Option[String],
+                                passwordTwo: Option[String],
                                 email: String,
                                 firstName: String,
                                 prefix: Option[String],
                                 lastName: String)
+
+object UserRegistrationData{
+
+  def apply(user: User): UserRegistrationData = UserRegistrationData(
+    user.username,
+    None,
+    None,
+    user.email,
+    user.firstName,
+    user.prefix,
+    user.lastName
+  )
+
+}
 
