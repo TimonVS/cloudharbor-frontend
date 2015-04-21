@@ -1,0 +1,17 @@
+{
+  "name": "cloudharbor-frontend",
+  "version": "0.0.0",
+  "authors": [
+    "Thomas Meijers",
+    "Rudie de Smit",
+    "Timon van Spronsen <timonvanspronsen@outlook.com>"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/bower_components/",
+    "test",
+    "tests"
+  ]
+}
