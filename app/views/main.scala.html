@@ -5,13 +5,51 @@
     <head>
         <title>Cloudharbor - @title</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("bower_components/mdi/css/materialdesignicons.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
         <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("dist/jquery.min.js"))'></script>
     </head>
     <body>
-        <div class="container">
-            @content
-        </div>
-    </body>
+        <nav class="navmenu navmenu-fixed-left offcanvas-sm" role="navigation">
+            <a href="#" class="navmenu-brand">
+                <img src='@routes.Assets.at("images/logo.png")' alt="Cloudharbor logo"/>
+            </a>
+            <ul class="nav navmenu-nav">
+                <li class="active">
+                    <a href="@routes.CloudServices.overviewDefault()"><i class="mdi mdi-dns"></i>Servers</a>
+                </li>
+                <li>
+                    <a href="@routes.Management.overview()"><i class="mdi mdi-hexagon-outline"></i>Containers</a>
+                </li>
+                <li>
+                    <a href="#"><i class="mdi mdi-settings"></i>Settings</a>
+                </li>
+            </ul>
+        </nav>
+        <div class="fixed-overlay box-shadow-1">
+            <div class="navbar navbar-default navbar-static-top">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target=".navmenu" data-canvas="body">
+                            <span>☰</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
 
+            <main>
+                <div class="container">
+                @content
+                </div>
+            </main>
+
+            <footer></footer>
+        </div>
+
+    </body>
+    <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("javascripts/bootstrap.js"))'></script>
+    <script type='text/javascript' src='@routes.Assets.at("bower_components/bootstrap-jasny/dist/js/jasny-bootstrap.js")'></script>
+
+    <script src="//use.typekit.net/yyf4ttb.js"></script>
+    <script>try{Typekit.load();}catch(e){}</script>
 </html>

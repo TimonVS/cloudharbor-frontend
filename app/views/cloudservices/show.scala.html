@@ -25,19 +25,21 @@
             }
         </div>
         <div class="panel-body">
-            <table class="table table-bordered">
-                <tr><th>Id</th><td>@cloudServer.id</td></tr>
-                <tr><th>Name</th><td>@cloudServer.name</td></tr>
-                <tr><th>Locked</th><td>@cloudServer.locked</td></tr>
-                <tr><th>Status</th><td>@cloudServer.status</td></tr>
-                <tr><th>Memory</th><td>@cloudServer.memory</td></tr>
-                <tr><th>Virtual CPUs</th><td>@cloudServer.vcpus</td></tr>
-                <tr><th>Disk</th><td>@cloudServer.disk</td></tr>
-                <tr><th>Image Name</th><td>@cloudServer.imageName</td></tr>
-                <tr><th>Operating System</th><td>@cloudServer.operatingSystem</td></tr>
-                <tr><th>Ip-address</th><td>@cloudServer.ipAddress.getOrElse("Not available")</td></tr>
-                <tr><th>Region</th><td>@cloudServer.regionName</td></tr>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <tr><th>Id</th><td>@cloudServer.id</td></tr>
+                    <tr><th>Name</th><td>@cloudServer.name</td></tr>
+                    <tr><th>Locked</th><td>@cloudServer.locked</td></tr>
+                    <tr><th>Status</th><td>@cloudServer.status</td></tr>
+                    <tr><th>Memory</th><td>@cloudServer.memory</td></tr>
+                    <tr><th>Virtual CPUs</th><td>@cloudServer.vcpus</td></tr>
+                    <tr><th>Disk</th><td>@cloudServer.disk</td></tr>
+                    <tr><th>Image Name</th><td>@cloudServer.imageName</td></tr>
+                    <tr><th>Operating System</th><td>@cloudServer.operatingSystem</td></tr>
+                    <tr><th>Ip-address</th><td>@cloudServer.ipAddress.getOrElse("Not available")</td></tr>
+                    <tr><th>Region</th><td>@cloudServer.regionName</td></tr>
+                </table>
+            </div>
         </div>
     </div>
 }
