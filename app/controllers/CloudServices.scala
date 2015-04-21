@@ -52,13 +52,12 @@ object CloudServices extends Controller with Secured{
     implicit request =>
       val cloudServiceOpt = CloudService.findByUserId(user.id)
       cloudServiceOpt match{
-        case Some(cloudService) => {
+        case Some(cloudService) =>
           val cloudServersJson = WS.url( "https://api.digitalocean.com/v2/droplets")
             .withHeaders("Authorization" -> ("Bearer " + cloudService.apiKey))
             .get()
           val test: WSResponse = Await.result(cloudServersJson, Duration.create(1.0, TimeUnit.SECONDS))
           Ok(views.html.cloudservices.overview((test.json \ "droplets").as[List[CloudServer]]))
-        }
         case None => Redirect(routes.CloudServices.addCloudServiceAccount()).flashing("error" -> "Add your api-key first")
       }
   }
@@ -87,7 +86,7 @@ object CloudServices extends Controller with Secured{
     Ok(views.html.cloudservices.addCloudService(addServiceForm, regions, sizes))
   }
 
-  def addCloudServiceAccount = withAuth{ user => implicit request =>
+  def addCloudServiceAccount() = withAuth{ user => implicit request =>
     val cloudService = CloudService.findByUserId(user.id)
     val addForm: Form[ApiData] = cloudService
       .map(cs => addCloudServiceInfoForm.fill(ApiData(cs.apiKey)))
@@ -128,22 +127,15 @@ object CloudServices extends Controller with Secured{
     val cloudServiceInfo = CloudService.findByUserId(user.id).get
     val getResult = WS.url(s"https://api.digitalocean.com/v2/droplets/$cloudServiceId/actions")
       .withHeaders("Authorization" -> ("Bearer " + cloudServiceInfo.apiKey))
-      .post(
-        Json.obj("type" -> "power_off")
-      )
+      .post(Json.obj("type" -> "power_off"))
     val flash = {
       val result = Await.result(getResult, Duration.create(3.0, TimeUnit.SECONDS))
-      if(result.status == CREATED){
-        ("succes" -> "Server powered off")
-      }else if(result.status == UNPROCESSABLE_ENTITY){
-        (result.json \ "message").asOpt[String].map{ message =>
-          ("error" -> message)
-        }.getOrElse{
-          ("error" -> result.json.toString)
-        }
-      }
-      else{
-        ("error" -> (result.json \ "message").as[String])
+
+      result.status match {
+        case CREATED => "succes" -> "Server powered off"
+        case _ => (result.json \ "message").asOpt[String]
+          .map(message => "error" -> message)
+          .getOrElse("error" -> result.json.toString)
       }
     }
     Redirect(routes.CloudServices.show(cloudServiceId)).flashing(flash)
@@ -153,21 +145,15 @@ object CloudServices extends Controller with Secured{
     val cloudServiceInfo = CloudService.findByUserId(user.id).get
     val getResult = WS.url(s"https://api.digitalocean.com/v2/droplets/$cloudServiceId/actions")
       .withHeaders("Authorization" -> ("Bearer " + cloudServiceInfo.apiKey))
-      .post(
-        Json.obj("type" -> "power_on")
-      )
+      .post(Json.obj("type" -> "power_on"))
     val flash = {
       val result = Await.result(getResult, Duration.create(3.0, TimeUnit.SECONDS))
-      if(result.status == CREATED){
-        ("succes" -> "Server started")
-      }else if(result.status == UNPROCESSABLE_ENTITY){
-        (result.json \ "message").asOpt[String].map{ message =>
-          ("error" -> message)
-        }.getOrElse{
-          ("error" -> result.json.toString)
-        }
-      }else{
-        ("error" -> (result.json \ "message").as[String])
+
+      result.status match {
+        case CREATED => "succes" -> "Server started"
+        case _ => (result.json \ "message").asOpt[String]
+          .map(message => "error" -> message)
+          .getOrElse("error" -> result.json.toString)
       }
     }
     Redirect(routes.CloudServices.show(cloudServiceId)).flashing(flash)
@@ -180,11 +166,8 @@ object CloudServices extends Controller with Secured{
       .delete()
     val flash = {
       val result = Await.result(getResult, Duration.create(3.0, TimeUnit.SECONDS))
-      if(result.status == NO_CONTENT){
-        ("succes" -> "Server deleted")
-      }else{
-        ("error" -> (result.json \ "message").as[String])
-      }
+      if(result.status == NO_CONTENT) "succes" -> "Server deleted"
+      else "error" -> (result.json \ "message").as[String]
     }
     if(flash._1 == "succes") Redirect(routes.CloudServices.overview(user.id)).flashing(flash)
     else Redirect(routes.CloudServices.show(cloudServiceId)).flashing(flash)
