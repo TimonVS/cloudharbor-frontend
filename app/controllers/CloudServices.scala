@@ -112,26 +112,32 @@ object CloudServices extends Controller with Secured{
       formWithErrors => BadRequest(views.html.cloudservices.addCloudService(formWithErrors, regions, sizes)),
       data => {
         CloudService.findByUserId(user.id).map{ cloudService =>
+          // val sshId is either a String with an error message or an optional BigDecimal
           val sshId: Either[String, Option[BigDecimal]] = if(data.ssh){
+            // create json with data from form, get is possible since data.ssh is true
             val sshJson = Json.obj(
               "name" -> data.sshName.get,
               "public_key" -> data.sshPublicKey.get
             )
 
+            // post the ssh key to digital ocean
             val sshPost = WS.url("https://api.digitalocean.com/v2/account/keys")
               .withHeaders("Authorization" -> ("Bearer " + cloudService.apiKey))
               .post(sshJson)
 
+            // wait for the result with a max time of 3 seconds
             val resultSsh = Await.result(sshPost, Duration.create(3.0, TimeUnit.SECONDS))
 
+            // match on the status code
             resultSsh.status match {
-              case CREATED => Right(Some((resultSsh.json \ "ssh_key" \ "id").as[BigDecimal]))
-              case _ => Left((resultSsh.json \ "message").as[String])
+              case CREATED => Right(Some((resultSsh.json \ "ssh_key" \ "id").as[BigDecimal])) // send back id
+              case _ => Left((resultSsh.json \ "message").as[String]) // send back the error message from the json
             }
           }else{
-            Right(None)
+            Right(None) // if ssh is not enabled the id is Non
           }
 
+          // folding either the error or the actual id value and create a server that has that ssh key
           sshId.fold(
             error => Redirect(routes.CloudServices.addCloudService()).flashing("error" -> error),
             id => {
