@@ -18,8 +18,8 @@ libraryDependencies ++= Seq(
   "org.scalikejdbc" %% "scalikejdbc-test"   % "2.2.5"   % "test",
   "org.mindrot" % "jbcrypt" % "0.3m",
   "org.webjars" %% "webjars-play" % "2.3.0-2",
-  "org.webjars" % "bootstrap" % "3.1.1-2",
-  "org.webjars" % "angularjs" % "1.2.16",
+  "org.webjars.bower" % "bootstrap-sass" % "3.3.4",
+  "org.webjars" % "angularjs" % "1.3.15",
   "com.adrianhurt" %% "play-bootstrap3" % "0.4"
 )
 
