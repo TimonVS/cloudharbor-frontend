@@ -10,9 +10,19 @@
             @success
         </div>
     }
-    @b3.form(routes.Auth.createUserPost()) {
+    @if(createUserForm.hasGlobalErrors) {
+        @for(error <- createUserForm.globalErrors) {
+            <div class="alert alert-danger" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                @error.message
+            </div>
+        }
+    }
+    @b3.form(routes.Users.createUserPost()) {
         @b3.text( createUserForm("username"), '_label -> "Username", 'placeholder -> "Username" )
         @b3.password( createUserForm("password"), '_label -> "Password", 'placeholder -> "Password" )
+        @b3.password( createUserForm("passwordTwo"), '_label -> "Password", 'placeholder -> "Repeat password" )
         @b3.text( createUserForm("email"), '_label -> "E-mail", 'placeholder -> "E-Mail" )
         @b3.text( createUserForm("firstName"), '_label -> "First Name", 'placeholder -> "First Name" )
         @b3.text( createUserForm("prefix"), '_label -> "Prefix", 'placeholder -> "Prefix (opt)" )
