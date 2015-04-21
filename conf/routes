@@ -9,8 +9,12 @@ GET         /                                  controllers.Application.index
 GET         /login                             controllers.Auth.login
 GET         /logout                            controllers.Auth.logout
 POST        /authenticate                      controllers.Auth.authenticate
-GET         /user/create                       controllers.Auth.createUser
-POST        /user/create                       controllers.Auth.createUserPost
+
+# User
+GET         /user/create                       controllers.Users.createUser
+POST        /user/create                       controllers.Users.createUserPost
+GET         /user/profile                      controllers.Users.showUser
+POST        /user/profile                      controllers.Users.updateUser
 
 # Management
 GET         /management/overview               controllers.Management.overview
