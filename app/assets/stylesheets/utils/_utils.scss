@@ -1,0 +1,32 @@
+.no-vertical-margin {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.relative-container {
+  position: relative;
+}
+
+.fixed-overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow-y: auto;
+  z-index: 10000;
+  @media (min-width: $screen-md-min) {
+    left: 300px;
+  }
+}
+
+// Shadows
+.box-shadow-1 {
+  box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+.box-shadow-2 {
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+.text-shadow-1 {
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
