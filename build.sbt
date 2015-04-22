@@ -20,7 +20,8 @@ libraryDependencies ++= Seq(
   "org.webjars" %% "webjars-play" % "2.3.0-2",
   "org.webjars.bower" % "bootstrap-sass" % "3.3.4",
   "org.webjars" % "angularjs" % "1.3.15",
-  "com.adrianhurt" %% "play-bootstrap3" % "0.4"
+  "com.adrianhurt" %% "play-bootstrap3" % "0.4",
+  "org.webjars.bower" % "jasny-bootstrap" % "3.1.3"
 )
 
 scalikejdbcSettings
