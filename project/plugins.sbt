@@ -26,3 +26,6 @@ libraryDependencies += "xalan" % "serializer" % "2.7.2"
 addSbtPlugin("org.scalikejdbc" %% "scalikejdbc-mapper-generator" % "2.2.5")
 
 addSbtPlugin("default" % "sbt-sass" % "0.1.9")
+
+// native packager
+addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.0.0")

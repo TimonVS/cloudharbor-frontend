@@ -25,3 +25,11 @@ libraryDependencies ++= Seq(
 )
 
 scalikejdbcSettings
+
+// setting a maintainer which is used for all packaging types
+maintainer := "Thomas Meijers"
+
+packageName in Docker := "frontend"
+
+// exposing the play ports
+dockerExposedPorts in Docker := Seq(9000, 9443)
