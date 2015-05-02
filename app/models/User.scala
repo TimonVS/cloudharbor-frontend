@@ -10,7 +10,10 @@ case class User(
   email: String,
   firstName: String,
   prefix: Option[String] = None,
-  lastName: String) {
+  lastName: String,
+  cloudService: Option[CloudService],
+  notifications: List[Notification]) {
+
   def update(data: UserRegistrationData): User = {
     val dataPassword = data.password.getOrElse(this.password)
     this.copy(
@@ -22,7 +25,6 @@ case class User(
       lastName = data.lastName
     )
   }
-
 
   def save()(implicit session: DBSession = User.autoSession): User = User.save(this)(session)
 
@@ -45,7 +47,9 @@ object User extends SQLSyntaxSupport[User] {
     email = rs.get(u.email),
     firstName = rs.get(u.firstName),
     prefix = rs.get(u.prefix),
-    lastName = rs.get(u.lastName)
+    lastName = rs.get(u.lastName),
+    cloudService = CloudService.findByUserId(rs.get(u.id)),
+    notifications = Notification.findByUserId(rs.get(u.id))
   )
 
   val u = User.syntax("u")
@@ -122,7 +126,9 @@ object User extends SQLSyntaxSupport[User] {
       email = email,
       firstName = firstName,
       prefix = prefix,
-      lastName = lastName)
+      lastName = lastName,
+      cloudService = None,
+      notifications = List())
   }
 
   def save(entity: User)(implicit session: DBSession = autoSession): User = {

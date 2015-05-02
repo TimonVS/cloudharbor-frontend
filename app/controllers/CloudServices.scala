@@ -1,15 +1,18 @@
 package controllers
 
 import java.util.concurrent.TimeUnit
+import actors.NotificationActor
+import akka.actor.Props
 import models._
 import play.api.data._
 import play.api.data.Forms._
 import play.api.libs.ws.{WSResponse, WS}
-import play.api.mvc.{Flash, Controller}
+import play.api.mvc.Controller
 import play.api.Play.current
 import CloudServer.personReads
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import play.api.libs.concurrent.Akka
 import play.api.libs.json._
 
 /**
@@ -76,9 +79,8 @@ object CloudServices extends Controller with Secured{
   def show(cloudServiceId: String) = withAuth { user =>
     implicit request =>
       val id = BigDecimal(cloudServiceId)
-      val cloudInfoOpt = CloudService.findByUserId(user.id)
 
-      cloudInfoOpt.map{cloudInfo =>
+      user.cloudService.map{cloudInfo =>
         val server = WS.url(s"https://api.digitalocean.com/v2/droplets/$id")
           .withHeaders("Authorization" -> ("Bearer " + cloudInfo.apiKey))
           .get()
@@ -158,7 +160,19 @@ object CloudServices extends Controller with Secured{
 
               if(result.status != ACCEPTED) Redirect(routes.CloudServices.addCloudService())
                 .flashing("error" -> (result.json \ "message").as[String])
-              else Redirect(routes.CloudServices.overview(user.id))
+              else {
+                val serverId = (result.json \ "droplet" \ "id").as[BigDecimal]
+
+                val notificationActor = Akka.system.actorOf(Props[NotificationActor], name = "notificationActor")
+
+                notificationActor ! NotificationActor.CreateServerNotification(
+                  user.id,
+                  NotificationMessages.serverCreated(serverId),
+                  NotificationType.ServerCreate
+                )
+
+                Redirect(routes.CloudServices.overview(user.id))
+              }
             }
           )
         }.getOrElse(Redirect(routes.CloudServices.addCloudService()).flashing("error" -> "Add a cloud service first"))
@@ -212,7 +226,16 @@ object CloudServices extends Controller with Secured{
       if(result.status == NO_CONTENT) "succes" -> "Server deleted"
       else "error" -> (result.json \ "message").as[String]
     }
-    if(flash._1 == "succes") Redirect(routes.CloudServices.overview(user.id)).flashing(flash)
+    if(flash._1 == "succes") {
+      val notificationActor = Akka.system.actorOf(Props[NotificationActor], name = "notificationActor")
+
+      notificationActor ! NotificationActor.CreateServerNotification(
+        user.id,
+        NotificationMessages.serverDeleted(BigDecimal(cloudServiceId)),
+        NotificationType.ServerDelete
+      )
+      Redirect(routes.CloudServices.overview(user.id)).flashing(flash)
+    }
     else Redirect(routes.CloudServices.show(cloudServiceId)).flashing(flash)
   }
 
