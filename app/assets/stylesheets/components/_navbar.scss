@@ -11,6 +11,14 @@
   &:active, &:focus {
     outline: none;
   }
+  
+  @media (min-width: $screen-sm-min) {
+    margin-left: 0;
+  }
+
+  @media (min-width: $screen-md-min) {
+    display: none;
+  }
 
   @extend .btn, .btn-link;
 }
