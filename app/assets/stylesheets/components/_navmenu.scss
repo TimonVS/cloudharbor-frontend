@@ -8,7 +8,7 @@ $navmenu-item-active: rgba(#000, 0.4);
 }
 
 .navmenu {
-  background-image: linear-gradient(-136deg, #2BBDFF 0%, #003A99 100%);
+  background-image: $ch-gradient;
   border: 0;
 }
 
