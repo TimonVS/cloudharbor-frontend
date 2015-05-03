@@ -8,14 +8,14 @@
         <div class="table-responsive">
             <table class="table table-hover">
                 <tr>
-                    <th>Id</th>
-                    <th>Server name</th>
-                    <th>Locked</th>
-                    <th>Status</th>
-                    <th>Image name</th>
-                    <th>OS</th>
-                    <th>Ip address</th>
-                    <th>Region</th>
+                    <th>@Messages("server.overview.id")</th>
+                    <th>@Messages("server.overview.name")</th>
+                    <th>@Messages("server.overview.locked")</th>
+                    <th>@Messages("server.overview.status")</th>
+                    <th>@Messages("server.overview.image-name")</th>
+                    <th>@Messages("server.overview.os")</th>
+                    <th>@Messages("server.overview.ip")</th>
+                    <th>@Messages("server.overview.region")</th>
                 </tr>
                 @for(cloudServer <- cloudServers){
                     <tr onclick="document.location = '@routes.CloudServices.show(cloudServer.id.toString)';">
@@ -25,12 +25,12 @@
                         <td>@cloudServer.status</td>
                         <td>@cloudServer.imageName</td>
                         <td>@cloudServer.operatingSystem</td>
-                        <td>@cloudServer.ipAddress.getOrElse("Not available")</td>
+                        <td>@cloudServer.ipAddress.getOrElse(Messages("server.not-available"))</td>
                         <td>@cloudServer.regionName</td>
                     </tr>
                 }
             </table>
         </div>
     }
-    <a class="btn btn-default" href="@routes.CloudServices.addCloudService()" role="button">Add a server</a>
+    <a class="btn btn-default" href="@routes.CloudServices.addCloudService()" role="button">@Messages("server.overview.add-server")</a>
 }
