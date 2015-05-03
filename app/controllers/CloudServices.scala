@@ -1,15 +1,24 @@
 package controllers
 
 import java.util.concurrent.TimeUnit
+import actors.NotificationActor
+import akka.actor.Props
 
 import api.{CloudAPI, DigitalOceanAPI}
 import models.DigitalOcean.{Droplet, SSHKey}
 import models._
 import play.api.data.Forms._
+import play.api.libs.ws.{WSResponse, WS}
+import play.api.mvc.Controller
+import play.api.Play.current
+import CloudServer.personReads
+import scala.concurrent.Await
 import play.api.data._
 import play.api.mvc.{Controller, EssentialAction}
 
 import scala.concurrent.duration.Duration
+import play.api.libs.concurrent.Akka
+import play.api.libs.json._
 import scala.concurrent.{Await, Future}
 
 /**
@@ -119,7 +128,16 @@ object CloudServices extends Controller with Secured {
               val sshKey = SSHKey(data.sshName.get, data.sshPublicKey.get)
               val result = Await.result(cloudAPI.addSSHKey(apiKey, sshKey), Duration.create(3, TimeUnit.SECONDS))
               result.fold(
-                success => create(Some(List(success.data))),
+                success => {
+                  create(Some(List(success.data)))
+
+                  val notificationActor = Akka.system.actorOf(Props[NotificationActor], name = "notificationActor")
+
+                  notificationActor ! NotificationActor.CreateServerNotification(
+                    user.id,
+                    NotificationMessages.serverCreated(serverId),
+                    NotificationType.ServerCreate
+                },
                 error => Future(Redirect(routes.CloudServices.addCloudService()).flashing(error.data))
               )
             } else {
@@ -153,7 +171,16 @@ object CloudServices extends Controller with Secured {
     val apiKey = CloudService.findByUserId(user.id).get.apiKey
 
     DigitalOceanAPI.delete(cloudServiceId, apiKey).map(result => result.fold(
-      success => Redirect(routes.CloudServices.overview(user.id)).flashing(success.data),
+      success => {
+        Redirect(routes.CloudServices.overview(user.id)).flashing(success.data)
+
+        val notificationActor = Akka.system.actorOf(NotificationActor.props, name = "notificationActor")
+
+        notificationActor ! NotificationActor.CreateServerNotification(
+          user.id,
+          NotificationMessages.serverDeleted(BigDecimal(cloudServiceId)),
+          NotificationType.ServerDelete
+      },
       error => Redirect(routes.CloudServices.show(cloudServiceId)).flashing(error.data)
     ))
   }

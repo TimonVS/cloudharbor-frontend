@@ -10,7 +10,10 @@ case class User(
   email: String,
   firstName: String,
   prefix: Option[String] = None,
-  lastName: String) {
+  lastName: String,
+  cloudService: Option[CloudService],
+  notifications: List[Notification]) {
+
   def update(data: UserRegistrationData): User = {
     val dataPassword = data.password.getOrElse(this.password)
     this.copy(
@@ -23,7 +26,6 @@ case class User(
     )
   }
 
-
   def save()(implicit session: DBSession = User.autoSession): User = User.save(this)(session)
 
   def destroy()(implicit session: DBSession = User.autoSession): Unit = User.destroy(this)(session)
@@ -31,11 +33,19 @@ case class User(
 }
 
 
-object User extends SQLSyntaxSupport[User] {
+object User extends SQLSyntaxSupport[User] with StandardQueries[User] {
 
   override val tableName = "users"
 
   override val columns = Seq("id", "username", "password", "email", "first_name", "prefix", "last_name")
+
+  override val autoSession = AutoSession
+
+  override val sp = User.syntax("u")
+
+  override val aliasSyntax = User as sp
+
+  override val result = User(sp.resultName) _
 
   def apply(u: SyntaxProvider[User])(rs: WrappedResultSet): User = apply(u.resultName)(rs)
   def apply(u: ResultName[User])(rs: WrappedResultSet): User = new User(
@@ -45,49 +55,15 @@ object User extends SQLSyntaxSupport[User] {
     email = rs.get(u.email),
     firstName = rs.get(u.firstName),
     prefix = rs.get(u.prefix),
-    lastName = rs.get(u.lastName)
+    lastName = rs.get(u.lastName),
+    cloudService = CloudService.findByUserId(rs.get(u.id)),
+    notifications = Notification.findByUserId(rs.get(u.id))
   )
-
-  val u = User.syntax("u")
-
-  override val autoSession = AutoSession
-
-  def find(id: Int)(implicit session: DBSession = autoSession): Option[User] = {
-    withSQL {
-      select.from(User as u).where.eq(u.id, id)
-    }.map(User(u.resultName)).single.apply()
-  }
 
   def findByUsername(username: String)(implicit session: DBSession = autoSession): Option[User] = {
     withSQL {
-      select.from(User as u).where.eq(u.username, username)
-    }.map(User(u.resultName)).single.apply()
-  }
-
-  def findAll()(implicit session: DBSession = autoSession): List[User] = {
-    withSQL(select.from(User as u)).map(User(u.resultName)).list.apply()
-  }
-
-  def countAll()(implicit session: DBSession = autoSession): Long = {
-    withSQL(select(sqls"count(1)").from(User as u)).map(rs => rs.long(1)).single.apply().get
-  }
-
-  def findBy(where: SQLSyntax)(implicit session: DBSession = autoSession): Option[User] = {
-    withSQL {
-      select.from(User as u).where.append(sqls"${where}")
-    }.map(User(u.resultName)).single.apply()
-  }
-
-  def findAllBy(where: SQLSyntax)(implicit session: DBSession = autoSession): List[User] = {
-    withSQL {
-      select.from(User as u).where.append(sqls"${where}")
-    }.map(User(u.resultName)).list.apply()
-  }
-
-  def countBy(where: SQLSyntax)(implicit session: DBSession = autoSession): Long = {
-    withSQL {
-      select(sqls"count(1)").from(User as u).where.append(sqls"${where}")
-    }.map(_.long(1)).single.apply().get
+      select.from(User as sp).where.eq(sp.username, username)
+    }.map(result).single.apply()
   }
 
   def create(
@@ -122,7 +98,9 @@ object User extends SQLSyntaxSupport[User] {
       email = email,
       firstName = firstName,
       prefix = prefix,
-      lastName = lastName)
+      lastName = lastName,
+      cloudService = None,
+      notifications = List())
   }
 
   def save(entity: User)(implicit session: DBSession = autoSession): User = {

@@ -13,9 +13,9 @@
         <div class="container">
             <h3>Login into Cloudharbor</h3>
             @b3.form(routes.Auth.authenticate()) {
-                @b3.text( loginForm("username"), '_label -> "Username", 'placeholder -> "Your username" )
-                @b3.password( loginForm("password"), '_label -> "Password", 'placeholder -> "Password" )
-                @b3.submit('class -> "btn btn-default"){ Sign in }
+                @b3.text( loginForm("username"), '_label -> "Username", 'placeholder -> Messages("user.username") )
+                @b3.password( loginForm("password"), '_label -> "Password", 'placeholder -> Messages("user.password") )
+                @b3.submit('class -> "btn btn-default"){ @Messages("user.sign-in") }
             }
         </div>
     </body>
