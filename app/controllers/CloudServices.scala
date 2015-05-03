@@ -227,7 +227,7 @@ object CloudServices extends Controller with Secured{
       else "error" -> (result.json \ "message").as[String]
     }
     if(flash._1 == "succes") {
-      val notificationActor = Akka.system.actorOf(Props[NotificationActor], name = "notificationActor")
+      val notificationActor = Akka.system.actorOf(NotificationActor.props, name = "notificationActor")
 
       notificationActor ! NotificationActor.CreateServerNotification(
         user.id,

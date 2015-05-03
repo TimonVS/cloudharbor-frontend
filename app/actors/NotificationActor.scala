@@ -1,7 +1,7 @@
 package actors
 
 import actors.NotificationActor.CreateServerNotification
-import akka.actor.{ActorLogging, Actor}
+import akka.actor.{Props, ActorLogging, Actor}
 import models.Notification
 import models.NotificationType.NotificationType
 import org.joda.time.DateTime
@@ -20,6 +20,9 @@ class NotificationActor extends Actor with ActorLogging{
 }
 
 object NotificationActor{
+
+  def props: Props = Props[NotificationActor]
+
   trait NotificationActorMessages
   case class CreateServerNotification(userId: Int, message: String, notificationType: NotificationType) extends NotificationActorMessages
   case class DeleteServerNotification(userId: Int, message: String, notificationType: NotificationType) extends NotificationActorMessages

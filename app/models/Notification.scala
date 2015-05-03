@@ -31,13 +31,21 @@ object NotificationMessages {
   def serverDeleted(id: BigDecimal) = s"You deleted a server with the id of $id"
 }
 
-object Notification extends SQLSyntaxSupport[Notification]{
+object Notification extends SQLSyntaxSupport[Notification] with StandardQueries[Notification]{
 
   override val tableName = "notification"
 
   override val columns = Seq("id", "user_id", "message", "time_stamp", "type", "read")
 
   override val nameConverters = Map("^notificationType$" -> "type")
+
+  override val sp = Notification.syntax("n")
+
+  override val autoSession = AutoSession
+
+  override val aliasSyntax = Notification as sp
+
+  override val result: (WrappedResultSet) => Notification = Notification(sp.resultName) _
 
   def apply(cs: SyntaxProvider[Notification])(rs: WrappedResultSet): Notification = apply(cs.resultName)(rs)
   def apply(cs: ResultName[Notification])(rs: WrappedResultSet): Notification = new Notification(
@@ -49,46 +57,10 @@ object Notification extends SQLSyntaxSupport[Notification]{
     read = rs.get(cs.read)
   )
 
-  val n = Notification.syntax("n")
-
-  override val autoSession = AutoSession
-
-  def find(id: Int)(implicit session: DBSession = autoSession): Option[Notification] = {
-    withSQL {
-      select.from(Notification as n).where.eq(n.id, id)
-    }.map(Notification(n.resultName)).single.apply()
-  }
-
   def findByUserId(userId: Int)(implicit session: DBSession = autoSession): List[Notification] = {
     withSQL{
-      select.from(Notification as n).where.eq(n.userId, userId)
-    }.map(Notification(n.resultName)).list().apply()
-  }
-
-  def findAll()(implicit session: DBSession = autoSession): List[Notification] = {
-    withSQL(select.from(Notification as n)).map(Notification(n.resultName)).list.apply()
-  }
-
-  def countAll()(implicit session: DBSession = autoSession): Long = {
-    withSQL(select(sqls"count(1)").from(Notification as n)).map(rs => rs.long(1)).single.apply().get
-  }
-
-  def findBy(where: SQLSyntax)(implicit session: DBSession = autoSession): Option[Notification] = {
-    withSQL {
-      select.from(Notification as n).where.append(sqls"${where}")
-    }.map(Notification(n.resultName)).single.apply()
-  }
-
-  def findAllBy(where: SQLSyntax)(implicit session: DBSession = autoSession): List[Notification] = {
-    withSQL {
-      select.from(Notification as n).where.append(sqls"${where}")
-    }.map(Notification(n.resultName)).list.apply()
-  }
-
-  def countBy(where: SQLSyntax)(implicit session: DBSession = autoSession): Long = {
-    withSQL {
-      select(sqls"count(1)").from(Notification as n).where.append(sqls"${where}")
-    }.map(_.long(1)).single.apply().get
+      select.from(aliasSyntax).where.eq(sp.userId, userId)
+    }.map(result).list().apply()
   }
 
   def create(
