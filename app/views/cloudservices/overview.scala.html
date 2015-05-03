@@ -19,7 +19,7 @@
                     <th>@Messages("server.overview.region")</th>
                 </tr>
                 @for(cloudServer <- cloudServers){
-                    <tr onclick="document.location = '@routes.CloudServices.show(cloudServer.id.toString)';">
+                    <tr class="table-row-link" onclick="document.location = '@routes.CloudServices.show(cloudServer.id.toString)';">
                         <td>@cloudServer.id</td>
                         <td>@cloudServer.name</td>
                         <td>@cloudServer.locked</td>
