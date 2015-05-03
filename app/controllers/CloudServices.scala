@@ -1,22 +1,26 @@
 package controllers
 
 import java.util.concurrent.TimeUnit
+
+import api.DigitalOceanAPI
+import models.CloudServer.personReads
 import models._
-import play.api.data._
-import play.api.data.Forms._
-import play.api.libs.ws.{WSResponse, WS}
-import play.api.mvc.{Flash, Controller}
 import play.api.Play.current
-import CloudServer.personReads
+import play.api.data.Forms._
+import play.api.data._
+import play.api.libs.json._
+import play.api.libs.ws.{WS, WSResponse}
+import play.api.mvc.{Controller, EssentialAction}
+
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
-import play.api.libs.json._
+import scala.util._
 
 /**
  * Created by ThomasWorkBook on 17/04/15.
  * Controller object for every CloudService related action
  */
-object CloudServices extends Controller with Secured{
+object CloudServices extends Controller with Secured with DigitalOceanAPI {
 
   implicit val context = play.api.libs.concurrent.Execution.Implicits.defaultContext
 
@@ -166,54 +170,29 @@ object CloudServices extends Controller with Secured{
     )
   }
 
-  def powerOff(cloudServiceId: String) = withAuth{ user => implicit request =>
-    val cloudServiceInfo = CloudService.findByUserId(user.id).get
-    val getResult = WS.url(s"https://api.digitalocean.com/v2/droplets/$cloudServiceId/actions")
-      .withHeaders("Authorization" -> ("Bearer " + cloudServiceInfo.apiKey))
-      .post(Json.obj("type" -> "power_off"))
-    val flash = {
-      val result = Await.result(getResult, Duration.create(3.0, TimeUnit.SECONDS))
+  def powerOff(cloudServiceId: String) = withAuthAsync { user => implicit request =>
+    val apiKey = CloudService.findByUserId(user.id).get.apiKey
 
-      result.status match {
-        case CREATED => "succes" -> "Server powered off"
-        case _ => (result.json \ "message").asOpt[String]
-          .map(message => "error" -> message)
-          .getOrElse("error" -> result.json.toString)
-      }
-    }
-    Redirect(routes.CloudServices.show(cloudServiceId)).flashing(flash)
+    powerOffDroplet(cloudServiceId, apiKey).map(result =>
+      Redirect(routes.CloudServices.show(cloudServiceId)).flashing(result)
+    )
   }
 
-  def powerOn(cloudServiceId: String) = withAuth{ user => implicit request =>
-    val cloudServiceInfo = CloudService.findByUserId(user.id).get
-    val getResult = WS.url(s"https://api.digitalocean.com/v2/droplets/$cloudServiceId/actions")
-      .withHeaders("Authorization" -> ("Bearer " + cloudServiceInfo.apiKey))
-      .post(Json.obj("type" -> "power_on"))
-    val flash = {
-      val result = Await.result(getResult, Duration.create(3.0, TimeUnit.SECONDS))
+  def powerOn(cloudServiceId: String): EssentialAction = withAuthAsync { user => implicit request =>
+    val apiKey = CloudService.findByUserId(user.id).get.apiKey
 
-      result.status match {
-        case CREATED => "succes" -> "Server started"
-        case _ => (result.json \ "message").asOpt[String]
-          .map(message => "error" -> message)
-          .getOrElse("error" -> result.json.toString)
-      }
-    }
-    Redirect(routes.CloudServices.show(cloudServiceId)).flashing(flash)
+    powerOnDroplet(cloudServiceId, apiKey).map(result =>
+      Redirect(routes.CloudServices.show(cloudServiceId)).flashing(result)
+    )
   }
 
-  def delete(cloudServiceId: String) = withAuth{ user => implicit request =>
-    val cloudServiceInfo = CloudService.findByUserId(user.id).get
-    val getResult = WS.url(s"https://api.digitalocean.com/v2/droplets/$cloudServiceId")
-      .withHeaders("Authorization" -> ("Bearer " + cloudServiceInfo.apiKey))
-      .delete()
-    val flash = {
-      val result = Await.result(getResult, Duration.create(3.0, TimeUnit.SECONDS))
-      if(result.status == NO_CONTENT) "succes" -> "Server deleted"
-      else "error" -> (result.json \ "message").as[String]
-    }
-    if(flash._1 == "succes") Redirect(routes.CloudServices.overview(user.id)).flashing(flash)
-    else Redirect(routes.CloudServices.show(cloudServiceId)).flashing(flash)
+  def delete(cloudServiceId: String) = withAuthAsync { user => implicit request =>
+    val apiKey = CloudService.findByUserId(user.id).get.apiKey
+
+    deleteDroplet(cloudServiceId, apiKey).map(result =>
+      if (result._1 == "success") Redirect(routes.CloudServices.overview(user.id)).flashing(result)
+      else Redirect(routes.CloudServices.show(cloudServiceId)).flashing(result)
+    )
   }
 
   def authenticateCloudServiceInfo = withAuth { user => implicit request =>
