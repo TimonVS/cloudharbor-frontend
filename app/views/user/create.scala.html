@@ -20,13 +20,13 @@
         }
     }
     @b3.form(routes.Users.createUserPost()) {
-        @b3.text( createUserForm("username"), '_label -> "Username", 'placeholder -> "Username" )
-        @b3.password( createUserForm("password"), '_label -> "Password", 'placeholder -> "Password" )
-        @b3.password( createUserForm("passwordTwo"), '_label -> "Password", 'placeholder -> "Repeat password" )
-        @b3.text( createUserForm("email"), '_label -> "E-mail", 'placeholder -> "E-Mail" )
-        @b3.text( createUserForm("firstName"), '_label -> "First Name", 'placeholder -> "First Name" )
-        @b3.text( createUserForm("prefix"), '_label -> "Prefix", 'placeholder -> "Prefix (opt)" )
-        @b3.text( createUserForm("lastName"), '_label -> "Last name", 'placeholder -> "lastName" )
+        @b3.text( createUserForm("username"), '_label -> "Username", 'placeholder -> Messages("user.username") )
+        @b3.password( createUserForm("password"), '_label -> "Password", 'placeholder -> Messages("user.password") )
+        @b3.password( createUserForm("passwordTwo"), '_label -> "Password", 'placeholder -> Messages("user.repeat-password") )
+        @b3.text( createUserForm("email"), '_label -> "E-mail", 'placeholder -> Messages("user.email") )
+        @b3.text( createUserForm("firstName"), '_label -> "First Name", 'placeholder -> Messages("user.fname") )
+        @b3.text( createUserForm("prefix"), '_label -> "Prefix", 'placeholder -> Messages("user.prefix") )
+        @b3.text( createUserForm("lastName"), '_label -> "Last name", 'placeholder -> Messages("user.lname") )
         @b3.submit('class -> "btn btn-default"){ Create user }
     }
 }
