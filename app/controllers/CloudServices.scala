@@ -3,18 +3,14 @@ package controllers
 import java.util.concurrent.TimeUnit
 
 import api.DigitalOceanAPI
-import models.CloudServer.personReads
+import models.DigitalOcean.{Droplet, SSHKey}
 import models._
-import play.api.Play.current
 import play.api.data.Forms._
 import play.api.data._
-import play.api.libs.json._
-import play.api.libs.ws.{WS, WSResponse}
 import play.api.mvc.{Controller, EssentialAction}
 
-import scala.concurrent.Await
 import scala.concurrent.duration.Duration
-import scala.util._
+import scala.concurrent.{Await, Future}
 
 /**
  * Created by ThomasWorkBook on 17/04/15.
@@ -63,38 +59,29 @@ object CloudServices extends Controller with Secured with DigitalOceanAPI {
     Redirect(routes.CloudServices.overview(user.id))
   }
 
-  def overview(userId: Int) = withAuth { user =>
-    implicit request =>
-      val cloudServiceOpt = CloudService.findByUserId(user.id)
-      cloudServiceOpt match{
+  def overview(userId: Int) = withAuthAsync { user => implicit request =>
+    CloudService.findByUserId(user.id) match {
         case Some(cloudService) =>
-          val cloudServersJson = WS.url( "https://api.digitalocean.com/v2/droplets")
-            .withHeaders("Authorization" -> ("Bearer " + cloudService.apiKey))
-            .get()
-          val test: WSResponse = Await.result(cloudServersJson, Duration.create(3.0, TimeUnit.SECONDS))
-          Ok(views.html.cloudservices.overview((test.json \ "droplets").as[List[CloudServer]]))
-        case None => Redirect(routes.CloudServices.addCloudServiceAccount()).flashing("error" -> "Add your api-key first")
+          getDroplets(cloudService.apiKey).map(result => result.fold(
+            success => Ok(views.html.cloudservices.overview(success.data)),
+            error => Redirect(routes.CloudServices.addCloudServiceAccount()).flashing(error.data)
+          ))
+        case None => Future(Redirect(routes.CloudServices.addCloudServiceAccount())
+          .flashing("error" -> "Add your api-key first"))
       }
   }
 
-  def show(cloudServiceId: String) = withAuth { user =>
-    implicit request =>
-      val id = BigDecimal(cloudServiceId)
-      val cloudInfoOpt = CloudService.findByUserId(user.id)
-
-      cloudInfoOpt.map{cloudInfo =>
-        val server = WS.url(s"https://api.digitalocean.com/v2/droplets/$id")
-          .withHeaders("Authorization" -> ("Bearer " + cloudInfo.apiKey))
-          .get()
-        val reply = Await.result(server, Duration.create(3.0, TimeUnit.SECONDS))
-        val cloudServer = (reply.json \ "droplet").as[CloudServer]
-
-        Ok(views.html.cloudservices.show(cloudServer))
-
-      }.getOrElse(
-          Redirect(routes.CloudServices.addCloudService())
-            .flashing("error" -> "Please add a digital ocean api-key first")
-        )
+  def show(cloudServiceId: String) = withAuthAsync { user => implicit request =>
+    CloudService.findByUserId(user.id) match {
+      case Some(cloudService) =>
+        getDroplet(BigDecimal(cloudServiceId), cloudService.apiKey).map(result => result.fold(
+          success => Ok(views.html.cloudservices.show(success.data)),
+          error => Redirect(routes.CloudServices.addCloudServiceAccount()).flashing(error.data)
+        ))
+      case None =>
+        Future(Redirect(routes.CloudServices.addCloudService())
+          .flashing("error" -> "Please add a digital ocean api-key first"))
+    }
   }
   
   def addCloudService() = withAuth { user => implicit request =>
@@ -110,62 +97,34 @@ object CloudServices extends Controller with Secured with DigitalOceanAPI {
     Ok(views.html.cloudservices.addCloudServiceInfo(addForm))
   }
 
-  def authenticateCloudService = withAuth { user => implicit request =>
+  def authenticateCloudService = withAuthAsync { user => implicit request =>
     addServiceForm.bindFromRequest().fold(
-      formWithErrors => BadRequest(views.html.cloudservices.addCloudService(formWithErrors, regions, sizes)),
+      formWithErrors => Future(BadRequest(views.html.cloudservices.addCloudService(formWithErrors, regions, sizes))),
       data => {
-        CloudService.findByUserId(user.id).map{ cloudService =>
-          // val sshId is either a String with an error message or an optional BigDecimal
-          val sshId: Either[String, Option[BigDecimal]] = if(data.ssh){
-            // create json with data from form, get is possible since data.ssh is true
-            val sshJson = Json.obj(
-              "name" -> data.sshName.get,
-              "public_key" -> data.sshPublicKey.get
-            )
+        CloudService.findByUserId(user.id) match {
+          case Some(cloudService) =>
+            val apiKey = cloudService.apiKey
 
-            // post the ssh key to digital ocean
-            val sshPost = WS.url("https://api.digitalocean.com/v2/account/keys")
-              .withHeaders("Authorization" -> ("Bearer " + cloudService.apiKey))
-              .post(sshJson)
-
-            // wait for the data with a max time of 3 seconds
-            val resultSsh = Await.result(sshPost, Duration.create(3.0, TimeUnit.SECONDS))
-
-            // match on the status code
-            resultSsh.status match {
-              case CREATED => Right(Some((resultSsh.json \ "ssh_key" \ "id").as[BigDecimal])) // send back id
-              case _ => Left((resultSsh.json \ "message").as[String]) // send back the error message from the json
+            def create(sshKeys: Option[List[BigDecimal]]) = {
+              val droplet = Droplet(data.name, "docker", data.region, data.size, data.backUps, data.ipv6, sshKeys)
+              createDroplet(apiKey, droplet).map(result => result.fold(
+                success => Redirect(routes.CloudServices.overview(user.id)).flashing(success.data),
+                error => Redirect(routes.CloudServices.addCloudService()).flashing(error.data)
+              ))
             }
-          }else{
-            Right(None) // if ssh is not enabled the id is Non
-          }
 
-          // folding either the error or the actual id value and create a server that has that ssh key
-          sshId.fold(
-            error => Redirect(routes.CloudServices.addCloudService()).flashing("error" -> error),
-            id => {
-              val jsonData = Json.obj(
-                "name" -> data.name,
-                "image" -> "docker",
-                "region" -> data.region,
-                "size" -> data.size,
-                "backups" -> data.backUps,
-                "ipv6" -> data.ipv6,
-                "ssh_keys" -> Json.arr(id)
+            if (data.ssh) {
+              val sshKey = SSHKey(data.sshName.get, data.sshPublicKey.get)
+              val result = Await.result(addSSHKey(apiKey, sshKey), Duration.create(3, TimeUnit.SECONDS))
+              result.fold(
+                success => create(Some(List(success.data))),
+                error => Future(Redirect(routes.CloudServices.addCloudService()).flashing(error.data))
               )
-
-              val post = WS.url("https://api.digitalocean.com/v2/droplets")
-                .withHeaders("Authorization" -> ("Bearer " + cloudService.apiKey))
-                .post(jsonData)
-
-              val result = Await.result(post, Duration.create(3.0, TimeUnit.SECONDS))
-
-              if(result.status != ACCEPTED) Redirect(routes.CloudServices.addCloudService())
-                .flashing("error" -> (result.json \ "message").as[String])
-              else Redirect(routes.CloudServices.overview(user.id))
+            } else {
+              create(None)
             }
-          )
-        }.getOrElse(Redirect(routes.CloudServices.addCloudService()).flashing("error" -> "Add a cloud service first"))
+          case None => Future(Redirect(routes.CloudServices.addCloudService()).flashing("error" -> "Add a cloud service first"))
+        }
       }
     )
   }
@@ -197,28 +156,19 @@ object CloudServices extends Controller with Secured with DigitalOceanAPI {
     ))
   }
 
-  def authenticateCloudServiceInfo = withAuth { user => implicit request =>
+  def authenticateCloudServiceInfo = withAuthAsync { user => implicit request =>
     addCloudServiceInfoForm.bindFromRequest().fold(
-      forumWithErrors => BadRequest(views.html.cloudservices.addCloudServiceInfo(forumWithErrors)),
+      forumWithErrors => Future(BadRequest(views.html.cloudservices.addCloudServiceInfo(forumWithErrors))),
       data => {
-        val request = WS.url("https://api.digitalocean.com/v2/account")
-          .withHeaders("Authorization" -> ("Bearer " + data.apiKey))
-          .get()
-
-        val result = Await.result(request, Duration.create(3.0, TimeUnit.SECONDS))
-
-        val works = if(result.status == OK) true else false
-
-        if (works) {
-          val cloudServiceOpt = CloudService.findByUserId(user.id)
-          val cloudServiceInfo = cloudServiceOpt.map { cs =>
-            cs.copy(apiKey = data.apiKey).save()
-          }.getOrElse {
-            CloudService.create(user.id, data.apiKey)
-          }
-          Redirect(routes.CloudServices.overview(user.id))
-        }
-        else Redirect(routes.CloudServices.addCloudServiceAccount()).flashing("error" -> "Api-key did not work!")
+        authenticate(data.apiKey).map(result => result.fold(
+          success => {
+            CloudService.findByUserId(user.id) match {
+              case Some(cloudService) => cloudService.copy(apiKey = data.apiKey).save()
+              case None => CloudService.create(user.id, data.apiKey)
+            }
+            Redirect(routes.CloudServices.overview(user.id))
+          },
+          error => Redirect(routes.CloudServices.addCloudServiceAccount()).flashing("error" -> "Api-key did not work!")))
       }
     )
   }
