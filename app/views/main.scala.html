@@ -35,8 +35,8 @@
                 </li>
             </ul>
         </nav>
-        <div class="fixed-overlay box-shadow-1">
-            <div class="navbar navbar-default navbar-static-top">
+        <div class="main-content box-shadow-1">
+            <div class="navbar navbar-default navbar-fixed-top">
                 <div class="container">
                     <div class="navbar-header">
                         <button type="button" class="navmenu-toggle" data-toggle="offcanvas" data-target=".navmenu" data-canvas="body">
@@ -56,13 +56,23 @@
                     </div>
                     <div class="navbar-header-menu">
                         <ul class="nav navbar-nav navbar-right">
-                            <li class="navbar-icon"><a href="#">
-                                <span class="mdi mdi-bell-outline"></span>
-                                <span class="notification-ball"></span>
-                            </a></li>
-                            <li class="dropdown">
+                            <li class="navbar-icon navbar-notifications dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                    <span>Timon van Spronsen</span> <span class="caret"></span>
+                                    <span class="mdi mdi-bell-outline"></span>
+                                    <span class="notification-ball"></span>
+                                </a>
+                                <ul class="dropdown-menu notifications-list" role="menu">
+                                    <li class="notification-list-item">
+                                        <a href="#">
+                                            <span class="notification-title">Lorem ipsum dolor.</span>
+                                            <span class="notification-description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. At, fuga.</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="navbar-user dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                    <span>Timon van Spronsen</span>
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="@routes.Users.showUser()">My profile</a></li>

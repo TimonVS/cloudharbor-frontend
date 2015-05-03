@@ -27,8 +27,10 @@
 @import "components/buttons";
 @import "components/navmenu";
 @import "components/navbar";
+@import "components/dropdown";
 @import "components/tables";
+@import "components/notifications";
 
 // Layout
-@import "layout/container";
+@import "layout/content";
 @import "layout/login";

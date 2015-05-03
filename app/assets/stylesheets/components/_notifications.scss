@@ -1,0 +1,28 @@
+.notifications-list {
+  //width: 160px;
+
+  @media (max-width: $screen-xs-max) {
+    position: fixed !important;
+    top: 50px;
+    width: 98% !important;
+    left: 5px;
+    right: 5px;
+  }
+}
+
+.notification-list-item {
+}
+
+.dropdown-menu > .notification-list-item > a {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.notification-title {
+  display: block;
+  font-weight: bold;
+}
+
+.notification-description {
+  display: block;
+}
