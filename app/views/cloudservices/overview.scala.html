@@ -2,8 +2,7 @@
 
 @(cloudServers: List[Droplet])
 
-@main("overview"){
-    <h1>Overview cloud services</h1>
+@main("Server overview"){
     @if(cloudServers.isEmpty){
         <h4>Please add a digital ocean server</h4>
     }else{

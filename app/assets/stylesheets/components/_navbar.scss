@@ -4,6 +4,7 @@
 }
 
 .navmenu-toggle {
+  float: left;
   margin-left: 15px;
   padding-top: 0;
   padding-bottom: 0;
@@ -37,6 +38,10 @@
 }
 .navbar-icon .mdi {
   line-height: $navbar-height;
+}
+.navbar-icon-text {
+  position: relative;
+  top: -2px;
 }
 
 .notification-ball {
