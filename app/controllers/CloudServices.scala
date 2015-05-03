@@ -128,7 +128,7 @@ object CloudServices extends Controller with Secured with DigitalOceanAPI {
               .withHeaders("Authorization" -> ("Bearer " + cloudService.apiKey))
               .post(sshJson)
 
-            // wait for the result with a max time of 3 seconds
+            // wait for the data with a max time of 3 seconds
             val resultSsh = Await.result(sshPost, Duration.create(3.0, TimeUnit.SECONDS))
 
             // match on the status code
@@ -173,26 +173,28 @@ object CloudServices extends Controller with Secured with DigitalOceanAPI {
   def powerOff(cloudServiceId: String) = withAuthAsync { user => implicit request =>
     val apiKey = CloudService.findByUserId(user.id).get.apiKey
 
-    powerOffDroplet(cloudServiceId, apiKey).map(result =>
-      Redirect(routes.CloudServices.show(cloudServiceId)).flashing(result)
-    )
+    powerOffDroplet(cloudServiceId, apiKey).map(result => result.fold(
+      success => Redirect(routes.CloudServices.show(cloudServiceId)).flashing(success.data),
+      error => Redirect(routes.CloudServices.show(cloudServiceId)).flashing(error.data)
+    ))
   }
 
   def powerOn(cloudServiceId: String): EssentialAction = withAuthAsync { user => implicit request =>
     val apiKey = CloudService.findByUserId(user.id).get.apiKey
 
-    powerOnDroplet(cloudServiceId, apiKey).map(result =>
-      Redirect(routes.CloudServices.show(cloudServiceId)).flashing(result)
-    )
+    powerOnDroplet(cloudServiceId, apiKey).map(result => result.fold(
+      success => Redirect(routes.CloudServices.show(cloudServiceId)).flashing(success.data),
+      error => Redirect(routes.CloudServices.show(cloudServiceId)).flashing(error.data)
+    ))
   }
 
   def delete(cloudServiceId: String) = withAuthAsync { user => implicit request =>
     val apiKey = CloudService.findByUserId(user.id).get.apiKey
 
-    deleteDroplet(cloudServiceId, apiKey).map(result => result match {
-      case SuccessFlash(_) => Redirect(routes.CloudServices.overview(user.id)).flashing(result)
-      case ErrorFlash(_) => Redirect(routes.CloudServices.show(cloudServiceId)).flashing(result)
-    })
+    deleteDroplet(cloudServiceId, apiKey).map(result => result.fold(
+      success => Redirect(routes.CloudServices.overview(user.id)).flashing(success.data),
+      error => Redirect(routes.CloudServices.show(cloudServiceId)).flashing(error.data)
+    ))
   }
 
   def authenticateCloudServiceInfo = withAuth { user => implicit request =>
