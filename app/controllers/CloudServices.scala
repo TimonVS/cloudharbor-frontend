@@ -189,10 +189,10 @@ object CloudServices extends Controller with Secured with DigitalOceanAPI {
   def delete(cloudServiceId: String) = withAuthAsync { user => implicit request =>
     val apiKey = CloudService.findByUserId(user.id).get.apiKey
 
-    deleteDroplet(cloudServiceId, apiKey).map(result =>
-      if (result._1 == "success") Redirect(routes.CloudServices.overview(user.id)).flashing(result)
-      else Redirect(routes.CloudServices.show(cloudServiceId)).flashing(result)
-    )
+    deleteDroplet(cloudServiceId, apiKey).map(result => result match {
+      case SuccessFlash(_) => Redirect(routes.CloudServices.overview(user.id)).flashing(result)
+      case ErrorFlash(_) => Redirect(routes.CloudServices.show(cloudServiceId)).flashing(result)
+    })
   }
 
   def authenticateCloudServiceInfo = withAuth { user => implicit request =>
