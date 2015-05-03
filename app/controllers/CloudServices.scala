@@ -2,7 +2,7 @@ package controllers
 
 import java.util.concurrent.TimeUnit
 
-import api.DigitalOceanAPI
+import api.{CloudAPI, DigitalOceanAPI}
 import models.DigitalOcean.{Droplet, SSHKey}
 import models._
 import play.api.data.Forms._
@@ -16,9 +16,11 @@ import scala.concurrent.{Await, Future}
  * Created by ThomasWorkBook on 17/04/15.
  * Controller object for every CloudService related action
  */
-object CloudServices extends Controller with Secured with DigitalOceanAPI {
+object CloudServices extends Controller with Secured {
 
   implicit val context = play.api.libs.concurrent.Execution.Implicits.defaultContext
+
+  lazy val cloudAPI: CloudAPI = DigitalOceanAPI
 
   val regions = Seq(("ams2", "Amsterdam 2"), ("ams3", "Amsterdam 3"))
   val sizes = Seq(
@@ -62,7 +64,7 @@ object CloudServices extends Controller with Secured with DigitalOceanAPI {
   def overview(userId: Int) = withAuthAsync { user => implicit request =>
     CloudService.findByUserId(user.id) match {
         case Some(cloudService) =>
-          getDroplets(cloudService.apiKey).map(result => result.fold(
+          cloudAPI.getCloudServers(cloudService.apiKey).map(result => result.fold(
             success => Ok(views.html.cloudservices.overview(success.data)),
             error => Redirect(routes.CloudServices.addCloudServiceAccount()).flashing(error.data)
           ))
@@ -74,7 +76,7 @@ object CloudServices extends Controller with Secured with DigitalOceanAPI {
   def show(cloudServiceId: String) = withAuthAsync { user => implicit request =>
     CloudService.findByUserId(user.id) match {
       case Some(cloudService) =>
-        getDroplet(BigDecimal(cloudServiceId), cloudService.apiKey).map(result => result.fold(
+        cloudAPI.getCloudServer(BigDecimal(cloudServiceId), cloudService.apiKey).map(result => result.fold(
           success => Ok(views.html.cloudservices.show(success.data)),
           error => Redirect(routes.CloudServices.addCloudServiceAccount()).flashing(error.data)
         ))
@@ -107,7 +109,7 @@ object CloudServices extends Controller with Secured with DigitalOceanAPI {
 
             def create(sshKeys: Option[List[BigDecimal]]) = {
               val droplet = Droplet(data.name, "docker", data.region, data.size, data.backUps, data.ipv6, sshKeys)
-              createDroplet(apiKey, droplet).map(result => result.fold(
+              cloudAPI.createService(apiKey, droplet).map(result => result.fold(
                 success => Redirect(routes.CloudServices.overview(user.id)).flashing(success.data),
                 error => Redirect(routes.CloudServices.addCloudService()).flashing(error.data)
               ))
@@ -115,7 +117,7 @@ object CloudServices extends Controller with Secured with DigitalOceanAPI {
 
             if (data.ssh) {
               val sshKey = SSHKey(data.sshName.get, data.sshPublicKey.get)
-              val result = Await.result(addSSHKey(apiKey, sshKey), Duration.create(3, TimeUnit.SECONDS))
+              val result = Await.result(cloudAPI.addSSHKey(apiKey, sshKey), Duration.create(3, TimeUnit.SECONDS))
               result.fold(
                 success => create(Some(List(success.data))),
                 error => Future(Redirect(routes.CloudServices.addCloudService()).flashing(error.data))
@@ -132,7 +134,7 @@ object CloudServices extends Controller with Secured with DigitalOceanAPI {
   def powerOff(cloudServiceId: String) = withAuthAsync { user => implicit request =>
     val apiKey = CloudService.findByUserId(user.id).get.apiKey
 
-    powerOffDroplet(cloudServiceId, apiKey).map(result => result.fold(
+    cloudAPI.powerOff(cloudServiceId, apiKey).map(result => result.fold(
       success => Redirect(routes.CloudServices.show(cloudServiceId)).flashing(success.data),
       error => Redirect(routes.CloudServices.show(cloudServiceId)).flashing(error.data)
     ))
@@ -141,7 +143,7 @@ object CloudServices extends Controller with Secured with DigitalOceanAPI {
   def powerOn(cloudServiceId: String): EssentialAction = withAuthAsync { user => implicit request =>
     val apiKey = CloudService.findByUserId(user.id).get.apiKey
 
-    powerOnDroplet(cloudServiceId, apiKey).map(result => result.fold(
+    cloudAPI.powerOn(cloudServiceId, apiKey).map(result => result.fold(
       success => Redirect(routes.CloudServices.show(cloudServiceId)).flashing(success.data),
       error => Redirect(routes.CloudServices.show(cloudServiceId)).flashing(error.data)
     ))
@@ -150,7 +152,7 @@ object CloudServices extends Controller with Secured with DigitalOceanAPI {
   def delete(cloudServiceId: String) = withAuthAsync { user => implicit request =>
     val apiKey = CloudService.findByUserId(user.id).get.apiKey
 
-    deleteDroplet(cloudServiceId, apiKey).map(result => result.fold(
+    DigitalOceanAPI.delete(cloudServiceId, apiKey).map(result => result.fold(
       success => Redirect(routes.CloudServices.overview(user.id)).flashing(success.data),
       error => Redirect(routes.CloudServices.show(cloudServiceId)).flashing(error.data)
     ))
@@ -160,7 +162,7 @@ object CloudServices extends Controller with Secured with DigitalOceanAPI {
     addCloudServiceInfoForm.bindFromRequest().fold(
       forumWithErrors => Future(BadRequest(views.html.cloudservices.addCloudServiceInfo(forumWithErrors))),
       data => {
-        authenticate(data.apiKey).map(result => result.fold(
+        cloudAPI.authenticate(data.apiKey).map(result => result.fold(
           success => {
             CloudService.findByUserId(user.id) match {
               case Some(cloudService) => cloudService.copy(apiKey = data.apiKey).save()
