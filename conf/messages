@@ -1,0 +1,31 @@
+# Global
+
+# Menu
+menu.servers = Servers
+menu.containers = Containers
+menu.settings = Settings
+
+# User
+user.username = Username
+user.password = Password
+user.repeat-password = Repeat password
+user.email = E-mail
+user.fname = First name
+user.lname = Last name
+user.prefix = Prefix
+user.sign-in = Sign in
+
+# Servers
+server.not-available = Not available!
+
+server.overview.add-server = Add server
+server.overview.id = Id
+server.overview.name = Server name
+server.overview.locked = Locked
+server.overview.status = Status
+server.overview.image-name =
+server.overview.os = Operating system
+server.overview.ip = IP-address
+server.overview.region = Region
+
+# Containers
