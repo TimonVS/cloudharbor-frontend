@@ -3,6 +3,8 @@ package controllers
 import models.User
 import play.api.mvc._
 
+import scala.concurrent.Future
+
 /**
  * Created by ThomasWorkBook on 16/04/15.
  * Trait for action composition for authenticated controllers
@@ -23,4 +25,9 @@ trait Secured {
     }
   }
 
+  def withAuthAsync(f: => User => Request[AnyContent] => Future[Result]) = {
+    Security.Authenticated(user, onUnauthorized) { user =>
+      Action.async(request => f(user)(request))
+    }
+  }
 }
