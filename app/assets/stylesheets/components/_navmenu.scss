@@ -10,6 +10,7 @@ $navmenu-item-active: rgba(#000, 0.4);
 .navmenu {
   background-image: $ch-gradient;
   border: 0;
+  box-shadow: inset -5px 0 15px -5px rgba(0, 0, 0, 0.3);
 }
 
 .navmenu li a {
