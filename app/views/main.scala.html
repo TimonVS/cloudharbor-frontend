@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="chApp" class="no-js">
     <head>
-        <title>Cloudharbor - @title</title>
+        <title>Cloudharbor | @title</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("bower_components/mdi/css/materialdesignicons.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
@@ -25,7 +25,7 @@
                     <a href="@routes.Management.overview()"><i class="mdi mdi-hexagon-outline"></i>@Messages("menu.containers")</a>
                 </li>
                 <li>
-                    <a href="#"><i class="mdi mdi-information"></i>Logs</a>
+                    <a href="#"><i class="mdi mdi-information"></i>Statistics</a>
                 </li>
                 <li>
                     <a href="#"><i class="mdi mdi-settings"></i>@Messages("menu.settings")</a>
@@ -42,6 +42,17 @@
                         <button type="button" class="navmenu-toggle" data-toggle="offcanvas" data-target=".navmenu" data-canvas="body">
                             <span class="mdi mdi-menu"></span>
                         </button>
+                        <div class="navbar-header-menu">
+                        <ul class="nav navbar-nav">
+                            <li class="navbar-icon">
+                                <a href="#">
+                                    <span class="mdi mdi-chevron-left"></span>
+                                    <span class="navbar-icon-text hidden-xs">Server dashboard</span>
+                                    <span class="navbar-icon-text hidden-sm hidden-md hidden-lg">Back</span>
+                                </a>
+                            </li>
+                        </ul>
+                        </div>
                     </div>
                     <div class="navbar-header-menu">
                         <ul class="nav navbar-nav navbar-right">
@@ -65,7 +76,8 @@
 
             <main>
                 <div class="container">
-                @content
+                    <h1 class="page-title">@title</h1>
+                    @content
                 </div>
             </main>
 
