@@ -8,18 +8,16 @@ import play.api.libs.ws.WS
 import play.mvc.Http.Status._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-import scala.util.{Either, Left, Right}
+import scala.util.{Left, Right}
 
 /**
  * Created by Rudie on 2-5-2015.
  */
-trait DigitalOceanAPI {
-  type Result[A, B] = Future[Either[Success[A], Error[B]]]
-
+object DigitalOceanAPI extends CloudAPI {
   val baseUri = "https://api.digitalocean.com/v2/"
 
-  def authenticate(apiKey: String): Result[(String, String), (String, String)] =
+  @Override
+  def authenticate(apiKey: String) =
     WS.url("https://api.digitalocean.com/v2/account")
       .withHeaders("Authorization" -> s"Bearer $apiKey")
       .get()
@@ -29,8 +27,8 @@ trait DigitalOceanAPI {
         .asOpt[String].getOrElse(result.json.toString)))
     })
 
-  /** Retrieves a droplet. */
-  def getDroplet(id: BigDecimal, apiKey: String): Result[CloudServer, (String, String)] =
+  @Override
+  def getCloudServer(id: BigDecimal, apiKey: String) =
     WS.url(baseUri + s"droplets/$id")
       .withHeaders("Authorization" -> s"Bearer $apiKey")
       .get()
@@ -40,7 +38,8 @@ trait DigitalOceanAPI {
         .asOpt[String].getOrElse(result.json.toString)))
     })
 
-  def getDroplets(apiKey: String): Result[List[CloudServer], (String, String)] =
+  @Override
+  def getCloudServers(apiKey: String) =
     WS.url(baseUri + "droplets")
       .withHeaders("Authorization" -> s"Bearer $apiKey")
       .get()
@@ -50,8 +49,8 @@ trait DigitalOceanAPI {
         .asOpt[String].getOrElse(result.json.toString)))
     })
 
-  /** Creates a droplet. */
-  def createDroplet(apiKey: String, droplet: Droplet): Result[(String, String), (String, String)] =
+  @Override
+  def createService(apiKey: String, droplet: Droplet) =
     WS.url(baseUri + "droplets")
       .withHeaders("Authorization" -> s"Bearer $apiKey")
       .post(droplet toJson)
@@ -61,8 +60,8 @@ trait DigitalOceanAPI {
         .asOpt[String].getOrElse(result.json.toString)))
     })
 
-  /** Adds a SSH key to the Digital Ocean account. */
-  def addSSHKey(apiKey: String, sshKey: SSHKey): Result[BigDecimal, (String, String)] =
+  @Override
+  def addSSHKey(apiKey: String, sshKey: SSHKey) =
     WS.url(baseUri + "account/keys")
       .withHeaders("Authorization" -> s"Bearer $apiKey")
       .post(sshKey toJson)
@@ -72,8 +71,8 @@ trait DigitalOceanAPI {
         .asOpt[String].getOrElse(result.json.toString)))
     })
 
-  /** Powers the droplet on. */
-  def powerOnDroplet(id: String, apiKey: String): Result[(String, String), (String, String)] =
+  @Override
+  def powerOn(id: String, apiKey: String) =
     WS.url(baseUri + s"droplets/$id/actions")
       .withHeaders("Authorization" -> s"Bearer $apiKey")
       .post(Json.obj("type" -> "power_on"))
@@ -83,8 +82,8 @@ trait DigitalOceanAPI {
         .asOpt[String].getOrElse(result.json.toString)))
     })
 
-  /** Powers the droplet off. */
-  def powerOffDroplet(id: String, apiKey: String): Result[(String, String), (String, String)] =
+  @Override
+  def powerOff(id: String, apiKey: String) =
     WS.url(baseUri + s"droplets/$id/actions")
       .withHeaders("Authorization" -> s"Bearer $apiKey")
       .post(Json.obj("type" -> "power_off"))
@@ -94,8 +93,8 @@ trait DigitalOceanAPI {
         .asOpt[String].getOrElse(result.json.toString)))
     })
 
-  /** Deletes the droplet. */
-  def deleteDroplet(id: String, apiKey: String): Result[(String, String), (String, String)] =
+  @Override
+  def delete(id: String, apiKey: String) =
     WS.url(baseUri + s"droplets/$id")
       .withHeaders("Authorization" -> s"Bearer $apiKey")
       .delete()
