@@ -14,11 +14,19 @@ case class CloudService(
 }
 
 
-object CloudService extends SQLSyntaxSupport[CloudService] {
+object CloudService extends SQLSyntaxSupport[CloudService] with StandardQueries[CloudService]{
 
   override val tableName = "cloud_service"
 
   override val columns = Seq("id", "user_id", "api_key")
+
+  override val autoSession = AutoSession
+
+  override val sp = CloudService.syntax("cs")
+
+  override val aliasSyntax = CloudService as sp
+
+  override val result = CloudService(sp.resultName) _
 
   def apply(cs: SyntaxProvider[CloudService])(rs: WrappedResultSet): CloudService = apply(cs.resultName)(rs)
   def apply(cs: ResultName[CloudService])(rs: WrappedResultSet): CloudService = new CloudService(
@@ -27,46 +35,10 @@ object CloudService extends SQLSyntaxSupport[CloudService] {
     apiKey = rs.get(cs.apiKey)
   )
 
-  val cs = CloudService.syntax("cs")
-
-  override val autoSession = AutoSession
-
-  def find(id: Int)(implicit session: DBSession = autoSession): Option[CloudService] = {
-    withSQL {
-      select.from(CloudService as cs).where.eq(cs.id, id)
-    }.map(CloudService(cs.resultName)).single.apply()
-  }
-
   def findByUserId(userId: Int)(implicit session: DBSession = autoSession): Option[CloudService] = {
     withSQL{
-      select.from(CloudService as cs).where.eq(cs.userId, userId)
-    }.map(CloudService(cs.resultName)).single().apply()
-  }
-
-  def findAll()(implicit session: DBSession = autoSession): List[CloudService] = {
-    withSQL(select.from(CloudService as cs)).map(CloudService(cs.resultName)).list.apply()
-  }
-
-  def countAll()(implicit session: DBSession = autoSession): Long = {
-    withSQL(select(sqls"count(1)").from(CloudService as cs)).map(rs => rs.long(1)).single.apply().get
-  }
-
-  def findBy(where: SQLSyntax)(implicit session: DBSession = autoSession): Option[CloudService] = {
-    withSQL {
-      select.from(CloudService as cs).where.append(sqls"${where}")
-    }.map(CloudService(cs.resultName)).single.apply()
-  }
-
-  def findAllBy(where: SQLSyntax)(implicit session: DBSession = autoSession): List[CloudService] = {
-    withSQL {
-      select.from(CloudService as cs).where.append(sqls"${where}")
-    }.map(CloudService(cs.resultName)).list.apply()
-  }
-
-  def countBy(where: SQLSyntax)(implicit session: DBSession = autoSession): Long = {
-    withSQL {
-      select(sqls"count(1)").from(CloudService as cs).where.append(sqls"${where}")
-    }.map(_.long(1)).single.apply().get
+      select.from(aliasSyntax).where.eq(sp.userId, userId)
+    }.map(result).single().apply()
   }
 
   def create(
