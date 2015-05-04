@@ -16,8 +16,7 @@ import scala.util.{Left, Right}
 object DigitalOceanAPI extends CloudAPI {
   val baseUri = "https://api.digitalocean.com/v2/"
 
-  @Override
-  def authenticate(apiKey: String) =
+  override def authenticate(apiKey: String) =
     WS.url("https://api.digitalocean.com/v2/account")
       .withHeaders("Authorization" -> s"Bearer $apiKey")
       .get()
@@ -27,8 +26,7 @@ object DigitalOceanAPI extends CloudAPI {
         .asOpt[String].getOrElse(result.json.toString)))
     })
 
-  @Override
-  def getCloudServer(id: BigDecimal, apiKey: String) =
+  override def getCloudServer(id: BigDecimal, apiKey: String) =
     WS.url(baseUri + s"droplets/$id")
       .withHeaders("Authorization" -> s"Bearer $apiKey")
       .get()
@@ -38,8 +36,7 @@ object DigitalOceanAPI extends CloudAPI {
         .asOpt[String].getOrElse(result.json.toString)))
     })
 
-  @Override
-  def getCloudServers(apiKey: String) =
+  override def getCloudServers(apiKey: String) =
     WS.url(baseUri + "droplets")
       .withHeaders("Authorization" -> s"Bearer $apiKey")
       .get()
@@ -52,8 +49,7 @@ object DigitalOceanAPI extends CloudAPI {
         .asOpt[String].getOrElse(result.json.toString)))
     })
 
-  @Override
-  def createServer(apiKey: String, droplet: CreateDroplet) =
+  override def createServer(apiKey: String, droplet: CreateDroplet) =
     WS.url(baseUri + "droplets")
       .withHeaders("Authorization" -> s"Bearer $apiKey")
       .post(Json.toJson(droplet))
@@ -63,8 +59,7 @@ object DigitalOceanAPI extends CloudAPI {
         .asOpt[String].getOrElse(result.json.toString)))
     })
 
-  @Override
-  def addSSHKey(apiKey: String, sshKey: CreateSSHKey) =
+  override def addSSHKey(apiKey: String, sshKey: CreateSSHKey) =
     WS.url(baseUri + "account/keys")
       .withHeaders("Authorization" -> s"Bearer $apiKey")
       .post(Json.toJson(sshKey))
@@ -74,8 +69,7 @@ object DigitalOceanAPI extends CloudAPI {
         .asOpt[String].getOrElse(result.json.toString)))
     })
 
-  @Override
-  def powerOn(id: String, apiKey: String) =
+  override def powerOn(id: String, apiKey: String) =
     WS.url(baseUri + s"droplets/$id/actions")
       .withHeaders("Authorization" -> s"Bearer $apiKey")
       .post(Json.obj("type" -> "power_on"))
@@ -85,8 +79,7 @@ object DigitalOceanAPI extends CloudAPI {
         .asOpt[String].getOrElse(result.json.toString)))
     })
 
-  @Override
-  def powerOff(id: String, apiKey: String) =
+  override def powerOff(id: String, apiKey: String) =
     WS.url(baseUri + s"droplets/$id/actions")
       .withHeaders("Authorization" -> s"Bearer $apiKey")
       .post(Json.obj("type" -> "power_off"))
@@ -96,8 +89,7 @@ object DigitalOceanAPI extends CloudAPI {
         .asOpt[String].getOrElse(result.json.toString)))
     })
 
-  @Override
-  def delete(id: String, apiKey: String) =
+  override def delete(id: String, apiKey: String) =
     WS.url(baseUri + s"droplets/$id")
       .withHeaders("Authorization" -> s"Bearer $apiKey")
       .delete()
