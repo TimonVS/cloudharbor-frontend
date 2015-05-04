@@ -1,4 +1,6 @@
-@(cloudServers: List[CloudServer])
+@import models.DigitalOcean.Droplet
+
+@(cloudServers: List[Droplet])
 
 @main("overview"){
     <h1>Overview cloud services</h1>
@@ -23,10 +25,12 @@
                         <td>@cloudServer.name</td>
                         <td>@cloudServer.locked</td>
                         <td>@cloudServer.status</td>
-                        <td>@cloudServer.imageName</td>
-                        <td>@cloudServer.operatingSystem</td>
-                        <td>@cloudServer.ipAddress.getOrElse(Messages("server.not-available"))</td>
-                        <td>@cloudServer.regionName</td>
+                        <td>@cloudServer.image.name</td>
+                        <td>@cloudServer.image.distribution</td>
+                        <td>@{
+                            cloudServer.networks.ipv4.map(n => n.ipAddress) :: cloudServer.networks.ipv6.map(n => n.ipAddress)
+                        }</td>
+                        <td>@cloudServer.region.name</td>
                     </tr>
                 }
             </table>
