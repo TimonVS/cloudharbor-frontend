@@ -3,9 +3,8 @@ package controllers
 import java.util.concurrent.TimeUnit
 
 import actors.NotificationActor
-import akka.actor.Props
 import api.{CloudAPI, DigitalOceanAPI}
-import models.DigitalOcean.{Droplet, SSHKey}
+import models.DigitalOcean.{CreateDroplet, CreateSSHKey}
 import models._
 import play.api.Play.current
 import play.api.data.Forms._
@@ -25,6 +24,7 @@ object CloudServices extends Controller with Secured {
   implicit val context = play.api.libs.concurrent.Execution.Implicits.defaultContext
 
   lazy val cloudAPI: CloudAPI = DigitalOceanAPI
+  lazy val notificationActor = Akka.system.actorOf(NotificationActor.props, name = "notificationActor")
 
   val regions = Seq(("ams2", "Amsterdam 2"), ("ams3", "Amsterdam 3"))
   val sizes = Seq(
@@ -112,28 +112,26 @@ object CloudServices extends Controller with Secured {
             val apiKey = cloudService.apiKey
 
             def create(sshKeys: Option[List[BigDecimal]]) = {
-              val droplet = Droplet(data.name, "docker", data.region, data.size, data.backUps, data.ipv6, sshKeys)
-              cloudAPI.createService(apiKey, droplet).map(result => result.fold(
-                success => Redirect(routes.CloudServices.overview(user.id)).flashing(success.data),
-                error => Redirect(routes.CloudServices.addCloudService()).flashing(error.data)
-              ))
-            }
-
-            if (data.ssh) {
-              val sshKey = SSHKey(data.sshName.get, data.sshPublicKey.get)
-              val result = Await.result(cloudAPI.addSSHKey(apiKey, sshKey), Duration.create(3, TimeUnit.SECONDS))
-              result.fold(
+              val droplet = CreateDroplet(data.name, "docker", data.region, data.size, data.backUps, data.ipv6, sshKeys)
+              cloudAPI.createServer(apiKey, droplet).map(result => result.fold(
                 success => {
-                  val notificationActor = Akka.system.actorOf(Props[NotificationActor], name = "notificationActor")
-
                   notificationActor ! NotificationActor.CreateServerNotification(
                     user.id,
                     NotificationMessages.serverCreated(success.data),
                     NotificationType.ServerCreate
                   )
 
-                  create(Some(List(success.data)))
+                  Redirect(routes.CloudServices.overview(user.id))
                 },
+                error => Redirect(routes.CloudServices.addCloudService()).flashing(error.data)
+              ))
+            }
+
+            if (data.ssh) {
+              val sshKey = CreateSSHKey(data.sshName.get, data.sshPublicKey.get)
+              val result = Await.result(cloudAPI.addSSHKey(apiKey, sshKey), Duration.create(3, TimeUnit.SECONDS))
+              result.fold(
+                success => create(Some(List(success.data))),
                 error => Future(Redirect(routes.CloudServices.addCloudService()).flashing(error.data))
               )
             } else {
@@ -168,8 +166,6 @@ object CloudServices extends Controller with Secured {
 
     DigitalOceanAPI.delete(cloudServiceId, apiKey).map(result => result.fold(
       success => {
-        val notificationActor = Akka.system.actorOf(NotificationActor.props, name = "notificationActor")
-
         notificationActor ! NotificationActor.CreateServerNotification(
           user.id,
           NotificationMessages.serverDeleted(BigDecimal(cloudServiceId)),

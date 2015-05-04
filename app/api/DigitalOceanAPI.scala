@@ -1,6 +1,6 @@
 package api
 
-import models.DigitalOcean.{Droplet, SSHKey}
+import models.DigitalOcean.{CreateDroplet, CreateSSHKey, Droplet}
 import models._
 import play.api.Play.current
 import play.api.libs.json.Json
@@ -33,7 +33,7 @@ object DigitalOceanAPI extends CloudAPI {
       .withHeaders("Authorization" -> s"Bearer $apiKey")
       .get()
       .map(result => result.status match {
-      case OK => Left(Success((result.json \ "droplet").as[CloudServer]))
+      case OK => Left(Success((result.json \ "droplet").as[Droplet]))
       case error => Right(Error("error" -> (result.json \ "message")
         .asOpt[String].getOrElse(result.json.toString)))
     })
@@ -44,27 +44,30 @@ object DigitalOceanAPI extends CloudAPI {
       .withHeaders("Authorization" -> s"Bearer $apiKey")
       .get()
       .map(result => result.status match {
-      case OK => Left(Success((result.json \ "droplets").as[List[CloudServer]]))
+      case OK => {
+        val json = result.json
+        Left(Success((result.json \ "droplets").as[List[Droplet]]))
+      }
       case error => Right(Error("error" -> (result.json \ "message")
         .asOpt[String].getOrElse(result.json.toString)))
     })
 
   @Override
-  def createService(apiKey: String, droplet: Droplet) =
+  def createServer(apiKey: String, droplet: CreateDroplet) =
     WS.url(baseUri + "droplets")
       .withHeaders("Authorization" -> s"Bearer $apiKey")
-      .post(droplet toJson)
+      .post(Json.toJson(droplet))
       .map(result => result.status match {
-      case ACCEPTED => Left(Success("success" -> "Droplet created"))
+      case ACCEPTED => Left(Success((result.json \ "droplet" \ "id").as[BigDecimal]))
       case error => Right(Error("error" -> (result.json \ "message")
         .asOpt[String].getOrElse(result.json.toString)))
     })
 
   @Override
-  def addSSHKey(apiKey: String, sshKey: SSHKey) =
+  def addSSHKey(apiKey: String, sshKey: CreateSSHKey) =
     WS.url(baseUri + "account/keys")
       .withHeaders("Authorization" -> s"Bearer $apiKey")
-      .post(sshKey toJson)
+      .post(Json.toJson(sshKey))
       .map(result => result.status match {
       case CREATED => Left(Success((result.json \ "ssh_key" \ "id").as[BigDecimal]))
       case error => Right(Error("error" -> (result.json \ "message")

@@ -1,7 +1,7 @@
 package api
 
-import models.DigitalOcean.{Droplet, SSHKey}
-import models.{CloudServer, Error, Success}
+import models.DigitalOcean.{CreateDroplet, CreateSSHKey, Droplet}
+import models.{Error, Success}
 
 import scala.concurrent.Future
 import scala.util.Either
@@ -16,16 +16,16 @@ trait CloudAPI {
   def authenticate(apiKey: String): Result[(String, String), (String, String)]
 
   /** Retrieves a server. */
-  def getCloudServer(id: BigDecimal, apiKey: String): Result[CloudServer, (String, String)]
+  def getCloudServer(id: BigDecimal, apiKey: String): Result[Droplet, (String, String)]
 
   /** Retrieves a list of all servers */
-  def getCloudServers(apiKey: String): Result[List[CloudServer], (String, String)]
+  def getCloudServers(apiKey: String): Result[List[Droplet], (String, String)]
 
   /** Creates a service. */
-  def createService(apiKey: String, droplet: Droplet): Result[(String, String), (String, String)]
+  def createServer(apiKey: String, droplet: CreateDroplet): Result[BigDecimal, (String, String)]
 
   /** Adds a SSH key to the API account. */
-  def addSSHKey(apiKey: String, sshKey: SSHKey): Result[BigDecimal, (String, String)]
+  def addSSHKey(apiKey: String, sshKey: CreateSSHKey): Result[BigDecimal, (String, String)]
 
   /** Powers the service on. */
   def powerOn(id: String, apiKey: String): Result[(String, String), (String, String)]
