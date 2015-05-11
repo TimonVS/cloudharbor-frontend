@@ -1,4 +1,6 @@
-@(cloudServer: CloudServer)(implicit flash: Flash)
+@import models.DigitalOcean.Droplet
+
+@(cloudServer: Droplet)( implicit flash: Flash)
 
 @main("Server " + cloudServer.name){
     <div class="panel panel-default">
@@ -34,10 +36,12 @@
                     <tr><th>Memory</th><td>@cloudServer.memory</td></tr>
                     <tr><th>Virtual CPUs</th><td>@cloudServer.vcpus</td></tr>
                     <tr><th>Disk</th><td>@cloudServer.disk</td></tr>
-                    <tr><th>Image Name</th><td>@cloudServer.imageName</td></tr>
-                    <tr><th>Operating System</th><td>@cloudServer.operatingSystem</td></tr>
-                    <tr><th>Ip-address</th><td>@cloudServer.ipAddress.getOrElse("Not available")</td></tr>
-                    <tr><th>Region</th><td>@cloudServer.regionName</td></tr>
+                    <tr><th>Image Name</th><td>@cloudServer.image.name</td></tr>
+                    <tr><th>Operating System</th><td>@cloudServer.image.distribution</td></tr>
+                    <tr><th>Ip-address</th><td>@{
+                        cloudServer.networks.ipv4.map(n => n.ipAddress) :: cloudServer.networks.ipv6.map(n => n.ipAddress)
+                    }</td></tr>
+                    <tr><th>Region</th><td>@cloudServer.region.name</td></tr>
                 </table>
             </div>
         </div>
