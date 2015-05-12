@@ -1,0 +1,38 @@
+$bower-path: '/public/bower_components/';
+
+// Override Bootstrap variables
+@import "utils/bootstrap-variables";
+
+// Vendor
+@import "public/bower_components/bootstrap-sass-official/assets/stylesheets/_bootstrap.scss";
+
+// bootstrap-jasny
+@import "public/bower_components/bootstrap-jasny/scss/variables";
+@import "public/bower_components/bootstrap-jasny/scss/grid-container-smooth";
+@import "public/bower_components/bootstrap-jasny/scss/button-labels";
+@import "public/bower_components/bootstrap-jasny/scss/nav-tab-alignment";
+@import "public/bower_components/bootstrap-jasny/scss/navmenu";
+@import "public/bower_components/bootstrap-jasny/scss/alerts-fixed";
+@import "public/bower_components/bootstrap-jasny/scss/offcanvas";
+@import "public/bower_components/bootstrap-jasny/scss/rowlink";
+@import "public/bower_components/bootstrap-jasny/scss/fileinput";
+
+// Utils
+@import "utils/variables";
+@import "utils/mixins";
+@import "utils/utils";
+
+// Base
+@import "base/typography";
+
+// Components
+@import "components/buttons";
+@import "components/navmenu";
+@import "components/navbar";
+@import "components/dropdown";
+@import "components/tables";
+@import "components/notifications";
+
+// Layout
+@import "layout/content";
+@import "layout/login";
