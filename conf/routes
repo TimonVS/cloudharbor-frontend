@@ -32,6 +32,8 @@ GET         /cloudservice/start/:id            controllers.CloudServices.powerOn
 GET         /cloudservice/delete/:id           controllers.CloudServices.delete(id: String)
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                      controllers.Assets.at(path="/public", file)
+GET         /images/*file                      controllers.Assets.at(path="/public/images", file)
+GET         /bower_components/*file            controllers.Assets.at(path="/public/bower_components", file)
+GET         /assets/*file                      controllers.Assets.at(path="/public/dev/assets", file)
 # Map web jar assets from sbt to the /webjars URL path (includes bootstrap & angularjs
 GET         /webjars/*file                     controllers.WebJarAssets.at(file)
