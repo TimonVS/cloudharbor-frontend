@@ -9,7 +9,6 @@ gulp.task('scripts', ['partials'], function () {
     .pipe($.plumber())
     .pipe($.jshint())
     .pipe($.jshint.reporter('jshint-stylish'))
-    .pipe($.traceur())
     .on('error', function handleError(err) {
       console.error(err.toString());
       this.emit('end');

@@ -1,4 +1,4 @@
-@(user: User, userForm: Form[UserRegistrationData])(implicit flash: Flash)
+@(user: User, userForm: Form[UserRegistrationData])(implicit flash: Flash, request: RequestHeader)
 @import b3.vertical.fieldConstructor
 
 @main("Profile settings - " + s"${user.username}"){

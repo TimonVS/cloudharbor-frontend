@@ -1,8 +1,8 @@
 @import models.DigitalOcean.Droplet
 
-@(cloudServers: List[Droplet])
+@(cloudServers: List[Droplet])(implicit request: RequestHeader)
 
-@main("Server overview"){
+@main("Server overview") {
     @if(cloudServers.isEmpty){
         <h4>Please add a digital ocean server</h4>
     }else{

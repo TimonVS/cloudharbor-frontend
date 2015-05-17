@@ -1,16 +1,18 @@
-@(title: String)(content: Html)
+@(title: String)(content: Html)(implicit request: RequestHeader)
+
+@import menu.menuItem
 
 <!DOCTYPE html>
-<html lang="en" ng-app="chApp" class="no-js">
+<html lang="en" ng-app="app" class="no-js">
     <head>
         <title>Cloudharbor | @title</title>
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("/public/images", "favicon.png")">
 
         <!-- build:css({public/dev,src}) /assets/app/vendor.css -->
         <!-- bower:css -->
+        <link rel="stylesheet" href="/bower_components/animate.css/animate.css" />
         <link rel="stylesheet" href="/bower_components/mdi/css/materialdesignicons.css" />
         <link rel="stylesheet" href="/bower_components/mdi/css/materialdesignicons.min.css" />
-        <link rel="stylesheet" href="/bower_components/animate.css/animate.css" />
         <!-- endbower -->
         <!-- endbuild -->
 
@@ -31,28 +33,16 @@
     </head>
     <body>
         <nav class="navmenu navmenu-fixed-left offcanvas-sm" role="navigation">
-            <a href="#" class="navmenu-brand">
+            <a href="/" class="navmenu-brand">
                 <img src='@routes.Assets.at("/public/images", "logo-small.png")' alt="Cloudharbor logo"/>
             </a>
             <ul class="nav navmenu-nav">
-                <li >
-                    <a href="#"><i class="mdi mdi-speedometer"></i>Dashboard</a>
-                </li>
-                <li class="active">
-                    <a href="@routes.CloudServices.overviewDefault()"><i class="mdi mdi-dns"></i>@Messages("menu.servers")</a>
-                </li>
-                <li>
-                    <a href="@routes.Management.overview()"><i class="mdi mdi-hexagon-outline"></i>@Messages("menu.containers")</a>
-                </li>
-                <li>
-                    <a href="#"><i class="mdi mdi-information"></i>Statistics</a>
-                </li>
-                <li>
-                    <a href="#"><i class="mdi mdi-settings"></i>@Messages("menu.settings")</a>
-                </li>
-                <li>
-                    <a href="#"><i class="mdi mdi-help-circle"></i>Help</a>
-                </li>
+                @menuItem("#", Messages("menu.dashboard"), "mdi-speedometer")
+                @menuItem(routes.CloudServices.overviewDefault.url, Messages("menu.servers"), "mdi-dns")
+                @menuItem(routes.Management.overview.url, Messages("menu.containers"), "mdi-hexagon-outline")
+                @menuItem("#", Messages("menu.stats"), "mdi-information")
+                @menuItem("#", Messages("menu.settings"), "mdi-settings")
+                @menuItem("#", Messages("menu.help"), "mdi-help-circle")
             </ul>
         </nav>
         <div class="main-content">
@@ -64,6 +54,7 @@
                         </button>
                         <div class="navbar-header-menu">
                         <ul class="nav navbar-nav">
+                            @backButton
                             <li class="navbar-icon">
                                 <a href="#">
                                     <span class="mdi mdi-chevron-left"></span>
@@ -134,8 +125,11 @@
     <script type='text/javascript' src='@routes.Assets.at("/public/bower_components", "bootstrap-jasny/dist/js/jasny-bootstrap.js")'></script>
     <!-- bower:js -->
     <script src="/bower_components/angular/angular.js"></script>
+    <script src="/bower_components/angular-route/angular-route.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
+
+    <script src="/assets/app/main.js"></script>
 
     <!-- build:js(public/dev) /assets/app/app.js -->
     <!-- inject:js -->
