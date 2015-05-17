@@ -1,0 +1,5 @@
+@(uri: String, text: String, icon: String)(implicit request: RequestHeader)
+
+<li @if(request.path.contains(uri)){class="active"}>
+    <a href="@uri"><i class="mdi @icon"></i>@text</a>
+</li>

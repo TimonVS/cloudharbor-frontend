@@ -1,6 +1,6 @@
 @import models.DigitalOcean.Droplet
 
-@(cloudServer: Droplet)( implicit flash: Flash)
+@(cloudServer: Droplet)(implicit flash: Flash, request: RequestHeader)
 
 @main("Server " + cloudServer.name){
     <div class="panel panel-default">
