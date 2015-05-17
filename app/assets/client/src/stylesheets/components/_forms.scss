@@ -1,0 +1,18 @@
+.input-transparent {
+  color: #fff;
+  background: rgba(#000, 0.5);
+  border: none;
+
+  &::-webkit-input-placeholder {
+    color: rgba(#fff, 0.8);
+  }
+  &:-moz-placeholder {
+    color: rgba(#fff, 0.8);
+  }
+  &::-moz-placeholder {
+    color: rgba(#fff, 0.8);
+  }
+  &:-ms-input-placeholder {
+    color: rgba(#fff, 0.8);
+  }
+}
