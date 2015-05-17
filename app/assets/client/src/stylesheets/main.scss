@@ -23,10 +23,12 @@ $bower-path: '/public/bower_components/';
 @import "utils/utils";
 
 // Base
+@import "base/base";
 @import "base/typography";
 
 // Components
 @import "components/buttons";
+@import "components/forms";
 @import "components/navmenu";
 @import "components/navbar";
 @import "components/dropdown";
