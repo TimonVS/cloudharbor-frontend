@@ -1,45 +1,105 @@
-@(title: String)(content: Html)
+@(title: String, backButtonOpt: Option[String] = None)(content: Html)(implicit request: RequestHeader)
+
+@import menu.menuItem
 
 <!DOCTYPE html>
-<html lang="en" ng-app="chApp" class="no-js">
+<html lang="en" ng-app="app" class="no-js">
     <head>
-        <title>Cloudharbor - @title</title>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("bower_components/mdi/css/materialdesignicons.css")">
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-        <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("dist/jquery.min.js"))'></script>
+        <title>Cloudharbor | @title</title>
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("/public/images", "favicon.png")">
+
+        <!-- build:css({public/dev,src}) /assets/app/vendor.css -->
+        <!-- bower:css -->
+        <link rel="stylesheet" href="/bower_components/animate.css/animate.css" />
+        <link rel="stylesheet" href="/bower_components/mdi/css/materialdesignicons.css" />
+        <link rel="stylesheet" href="/bower_components/mdi/css/materialdesignicons.min.css" />
+        <!-- endbower -->
+        <!-- endbuild -->
+
+        <!-- build:css({public/dev,src}) /assets/app/app.css -->
+        <!-- inject:css -->
+        <link rel="stylesheet" href="/assets/app/main.css">
+        <!-- endinject -->
+        <!-- endbuild -->
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="@routes.Assets.at("/public/bower_components", "jquery/dist/jquery.js")"></script>
     </head>
-    <body>
+    <body class="main">
         <nav class="navmenu navmenu-fixed-left offcanvas-sm" role="navigation">
-            <a href="#" class="navmenu-brand">
-                <img src='@routes.Assets.at("images/logo.png")' alt="Cloudharbor logo"/>
+            <a href="/" class="navmenu-brand">
+                <img src='@routes.Assets.at("/public/images", "logo-small.png")' alt="Cloudharbor logo"/>
             </a>
             <ul class="nav navmenu-nav">
-                <li class="active">
-                    <a href="@routes.CloudServices.overviewDefault()"><i class="mdi mdi-dns"></i>@Messages("menu.servers")</a>
-                </li>
-                <li>
-                    <a href="@routes.Management.overview()"><i class="mdi mdi-hexagon-outline"></i>@Messages("menu.containers")</a>
-                </li>
-                <li>
-                    <a href="#"><i class="mdi mdi-settings"></i>@Messages("menu.settings")</a>
-                </li>
+                @menuItem("#", Messages("menu.dashboard"), "mdi-speedometer")
+                @menuItem(routes.ServerManagement.overviewDefault.url, Messages("menu.servers"), "mdi-dns")
+                @menuItem(routes.ContainerManagement.overview.url, Messages("menu.containers"), "mdi-hexagon-outline")
+                @menuItem("#", Messages("menu.stats"), "mdi-information")
+                @menuItem("#", Messages("menu.settings"), "mdi-settings")
+                @menuItem("#", Messages("menu.help"), "mdi-help-circle")
             </ul>
         </nav>
-        <div class="fixed-overlay box-shadow-1">
-            <div class="navbar navbar-default navbar-static-top">
+        <div class="main-content">
+            <div class="navbar navbar-default navbar-fixed-top">
                 <div class="container">
                     <div class="navbar-header">
-                        <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target=".navmenu" data-canvas="body">
-                            <span>☰</span>
+                        <button type="button" class="navmenu-toggle" data-toggle="offcanvas" data-target=".navmenu" data-canvas="body">
+                            <span class="mdi mdi-menu"></span>
                         </button>
+                        <div class="navbar-header-menu">
+                        <ul class="nav navbar-nav">
+                            @backButtonOpt.map{backButton =>
+                                <li class="navbar-icon">
+                                    <a href="#">
+                                        <span class="mdi mdi-chevron-left"></span>
+                                        <span class="navbar-icon-text hidden-xs">@backButton @Messages("dashboard")</span>
+                                        <span class="navbar-icon-text hidden-sm hidden-md hidden-lg">Back</span>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                        </div>
+                    </div>
+                    <div class="navbar-header-menu">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="navbar-icon navbar-notifications dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                    <span class="mdi mdi-bell-outline"></span>
+                                    <span class="notification-ball"></span>
+                                </a>
+                                <ul class="dropdown-menu notifications-list" role="menu">
+                                    <li class="notification-list-item">
+                                        <a href="#">
+                                            <span class="notification-title">Lorem ipsum dolor.</span>
+                                            <span class="notification-description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. At, fuga.</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="navbar-user dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                    <span>Timon van Spronsen</span>
+                                </a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="@routes.Users.showUser()">My profile</a></li>
+                                    <li><a href="@routes.Auth.logout()">Log out</a></li>
+                                </ul>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
 
             <main>
                 <div class="container">
-                @content
+                    <h1 class="page-title">@title</h1>
+                    @content
                 </div>
             </main>
 
@@ -47,9 +107,40 @@
         </div>
 
     </body>
-    <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("javascripts/bootstrap.js"))'></script>
-    <script type='text/javascript' src='@routes.Assets.at("bower_components/bootstrap-jasny/dist/js/jasny-bootstrap.js")'></script>
 
     <script src="//use.typekit.net/yyf4ttb.js"></script>
     <script>try{Typekit.load();}catch(e){}</script>
+
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+    <script>
+    (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+    function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+    e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+    e.src='//www.google-analytics.com/analytics.js';
+    r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+    ga('create','UA-XXXXX-X');ga('send','pageview');
+    </script>
+
+    <!-- build:js(public) /assets/app/vendor.js -->
+    <script type='text/javascript' src='@routes.Assets.at("/public/bower_components", "bootstrap-sass-official/assets/javascripts/bootstrap.js")'></script>
+    <script type='text/javascript' src='@routes.Assets.at("/public/bower_components", "bootstrap-jasny/dist/js/jasny-bootstrap.js")'></script>
+    <!-- bower:js -->
+    <script src="/bower_components/angular/angular.js"></script>
+    <script src="/bower_components/angular-route/angular-route.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    <script src="/assets/app/main.js"></script>
+
+    <!-- build:js(public/dev) /assets/app/app.js -->
+    <!-- inject:js -->
+    <script src="/assets/components/directives/util.js"></script>
+    <script src="/assets/components/directives/dockerHubSearch/dockerHubSearch.dir.js"></script>
+    <script src="/assets/app/main.js"></script>
+    <!-- endinject -->
+
+    <!-- inject:partials -->
+    <script src="/assets/app/templateCacheHtml.js"></script>
+    <!-- endinject -->
+    <!-- endbuild -->
 </html>

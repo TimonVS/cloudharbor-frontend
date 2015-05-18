@@ -1,0 +1,181 @@
+.navbar-default {
+  background: #f8f8f8;
+  border: none;
+
+  @media (min-width: $screen-md-min) {
+    left: 300px;
+  }
+}
+
+.navmenu-toggle {
+  float: left;
+  margin-left: 15px;
+  padding-top: 0;
+  padding-bottom: 0;
+  border: none;
+
+  &:active, &:focus {
+    outline: none;
+  }
+
+  @media (min-width: $screen-sm-min) {
+    margin-left: 0;
+  }
+
+  @media (min-width: $screen-md-min) {
+    display: none;
+  }
+
+  @extend .btn, .btn-link;
+}
+
+.navmenu-toggle .mdi {
+  line-height: $navbar-height;
+}
+
+.navbar .mdi {
+  font-size: 20px;
+}
+
+.navbar-icon > a {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.navbar-icon .mdi {
+  line-height: $navbar-height;
+}
+
+.navbar-icon-text {
+  position: relative;
+  top: -2px;
+}
+
+.notification-ball {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #fff;
+  border-radius: 99px;
+  background-color: #337ab7;
+}
+
+// Add caret to dropdowns
+.navbar .nav > li > .dropdown-menu::before {
+  position: absolute;
+  top: -7px;
+  right: 17px;
+  display: inline-block;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid #CCC;
+  border-left: 7px solid transparent;
+  border-bottom-color: rgba(0, 0, 0, 0.2);
+  content: '';
+}
+
+.navbar .nav > li > .dropdown-menu::after {
+  position: absolute;
+  top: -6px;
+  right: 18px;
+  display: inline-block;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid white;
+  border-left: 6px solid transparent;
+  content: '';
+}
+
+// Navbar items
+.navbar-notifications > .dropdown-menu::before {
+  @media (max-width: $screen-xs-max) {
+    right: 123px !important;
+  }
+}
+
+.navbar-notifications > .dropdown-menu::after {
+  @media (max-width: $screen-xs-max) {
+    right: 124px !important;
+  }
+}
+
+.navbar-user {
+  @media (max-width: $screen-xs-max) {
+    max-width: 100px;
+  }
+}
+
+.navbar-user > a {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow-x: hidden;
+}
+
+.navbar-user .dropdown-menu {
+  right: 0;
+  left: auto;
+}
+
+// Disable collapsing
+.navbar-header {
+  float: left;
+}
+
+.navbar-header-menu {
+  float: right;
+  margin-right: 15px;
+}
+
+.navbar-header-menu > .navbar-nav {
+  float: left;
+  margin: 0;
+}
+
+.navbar-header-menu > .navbar-nav > li {
+  float: left;
+}
+
+.navbar-header-menu > .navbar-nav > li > a {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.navbar-header-menu > .navbar-nav .open .dropdown-menu {
+  position: absolute;
+  float: left;
+  margin-top: 0;
+  width: auto;
+  border: 1px solid rgba(0, 0, 0, .15);
+  background-color: #fff;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+}
+
+.navbar-header-menu > .navbar-form {
+  float: left;
+  margin-right: 0;
+  margin-left: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  width: auto;
+  border: 0;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.navbar-header-menu > .navbar-form > .form-group {
+  display: inline-block;
+  margin-bottom: 0;
+  vertical-align: middle;
+}
+
+.navbar-header-menu > .navbar-left {
+  float: left;
+}
+
+.navbar-header-menu > .navbar-right {
+  float: right !important;
+}
+
+.navbar-header-menu > *.navbar-right:last-child {
+  margin-right: -15px !important;
+}

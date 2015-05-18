@@ -1,9 +1,0 @@
-@mixin no-text-decoration {
-  text-decoration: none;
-
-  &:hover,
-  &:active,
-  &.active {
-    text-decoration: none;
-  }
-}

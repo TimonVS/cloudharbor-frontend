@@ -1,23 +1,26 @@
-@(loginForm: Form[UserData])
+@(loginForm: Form[UserData])(implicit request: RequestHeader)
 @import b3.vertical.fieldConstructor
 
 <!DOCTYPE html>
 <html>
     <head>
         <title>Cloudharbor - Login</title>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-        <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("dist/jquery.min.js"))'></script>
+        <link rel="stylesheet" href="/assets/app/main.css">
+        <link rel="stylesheet" href="/bower_components/animate.css/animate.css" />
+        @*<link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">*@
+        @*<script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("dist/jquery.min.js"))'></script>*@
     </head>
-    <body>
-        <div class="container">
-            <h3>Login into Cloudharbor</h3>
+    <body class="login">
+        <div class="login-form animated fadeIn">
+            <img src='@routes.Assets.at("/public/images", "logo-small.png")' alt="Cloudharbor logo"/>
             @b3.form(routes.Auth.authenticate()) {
-                @b3.text( loginForm("username"), '_label -> "Username", 'placeholder -> Messages("user.username") )
-                @b3.password( loginForm("password"), '_label -> "Password", 'placeholder -> Messages("user.password") )
-                @b3.submit('class -> "btn btn-default"){ @Messages("user.sign-in") }
+                @b3.text( loginForm("username"), '_label -> "Username", 'class -> "form-control input-transparent", 'placeholder -> Messages("user.username") )
+                @b3.password( loginForm("password"), '_label -> "Password", 'class -> "form-control input-transparent", 'placeholder -> Messages("user.password") )
+                @b3.submit('class -> "btn btn-block btn-transparent"){ @Messages("user.sign-in") }
             }
         </div>
     </body>
 
+    <script src="//use.typekit.net/yyf4ttb.js"></script>
+    <script>try{Typekit.load();}catch(e){}</script>
 </html>
