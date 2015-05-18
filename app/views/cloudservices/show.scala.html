@@ -2,7 +2,7 @@
 
 @(cloudServer: Droplet)(implicit flash: Flash, request: RequestHeader)
 
-@main("Server " + cloudServer.name){
+@main("Server " + cloudServer.name, Some(Messages("menu.servers"))){
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="pull-right">

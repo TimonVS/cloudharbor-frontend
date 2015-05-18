@@ -1,4 +1,4 @@
-@(title: String)(content: Html)(implicit request: RequestHeader)
+@(title: String, backButtonOpt: Option[String] = None)(content: Html)(implicit request: RequestHeader)
 
 @import menu.menuItem
 
@@ -31,7 +31,7 @@
 
         <script src="@routes.Assets.at("/public/bower_components", "jquery/dist/jquery.js")"></script>
     </head>
-    <body>
+    <body class="main">
         <nav class="navmenu navmenu-fixed-left offcanvas-sm" role="navigation">
             <a href="/" class="navmenu-brand">
                 <img src='@routes.Assets.at("/public/images", "logo-small.png")' alt="Cloudharbor logo"/>
@@ -54,14 +54,15 @@
                         </button>
                         <div class="navbar-header-menu">
                         <ul class="nav navbar-nav">
-                            @backButton
-                            <li class="navbar-icon">
-                                <a href="#">
-                                    <span class="mdi mdi-chevron-left"></span>
-                                    <span class="navbar-icon-text hidden-xs">Server dashboard</span>
-                                    <span class="navbar-icon-text hidden-sm hidden-md hidden-lg">Back</span>
-                                </a>
-                            </li>
+                            @backButtonOpt.map{backButton =>
+                                <li class="navbar-icon">
+                                    <a href="#">
+                                        <span class="mdi mdi-chevron-left"></span>
+                                        <span class="navbar-icon-text hidden-xs">@backButton @Messages("dashboard")</span>
+                                        <span class="navbar-icon-text hidden-sm hidden-md hidden-lg">Back</span>
+                                    </a>
+                                </li>
+                            }
                         </ul>
                         </div>
                     </div>

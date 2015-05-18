@@ -6483,7 +6483,7 @@ img {
     color: rgba(255, 255, 255, 0.8); }
 
 @media (min-width: 992px) {
-  body {
+  body.main {
     padding-left: 300px; } }
 
 .navmenu {
