@@ -1,4 +1,4 @@
-@(cloudServiceForm: Form[CloudServerData], regions: Seq[(String, String)], sizes: Seq[(String, String)])(implicit flash: Flash, request: RequestHeader)
+@(cloudServiceForm: Form[ServerData], regions: Seq[(String, String)], sizes: Seq[(String, String)])(implicit flash: Flash, request: RequestHeader)
 @import b3.vertical.fieldConstructor
 
 @main("Add a server", Some(Messages("menu.servers"))) {
@@ -19,7 +19,7 @@
             </div>
         }
     }
-    @b3.form(routes.CloudServices.authenticateCloudService()) {
+    @b3.form(routes.ServerManagement.authenticateCloudService()) {
         @b3.text( cloudServiceForm("name"), '_label -> "Name", 'placeholder -> "Server name" )
         @b3.select( cloudServiceForm("region"), options = regions, '_label -> "Select a region" )
         @b3.select( cloudServiceForm("size"), options = sizes, '_label -> "Select a size" )
