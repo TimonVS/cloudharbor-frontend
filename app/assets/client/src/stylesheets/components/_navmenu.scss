@@ -2,7 +2,7 @@ $navmenu-item-active: rgba(#000, 0.4);
 
 // Fixed navmenu
 @media (min-width: 992px) {
-  body {
+  body.main {
     padding-left: 300px;
   }
 }
