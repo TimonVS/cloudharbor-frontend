@@ -97,7 +97,7 @@ object Notification extends SQLSyntaxSupport[Notification] with StandardQueries[
 
   def save(entity: Notification)(implicit session: DBSession = autoSession): Notification = {
     withSQL {
-      update(CloudService).set(
+      update(Server).set(
         column.id -> entity.id,
         column.message -> entity.message,
         column.timeStamp -> entity.timeStamp,
@@ -109,7 +109,7 @@ object Notification extends SQLSyntaxSupport[Notification] with StandardQueries[
   }
 
   def destroy(entity: Notification)(implicit session: DBSession = autoSession): Unit = {
-    withSQL { delete.from(CloudService).where.eq(column.id, entity.id) }.update.apply()
+    withSQL { delete.from(Server).where.eq(column.id, entity.id) }.update.apply()
   }
 
 }

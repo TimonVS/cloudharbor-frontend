@@ -11,7 +11,7 @@ case class User(
   firstName: String,
   prefix: Option[String] = None,
   lastName: String,
-  cloudService: Option[CloudService],
+  cloudService: Option[Server],
   notifications: List[Notification]) {
 
   def update(data: UserRegistrationData): User = {
@@ -56,7 +56,7 @@ object User extends SQLSyntaxSupport[User] with StandardQueries[User] {
     firstName = rs.get(u.firstName),
     prefix = rs.get(u.prefix),
     lastName = rs.get(u.lastName),
-    cloudService = CloudService.findByUserId(rs.get(u.id)),
+    cloudService = Server.findByUserId(rs.get(u.id)),
     notifications = Notification.findByUserId(rs.get(u.id))
   )
 
@@ -92,7 +92,7 @@ object User extends SQLSyntaxSupport[User] with StandardQueries[User] {
     }.updateAndReturnGeneratedKey.apply()
 
     User(
-      id = generatedKey.toInt, 
+      id = generatedKey.toInt,
       username = username,
       password = password,
       email = email,

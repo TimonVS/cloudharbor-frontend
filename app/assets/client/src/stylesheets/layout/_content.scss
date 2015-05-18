@@ -1,0 +1,17 @@
+.main-content {
+  margin-top: $navbar-height;
+  z-index: 10000;
+  height: 100%;
+
+  @media (min-width: $screen-md-min) {
+    left: 300px;
+  }
+}
+
+.container {
+  @media (min-width: $screen-md-min) {
+    max-width: 100%;
+    padding-left: 25px;
+    padding-right: 25px;
+  }
+}

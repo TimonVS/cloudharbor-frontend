@@ -16,22 +16,24 @@ POST        /user/create                       controllers.Users.createUserPost
 GET         /user/profile                      controllers.Users.showUser
 POST        /user/profile                      controllers.Users.updateUser
 
-# Management
-GET         /management/overview               controllers.Management.overview
+# ContainerManagement
+GET         /management/overview               controllers.ContainerManagement.overview
 
-# CloudServices
-GET         /cloudservices/overview            controllers.CloudServices.overviewDefault
-GET         /cloudservices/overview/:id        controllers.CloudServices.overview(id: Int)
-GET         /cloudservices/:id                 controllers.CloudServices.show(id: String)
-GET         /cloudservices/add/account         controllers.CloudServices.addCloudServiceAccount
-POST        /cloudservices/add/account         controllers.CloudServices.authenticateCloudServiceInfo
-GET         /cloudservices/add/server          controllers.CloudServices.addCloudService
-POST        /cloudservices/add/server          controllers.CloudServices.authenticateCloudService
-GET         /cloudservice/stop/:id             controllers.CloudServices.powerOff(id: String)
-GET         /cloudservice/start/:id            controllers.CloudServices.powerOn(id: String)
-GET         /cloudservice/delete/:id           controllers.CloudServices.delete(id: String)
+# ServerManagement
+GET         /cloudservices/overview            controllers.ServerManagement.overviewDefault
+GET         /cloudservices/overview/:id        controllers.ServerManagement.overview(id: Int)
+GET         /cloudservices/:id                 controllers.ServerManagement.show(id: String)
+GET         /cloudservices/add/account         controllers.ServerManagement.addCloudServiceAccount
+POST        /cloudservices/add/account         controllers.ServerManagement.authenticateCloudServiceInfo
+GET         /cloudservices/add/server          controllers.ServerManagement.addCloudService
+POST        /cloudservices/add/server          controllers.ServerManagement.authenticateCloudService
+GET         /cloudservice/stop/:id             controllers.ServerManagement.powerOff(id: String)
+GET         /cloudservice/start/:id            controllers.ServerManagement.powerOn(id: String)
+GET         /cloudservice/delete/:id           controllers.ServerManagement.delete(id: String)
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                      controllers.Assets.at(path="/public", file)
+GET         /images/*file                      controllers.Assets.at(path="/public/images", file)
+GET         /bower_components/*file            controllers.Assets.at(path="/public/bower_components", file)
+GET         /assets/*file                      controllers.Assets.at(path="/public/dev/assets", file)
 # Map web jar assets from sbt to the /webjars URL path (includes bootstrap & angularjs
 GET         /webjars/*file                     controllers.WebJarAssets.at(file)

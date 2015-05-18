@@ -1,0 +1,7 @@
+.btn {
+  border: none;
+}
+
+.btn-transparent {
+  @include button-variant(#fff, rgba(#000, 0.5), #000);
+}

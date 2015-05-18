@@ -1,0 +1,25 @@
+.login {
+  color: #fff;
+  background-image: $ch-gradient;
+  height: 100vh;
+}
+
+.login-form {
+  width: 300px;
+  max-width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+
+  @include vertical-align;
+}
+.login-form.animated {
+  animation-duration: 2s;
+}
+
+.login-form img {
+  margin-bottom: 30px;
+}
+
+.login-form label {
+  display: none;
+}

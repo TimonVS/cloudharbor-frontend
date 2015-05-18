@@ -1,9 +1,14 @@
 # Global
+back = Back
+dashboard = dashboard
 
 # Menu
+menu.dashboard = Dashboard
 menu.servers = Servers
 menu.containers = Containers
+menu.stats = Statistics
 menu.settings = Settings
+menu.help = Help
 
 # User
 user.username = Username

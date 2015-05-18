@@ -1,0 +1,41 @@
+@import models.DigitalOcean.Droplet
+
+@(cloudServers: List[Droplet])(implicit request: RequestHeader)
+
+@main("Server overview") {
+    @if(cloudServers.isEmpty){
+        <h4>Please add a digital ocean server</h4>
+    }else{
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <tr>
+                    <th>@Messages("server.overview.id")</th>
+                    <th>@Messages("server.overview.name")</th>
+                    <th>@Messages("server.overview.locked")</th>
+                    <th>@Messages("server.overview.status")</th>
+                    <th>@Messages("server.overview.image-name")</th>
+                    <th>@Messages("server.overview.os")</th>
+                    <th>@Messages("server.overview.ip")</th>
+                    <th>@Messages("server.overview.region")</th>
+                </tr>
+                @for(cloudServer <- cloudServers){
+                    <tr class="table-row-link" onclick="document.location = '@routes.ServerManagement.show(cloudServer.id.toString)';">
+                        <td>@cloudServer.id</td>
+                        <td>@cloudServer.name</td>
+                        <td>@cloudServer.locked</td>
+                        <td>@cloudServer.status</td>
+                        <td>@cloudServer.image.name</td>
+                        <td>@cloudServer.image.distribution</td>
+                        <td>@{
+                            cloudServer.networks.ipv4.map(n => n.ipAddress) :: cloudServer.networks.ipv6.map(n => n.ipAddress)
+                        }</td>
+                        <td>@cloudServer.region.name</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    }
+    <a class="btn btn-default" href="@routes.ServerManagement.addCloudService()" role="button">@Messages("server.overview.add-server")</a>
+
+    <docker-hub-search></docker-hub-search>
+}
