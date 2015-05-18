@@ -38,8 +38,8 @@
             </a>
             <ul class="nav navmenu-nav">
                 @menuItem("#", Messages("menu.dashboard"), "mdi-speedometer")
-                @menuItem(routes.CloudServices.overviewDefault.url, Messages("menu.servers"), "mdi-dns")
-                @menuItem(routes.Management.overview.url, Messages("menu.containers"), "mdi-hexagon-outline")
+                @menuItem(routes.ServerManagement.overviewDefault.url, Messages("menu.servers"), "mdi-dns")
+                @menuItem(routes.ContainerManagement.overview.url, Messages("menu.containers"), "mdi-hexagon-outline")
                 @menuItem("#", Messages("menu.stats"), "mdi-information")
                 @menuItem("#", Messages("menu.settings"), "mdi-settings")
                 @menuItem("#", Messages("menu.help"), "mdi-help-circle")
@@ -134,11 +134,13 @@
 
     <!-- build:js(public/dev) /assets/app/app.js -->
     <!-- inject:js -->
+    <script src="/assets/components/directives/util.js"></script>
+    <script src="/assets/components/directives/dockerHubSearch/dockerHubSearch.dir.js"></script>
     <script src="/assets/app/main.js"></script>
     <!-- endinject -->
 
     <!-- inject:partials -->
-    <!-- angular templates will be automatically converted in js and inserted here -->
+    <script src="/assets/app/templateCacheHtml.js"></script>
     <!-- endinject -->
     <!-- endbuild -->
 </html>

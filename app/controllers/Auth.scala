@@ -28,14 +28,14 @@ object Auth extends Controller with Secured{
   }
 
   def login = Action { implicit request =>
-    if(request.session.get("username").isDefined) Redirect(routes.Management.overview())
+    if(request.session.get("username").isDefined) Redirect(routes.ContainerManagement.overview())
     else Ok(views.html.user.login(loginForm))
   }
 
   def authenticate = Action { implicit request =>
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(views.html.user.login(formWithErrors)),
-      user => Redirect(routes.Management.overview).withSession(Security.username -> user.username)
+      user => Redirect(routes.ContainerManagement.overview).withSession(Security.username -> user.username)
     )
   }
 

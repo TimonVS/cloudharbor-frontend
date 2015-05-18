@@ -17,9 +17,9 @@ import scala.concurrent.{Await, Future}
 
 /**
  * Created by ThomasWorkBook on 17/04/15.
- * Controller object for every CloudService related action
+ * Controller object for every Server related action
  */
-object CloudServices extends Controller with Secured {
+object ServerManagement extends Controller with Secured {
 
   implicit val context = play.api.libs.concurrent.Execution.Implicits.defaultContext
 
@@ -34,13 +34,13 @@ object CloudServices extends Controller with Secured {
     ("4gb", "4gb - €40 p/month")
   )
 
-  val addCloudServiceInfoForm: Form[ApiData] = Form(
+  val addServerInfoForm: Form[ApiData] = Form(
     mapping(
       "apiKey" -> text
     )(ApiData.apply)(ApiData.unapply)
   )
 
-  val addServiceForm: Form[CloudServerData] = Form(
+  val addServerForm: Form[ServerData] = Form(
     mapping(
       "name" -> text(minLength = 1),
       "region" -> text,
@@ -50,7 +50,7 @@ object CloudServices extends Controller with Secured {
       "ssh" -> boolean,
       "name" -> optional(text),
       "publicKey" -> optional(text)
-    )(CloudServerData.apply)(CloudServerData.unapply) verifying (
+    )(ServerData.apply)(ServerData.unapply) verifying (
       "If you want to add a ssh key please fill in the name and the public key of the ssh key",
       data => sshCheck(data.ssh, data.sshName, data.sshPublicKey)
       )
@@ -62,52 +62,52 @@ object CloudServices extends Controller with Secured {
 
 
   def overviewDefault = withAuth{ user => implicit request =>
-    Redirect(routes.CloudServices.overview(user.id))
+    Redirect(routes.ServerManagement.overview(user.id))
   }
 
   def overview(userId: Int) = withAuthAsync { user => implicit request =>
-    CloudService.findByUserId(user.id) match {
+    Server.findByUserId(user.id) match {
         case Some(cloudService) =>
           cloudAPI.getCloudServers(cloudService.apiKey).map(result => result.fold(
-            success => Ok(views.html.cloudservices.overview(success.data)),
-            error => Redirect(routes.CloudServices.addCloudServiceAccount()).flashing(error.data)
+            success => Ok(views.html.serverManagement.overview(success.data)),
+            error => Redirect(routes.ServerManagement.addCloudServiceAccount()).flashing(error.data)
           ))
-        case None => Future(Redirect(routes.CloudServices.addCloudServiceAccount())
+        case None => Future(Redirect(routes.ServerManagement.addCloudServiceAccount())
           .flashing("error" -> "Add your api-key first"))
       }
   }
 
   def show(cloudServiceId: String) = withAuthAsync { user => implicit request =>
-    CloudService.findByUserId(user.id) match {
+    Server.findByUserId(user.id) match {
       case Some(cloudService) =>
         cloudAPI.getCloudServer(BigDecimal(cloudServiceId), cloudService.apiKey).map(result => result.fold(
-          success => Ok(views.html.cloudservices.show(success.data)),
-          error => Redirect(routes.CloudServices.addCloudServiceAccount()).flashing(error.data)
+          success => Ok(views.html.serverManagement.show(success.data)),
+          error => Redirect(routes.ServerManagement.addCloudServiceAccount()).flashing(error.data)
         ))
       case None =>
-        Future(Redirect(routes.CloudServices.addCloudService())
+        Future(Redirect(routes.ServerManagement.addCloudService())
           .flashing("error" -> "Please add a digital ocean api-key first"))
     }
   }
-  
+
   def addCloudService() = withAuth { user => implicit request =>
-    Ok(views.html.cloudservices.addCloudService(addServiceForm, regions, sizes))
+    Ok(views.html.serverManagement.addCloudService(addServerForm, regions, sizes))
   }
 
   def addCloudServiceAccount() = withAuth{ user => implicit request =>
-    val cloudService = CloudService.findByUserId(user.id)
+    val cloudService = Server.findByUserId(user.id)
     val addForm: Form[ApiData] = cloudService
-      .map(cs => addCloudServiceInfoForm.fill(ApiData(cs.apiKey)))
-      .getOrElse(addCloudServiceInfoForm)
+      .map(cs => addServerInfoForm.fill(ApiData(cs.apiKey)))
+      .getOrElse(addServerInfoForm)
 
-    Ok(views.html.cloudservices.addCloudServiceInfo(addForm))
+    Ok(views.html.serverManagement.addCloudServiceInfo(addForm))
   }
 
   def authenticateCloudService = withAuthAsync { user => implicit request =>
-    addServiceForm.bindFromRequest().fold(
-      formWithErrors => Future(BadRequest(views.html.cloudservices.addCloudService(formWithErrors, regions, sizes))),
+    addServerForm.bindFromRequest().fold(
+      formWithErrors => Future(BadRequest(views.html.serverManagement.addCloudService(formWithErrors, regions, sizes))),
       data => {
-        CloudService.findByUserId(user.id) match {
+        Server.findByUserId(user.id) match {
           case Some(cloudService) =>
             val apiKey = cloudService.apiKey
 
@@ -121,9 +121,9 @@ object CloudServices extends Controller with Secured {
                     NotificationType.ServerCreate
                   )
 
-                  Redirect(routes.CloudServices.overview(user.id))
+                  Redirect(routes.ServerManagement.overview(user.id))
                 },
-                error => Redirect(routes.CloudServices.addCloudService()).flashing(error.data)
+                error => Redirect(routes.ServerManagement.addCloudService()).flashing(error.data)
               ))
             }
 
@@ -132,37 +132,37 @@ object CloudServices extends Controller with Secured {
               val result = Await.result(cloudAPI.addSSHKey(apiKey, sshKey), Duration.create(3, TimeUnit.SECONDS))
               result.fold(
                 success => create(Some(List(success.data))),
-                error => Future(Redirect(routes.CloudServices.addCloudService()).flashing(error.data))
+                error => Future(Redirect(routes.ServerManagement.addCloudService()).flashing(error.data))
               )
             } else {
               create(None)
             }
-          case None => Future(Redirect(routes.CloudServices.addCloudService()).flashing("error" -> "Add a cloud service first"))
+          case None => Future(Redirect(routes.ServerManagement.addCloudService()).flashing("error" -> "Add a cloud service first"))
         }
       }
     )
   }
 
   def powerOff(cloudServiceId: String) = withAuthAsync { user => implicit request =>
-    val apiKey = CloudService.findByUserId(user.id).get.apiKey
+    val apiKey = Server.findByUserId(user.id).get.apiKey
 
     cloudAPI.powerOff(cloudServiceId, apiKey).map(result => result.fold(
-      success => Redirect(routes.CloudServices.show(cloudServiceId)).flashing(success.data),
-      error => Redirect(routes.CloudServices.show(cloudServiceId)).flashing(error.data)
+      success => Redirect(routes.ServerManagement.show(cloudServiceId)).flashing(success.data),
+      error => Redirect(routes.ServerManagement.show(cloudServiceId)).flashing(error.data)
     ))
   }
 
   def powerOn(cloudServiceId: String): EssentialAction = withAuthAsync { user => implicit request =>
-    val apiKey = CloudService.findByUserId(user.id).get.apiKey
+    val apiKey = Server.findByUserId(user.id).get.apiKey
 
     cloudAPI.powerOn(cloudServiceId, apiKey).map(result => result.fold(
-      success => Redirect(routes.CloudServices.show(cloudServiceId)).flashing(success.data),
-      error => Redirect(routes.CloudServices.show(cloudServiceId)).flashing(error.data)
+      success => Redirect(routes.ServerManagement.show(cloudServiceId)).flashing(success.data),
+      error => Redirect(routes.ServerManagement.show(cloudServiceId)).flashing(error.data)
     ))
   }
 
   def delete(cloudServiceId: String) = withAuthAsync { user => implicit request =>
-    val apiKey = CloudService.findByUserId(user.id).get.apiKey
+    val apiKey = Server.findByUserId(user.id).get.apiKey
 
     DigitalOceanAPI.delete(cloudServiceId, apiKey).map(result => result.fold(
       success => {
@@ -172,25 +172,25 @@ object CloudServices extends Controller with Secured {
           NotificationType.ServerDelete
         )
 
-        Redirect(routes.CloudServices.overview(user.id)).flashing(success.data)
+        Redirect(routes.ServerManagement.overview(user.id)).flashing(success.data)
       },
-      error => Redirect(routes.CloudServices.show(cloudServiceId)).flashing(error.data)
+      error => Redirect(routes.ServerManagement.show(cloudServiceId)).flashing(error.data)
     ))
   }
 
   def authenticateCloudServiceInfo = withAuthAsync { user => implicit request =>
-    addCloudServiceInfoForm.bindFromRequest().fold(
-      forumWithErrors => Future(BadRequest(views.html.cloudservices.addCloudServiceInfo(forumWithErrors))),
+    addServerInfoForm.bindFromRequest().fold(
+      forumWithErrors => Future(BadRequest(views.html.serverManagement.addCloudServiceInfo(forumWithErrors))),
       data => {
         cloudAPI.authenticate(data.apiKey).map(result => result.fold(
           success => {
-            CloudService.findByUserId(user.id) match {
+            Server.findByUserId(user.id) match {
               case Some(cloudService) => cloudService.copy(apiKey = data.apiKey).save()
-              case None => CloudService.create(user.id, data.apiKey)
+              case None => Server.create(user.id, data.apiKey)
             }
-            Redirect(routes.CloudServices.overview(user.id))
+            Redirect(routes.ServerManagement.overview(user.id))
           },
-          error => Redirect(routes.CloudServices.addCloudServiceAccount()).flashing("error" -> "Api-key did not work!")))
+          error => Redirect(routes.ServerManagement.addCloudServiceAccount()).flashing("error" -> "Api-key did not work!")))
       }
     )
   }

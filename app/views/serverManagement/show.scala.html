@@ -6,9 +6,9 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="pull-right">
-                <a class="btn btn-success" href="@routes.CloudServices.powerOn(cloudServer.id.toString)" role="button">Power On</a>
-                <a class="btn btn-warning" href="@routes.CloudServices.powerOff(cloudServer.id.toString)" role="button">Power Off</a>
-                <a class="btn btn-danger" href="@routes.CloudServices.delete(cloudServer.id.toString)" role="button">Delete</a>
+                <a class="btn btn-success" href="@routes.ServerManagement.powerOn(cloudServer.id.toString)" role="button">Power On</a>
+                <a class="btn btn-warning" href="@routes.ServerManagement.powerOff(cloudServer.id.toString)" role="button">Power Off</a>
+                <a class="btn btn-danger" href="@routes.ServerManagement.delete(cloudServer.id.toString)" role="button">Delete</a>
             </div>
             <h2 class="panel-title">@cloudServer.name</h2>
             @flash.get("succes").map { success =>
