@@ -9,7 +9,7 @@ import play.api.mvc.Controller
 object ContainerManagement extends Controller with Secured{
 
   def overview = withAuth{ user => implicit request =>
-    Ok(views.html.management.overview())
+    Ok(views.html.containerManagement.overview())
   }
 
 }
