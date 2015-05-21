@@ -61,11 +61,11 @@ object ServerManagement extends Controller with Secured {
     else true
 
 
-  def overviewDefault = withAuth{ user => implicit request =>
+  def overviewDefault = withAuth{ implicit user => implicit request =>
     Redirect(routes.ServerManagement.overview(user.id))
   }
 
-  def overview(userId: Int) = withAuthAsync { user => implicit request =>
+  def overview(userId: Int) = withAuthAsync { implicit user => implicit request =>
     Server.findByUserId(user.id) match {
         case Some(cloudService) =>
           cloudAPI.getCloudServers(cloudService.apiKey).map(result => result.fold(
@@ -77,7 +77,7 @@ object ServerManagement extends Controller with Secured {
       }
   }
 
-  def show(cloudServiceId: String) = withAuthAsync { user => implicit request =>
+  def show(cloudServiceId: String) = withAuthAsync { implicit user => implicit request =>
     Server.findByUserId(user.id) match {
       case Some(cloudService) =>
         cloudAPI.getCloudServer(BigDecimal(cloudServiceId), cloudService.apiKey).map(result => result.fold(
@@ -90,11 +90,11 @@ object ServerManagement extends Controller with Secured {
     }
   }
 
-  def addCloudService() = withAuth { user => implicit request =>
+  def addCloudService() = withAuth { implicit user => implicit request =>
     Ok(views.html.serverManagement.addCloudService(addServerForm, regions, sizes))
   }
 
-  def addCloudServiceAccount() = withAuth{ user => implicit request =>
+  def addCloudServiceAccount() = withAuth{ implicit user => implicit request =>
     val cloudService = Server.findByUserId(user.id)
     val addForm: Form[ApiData] = cloudService
       .map(cs => addServerInfoForm.fill(ApiData(cs.apiKey)))
@@ -103,7 +103,7 @@ object ServerManagement extends Controller with Secured {
     Ok(views.html.serverManagement.addCloudServiceInfo(addForm))
   }
 
-  def authenticateCloudService = withAuthAsync { user => implicit request =>
+  def authenticateCloudService = withAuthAsync { implicit user => implicit request =>
     addServerForm.bindFromRequest().fold(
       formWithErrors => Future(BadRequest(views.html.serverManagement.addCloudService(formWithErrors, regions, sizes))),
       data => {
@@ -143,7 +143,7 @@ object ServerManagement extends Controller with Secured {
     )
   }
 
-  def powerOff(cloudServiceId: String) = withAuthAsync { user => implicit request =>
+  def powerOff(cloudServiceId: String) = withAuthAsync { implicit user => implicit request =>
     val apiKey = Server.findByUserId(user.id).get.apiKey
 
     cloudAPI.powerOff(cloudServiceId, apiKey).map(result => result.fold(
@@ -152,7 +152,7 @@ object ServerManagement extends Controller with Secured {
     ))
   }
 
-  def powerOn(cloudServiceId: String): EssentialAction = withAuthAsync { user => implicit request =>
+  def powerOn(cloudServiceId: String): EssentialAction = withAuthAsync { implicit user => implicit request =>
     val apiKey = Server.findByUserId(user.id).get.apiKey
 
     cloudAPI.powerOn(cloudServiceId, apiKey).map(result => result.fold(
@@ -161,7 +161,7 @@ object ServerManagement extends Controller with Secured {
     ))
   }
 
-  def delete(cloudServiceId: String) = withAuthAsync { user => implicit request =>
+  def delete(cloudServiceId: String) = withAuthAsync { implicit user => implicit request =>
     val apiKey = Server.findByUserId(user.id).get.apiKey
 
     DigitalOceanAPI.delete(cloudServiceId, apiKey).map(result => result.fold(
@@ -178,7 +178,7 @@ object ServerManagement extends Controller with Secured {
     ))
   }
 
-  def authenticateCloudServiceInfo = withAuthAsync { user => implicit request =>
+  def authenticateCloudServiceInfo = withAuthAsync { implicit user => implicit request =>
     addServerInfoForm.bindFromRequest().fold(
       forumWithErrors => Future(BadRequest(views.html.serverManagement.addCloudServiceInfo(forumWithErrors))),
       data => {

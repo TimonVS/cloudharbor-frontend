@@ -33,11 +33,11 @@ object Users extends Controller with Secured{
       true
 
 
-  def createUser = withAuth { user => implicit request =>
+  def createUser = withAuth { implicit user => implicit request =>
     Ok(views.html.user.create(createUserForm(true)))
   }
 
-  def createUserPost = withAuth { user => implicit request =>
+  def createUserPost = withAuth { implicit user => implicit request =>
     createUserForm(true).bindFromRequest().fold(
       formWithErrors => BadRequest(views.html.user.create(formWithErrors)),
       data => {
@@ -49,22 +49,22 @@ object Users extends Controller with Secured{
           data.prefix,
           data.lastName
         )
-        Redirect(routes.Users.createUser()).flashing("succes" -> s"${user.username} is created with an id: ${user.id}")
+        Redirect(routes.Users.createUser()).flashing("succes" -> s"${user.username} was created with an id: ${user.id}")
       }
     )
   }
 
-  def showUser = withAuth { user => implicit request =>
+  def showUser = withAuth { implicit user => implicit request =>
     val filledInForm = createUserForm(false).fill(UserRegistrationData(user))
-    Ok(views.html.user.profile(user, filledInForm))
+    Ok(views.html.user.profile(filledInForm))
   }
 
-  def updateUser = withAuth { user => implicit request =>
+  def updateUser = withAuth { implicit user => implicit request =>
     createUserForm(false).bindFromRequest().fold(
-      formWithErrors => Ok(views.html.user.profile(user, formWithErrors)),
+      formWithErrors => Ok(views.html.user.profile(formWithErrors)),
       data => {
         user.update(data).save()
-        Redirect(routes.Users.showUser()).flashing("succes" -> "User profile is updated succesfully.")
+        Redirect(routes.Users.showUser()).flashing("succes" -> "User profile was updated succesfully.")
       }
     )
   }
