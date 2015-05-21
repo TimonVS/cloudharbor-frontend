@@ -1,6 +1,6 @@
 @import models.DigitalOcean.Droplet
 
-@(cloudServers: List[Droplet])(implicit request: RequestHeader)
+@(cloudServers: List[Droplet])(implicit request: RequestHeader, user: User)
 
 @main("Server overview") {
     @if(cloudServers.isEmpty){

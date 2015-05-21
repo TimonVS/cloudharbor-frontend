@@ -1,4 +1,4 @@
-@(title: String, backButtonOpt: Option[String] = None)(content: Html)(implicit request: RequestHeader)
+@(title: String, backButtonOpt: Option[String] = None)(content: Html)(implicit request: RequestHeader, user: User)
 
 @import menu.menuItem
 
@@ -51,7 +51,7 @@
                             <span class="mdi mdi-menu"></span>
                         </button>
                         <div class="navbar-header-menu">
-                        <ul class="nav navbar-nav">
+                            <ul class="nav navbar-nav">
                             @backButtonOpt.map{backButton =>
                                 <li class="navbar-icon">
                                     <a href="#">
@@ -61,7 +61,7 @@
                                     </a>
                                 </li>
                             }
-                        </ul>
+                            </ul>
                         </div>
                     </div>
                     <div class="navbar-header-menu">
@@ -81,8 +81,8 @@
                                 </ul>
                             </li>
                             <li class="navbar-user dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                    <span>Timon van Spronsen</span>
+                                <a href="@routes.Users.showUser()" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                    <span>@user.firstName @user.prefix.getOrElse("") @user.lastName</span>
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="@routes.Users.showUser()">My profile</a></li>
