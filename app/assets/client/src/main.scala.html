@@ -1,4 +1,4 @@
-@(title: String, backButtonOpt: Option[String] = None)(content: Html)(implicit request: RequestHeader)
+@(title: String, backButtonOpt: Option[String] = None)(content: Html)(implicit request: RequestHeader, user: User)
 
 @import menu.menuItem
 
@@ -8,21 +8,23 @@
         <title>Cloudharbor | @title</title>
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("/public/images", "favicon.png")">
 
-        <!-- build:css({public/dev,src}) /assets/app/vendor.css -->
-        <!-- bower:css -->
-        <!-- run `gulp wiredep` to automaticaly populate bower styles dependencies -->
-        <!-- endbower -->
-        <!-- endbuild -->
+            <!-- build:css({public/dev,src}) /assets/app/vendor.css -->
+            <!-- bower:css -->
+        <link rel="stylesheet" href="/bower_components/animate.css/animate.css" />
+        <link rel="stylesheet" href="/bower_components/mdi/css/materialdesignicons.css" />
+        <link rel="stylesheet" href="/bower_components/mdi/css/materialdesignicons.min.css" />
+            <!-- endbower -->
+            <!-- endbuild -->
 
-        <!-- build:css({public/dev,src}) /assets/app/app.css -->
-        <!-- inject:css -->
-        <!-- css files will be automaticaly insert here -->
-        <!-- endinject -->
-        <!-- endbuild -->
+            <!-- build:css({public/dev,src}) /assets/app/app.css -->
+            <!-- inject:css -->
+        <link rel="stylesheet" href="/assets/app/main.css">
+            <!-- endinject -->
+            <!-- endbuild -->
 
-        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-        <!--[if lt IE 9]>
+            <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+            <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+            <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
@@ -51,7 +53,7 @@
                             <span class="mdi mdi-menu"></span>
                         </button>
                         <div class="navbar-header-menu">
-                        <ul class="nav navbar-nav">
+                            <ul class="nav navbar-nav">
                             @backButtonOpt.map{backButton =>
                                 <li class="navbar-icon">
                                     <a href="#">
@@ -61,7 +63,7 @@
                                     </a>
                                 </li>
                             }
-                        </ul>
+                            </ul>
                         </div>
                     </div>
                     <div class="navbar-header-menu">
@@ -81,8 +83,8 @@
                                 </ul>
                             </li>
                             <li class="navbar-user dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                    <span>Timon van Spronsen</span>
+                                <a href="@routes.Users.showUser()" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                    <span>@user.firstName @user.prefix.getOrElse("") @user.lastName</span>
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="@routes.Users.showUser()">My profile</a></li>
@@ -109,7 +111,7 @@
     <script src="//use.typekit.net/yyf4ttb.js"></script>
     <script>try{Typekit.load();}catch(e){}</script>
 
-    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
     <script>
     (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
     function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
@@ -119,23 +121,26 @@
     ga('create','UA-XXXXX-X');ga('send','pageview');
     </script>
 
-    <!-- build:js(public) /assets/app/vendor.js -->
+        <!-- build:js(public) /assets/app/vendor.js -->
     <script type='text/javascript' src='@routes.Assets.at("/public/bower_components", "bootstrap-sass-official/assets/javascripts/bootstrap.js")'></script>
     <script type='text/javascript' src='@routes.Assets.at("/public/bower_components", "bootstrap-jasny/dist/js/jasny-bootstrap.js")'></script>
-    <!-- bower:js -->
-    <!-- run `gulp wiredep` to automaticaly populate bower script dependencies -->
-    <!-- endbower -->
-    <!-- endbuild -->
+        <!-- bower:js -->
+    <script src="/bower_components/angular/angular.js"></script>
+    <script src="/bower_components/angular-route/angular-route.js"></script>
+        <!-- endbower -->
+        <!-- endbuild -->
 
     <script src="/assets/app/main.js"></script>
 
-    <!-- build:js(public/dev) /assets/app/app.js -->
-    <!-- inject:js -->
-    <!-- js files will be automaticaly insert here -->
-    <!-- endinject -->
+        <!-- build:js(public/dev) /assets/app/app.js -->
+        <!-- inject:js -->
+    <script src="/assets/components/directives/util.js"></script>
+    <script src="/assets/components/directives/dockerHubSearch/dockerHubSearch.dir.js"></script>
+    <script src="/assets/app/main.js"></script>
+        <!-- endinject -->
 
-    <!-- inject:partials -->
-    <!-- angular templates will be automatically converted in js and inserted here -->
-    <!-- endinject -->
-    <!-- endbuild -->
+        <!-- inject:partials -->
+    <script src="/assets/app/templateCacheHtml.js"></script>
+        <!-- endinject -->
+        <!-- endbuild -->
 </html>

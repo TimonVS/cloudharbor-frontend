@@ -1,4 +1,4 @@
-@(title: String, backButtonOpt: Option[String] = None)(content: Html)(implicit request: RequestHeader)
+@(title: String, backButtonOpt: Option[String] = None)(content: Html)(implicit request: RequestHeader, user: User)
 
 @import menu.menuItem
 
@@ -83,8 +83,8 @@
                                 </ul>
                             </li>
                             <li class="navbar-user dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                    <span>Timon van Spronsen</span>
+                                <a href="@routes.Users.showUser()" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                    <span>@user.firstName @user.prefix.getOrElse("") @user.lastName</span>
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="@routes.Users.showUser()">My profile</a></li>
@@ -134,10 +134,6 @@
 
     <!-- build:js(public/dev) /assets/app/app.js -->
     <!-- inject:js -->
-    <script src="/assets/app/containerManagement/containerManagement.ctrl.js"></script>
-    <script src="/assets/app/containerManagement/containerManagement.js"></script>
-    <script src="/assets/app/serverManagement/serverManagement.ctrl.js"></script>
-    <script src="/assets/app/serverManagement/serverManagement.js"></script>
     <script src="/assets/components/directives/util.js"></script>
     <script src="/assets/components/directives/dockerHubSearch/dockerHubSearch.dir.js"></script>
     <script src="/assets/app/main.js"></script>
