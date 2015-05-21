@@ -3,8 +3,9 @@ project/project
 project/target
 target
 tmp
-.history
 dist
+!public/bower_components/**/dist
+.history
 /.idea
 /*.iml
 /out
@@ -19,6 +20,7 @@ activator-launch-1.2.12.jar
 LICENSE
 activator
 .sbtserver
+app/views/main.scala.html
 
 ### Bower ###
 .bower-cache
