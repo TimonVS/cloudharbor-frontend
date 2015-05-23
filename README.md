@@ -24,7 +24,7 @@ npm install
 //installs all necessary bower packages defined in bower.json
 bower install
 //compiles all JS and Sass and injects bower packages in main.scala.html
-gulp build:prod
+gulp build:dev
 //compiles the Play application
 activator compile
 ```
