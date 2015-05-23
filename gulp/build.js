@@ -57,7 +57,7 @@ gulp.task('clean', function (done) {
 });
 
 gulp.task('build:prod', function(done) {
-  runSequence(['html', 'images', 'fonts', 'misc'],
+  runSequence(['inject', 'partials', 'images', 'fonts', 'misc'],
               'replace_prod',
               done);
 });
