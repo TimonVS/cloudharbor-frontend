@@ -3,6 +3,12 @@ $bower-path: '/public/bower_components/';
 // Override Bootstrap variables
 @import "utils/bootstrap-variables";
 
+// injector
+// endinjector
+
+@import "../components/directives/dockerHubSearch/dockerHubSearch";
+@import "../components/directives/spinner/spinner";
+
 // Vendor
 @import "public/bower_components/bootstrap-sass-official/assets/stylesheets/_bootstrap.scss";
 
