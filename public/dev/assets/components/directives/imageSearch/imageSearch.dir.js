@@ -1,8 +1,10 @@
+'use strict';
+
 angular
   .module('util')
   .directive('imageSearch', imageSearch);
 
-function imageSearch ($http, $resource, dockerHubApi) {
+function imageSearch (dockerHubApi) {
   return {
     restrict: 'EA',
     templateUrl: 'components/directives/imageSearch/imageSearch.tpl.html',
@@ -24,7 +26,6 @@ function imageSearch ($http, $resource, dockerHubApi) {
         search($scope.search.input, {pageNum: num})
       }
 
-      // Binding function to scope
       $scope.search = search
 
       function search (query, params) {
