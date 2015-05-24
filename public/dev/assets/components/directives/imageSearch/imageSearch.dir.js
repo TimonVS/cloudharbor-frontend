@@ -2,14 +2,11 @@ angular
   .module('util')
   .directive('imageSearch', imageSearch);
 
-function imageSearch ($http, $resource) {
+function imageSearch ($http, $resource, dockerHubApi) {
   return {
     restrict: 'EA',
     templateUrl: 'components/directives/imageSearch/imageSearch.tpl.html',
     link: function ($scope, $element, $attr) {
-      var SEARCH_URL = 'https://cloudharbor-reverse-proxy.herokuapp.com/https://registry.hub.docker.com/v1/search?q=',
-        RESULTS = 25
-
       var inputElement = angular.element($element.find('input')[0])
 
       // Select existing text upon click
@@ -17,35 +14,29 @@ function imageSearch ($http, $resource) {
         inputElement.select()
       })
 
-      $scope.$watch('search.input', function (input) {
-        if (input === undefined) return delete $scope.results
-        search(input)
-      })
-
       $scope.pagination = {
         current: 1
       }
 
       $scope.changePage = function (num) {
-        search($scope.search.input, num)
+        search($scope.search.input, {pageNum: num})
       }
 
-      function search(input, page) {
-        if (!page) var page = 1
-        if ($scope.busy) return
-
+      function search (query, params) {
         $scope.busy = true
 
-        $http.get(SEARCH_URL + input + '&page=' + page + '&n=' + RESULTS)
-          .success(function (data) {
+        dockerHubApi.search(query, params)
+          .then(function (response) {
             $scope.busy = false
-            $scope.results = data
-          })
-          .error(function () {
-            // todo
-            $scope.busy = false
+            $scope.results = response.data
           })
       }
+
+      // Watch input changes
+      $scope.$watch('search.input', function (query) {
+        if (query === undefined) return delete $scope.results
+        $scope.search(query)
+      })
     }
   }
 }
