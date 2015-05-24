@@ -35,7 +35,7 @@ function imageSearch ($http, $resource, dockerHubApi) {
       // Watch input changes
       $scope.$watch('search.input', function (query) {
         if (query === undefined) return delete $scope.results
-        $scope.search(query)
+        search(query)
       })
     }
   }
