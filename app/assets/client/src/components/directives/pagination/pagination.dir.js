@@ -1,3 +1,5 @@
+'use strict';
+
 angular
   .module('util')
   .directive('pagination', pagination);
