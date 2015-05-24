@@ -7,6 +7,12 @@ function imageSearch ($http, $resource, dockerHubApi) {
     restrict: 'EA',
     templateUrl: 'components/directives/imageSearch/imageSearch.tpl.html',
     link: function ($scope, $element, $attr) {
+      // Initialization
+      $scope.pagination = {
+        current: 1
+      }
+      $scope.results = []
+
       var inputElement = angular.element($element.find('input')[0])
 
       // Select existing text upon click
@@ -14,13 +20,11 @@ function imageSearch ($http, $resource, dockerHubApi) {
         inputElement.select()
       })
 
-      $scope.pagination = {
-        current: 1
-      }
-
       $scope.changePage = function (num) {
         search($scope.search.input, {pageNum: num})
       }
+
+      $scope.search = search
 
       function search (query, params) {
         $scope.busy = true
@@ -28,6 +32,12 @@ function imageSearch ($http, $resource, dockerHubApi) {
         dockerHubApi.search(query, params)
           .then(function (response) {
             $scope.busy = false
+
+            if (response.status !== 200) {
+              $scope.search.error = {query: query, params: params}
+              return
+            }
+
             $scope.results = response.data
           })
       }
