@@ -1,16 +1,25 @@
-<div>
-    <form>
+<div class="docker-hub-search">
+    <form name="dockerHubSearch" novalidate>
         <div class="form-group">
-            <label for="search">Server name</label>
-            <input type="text" class="form-control" id="search" placeholder="Search by image name">
+            <label for="search">Image name</label>
+            <input ng-model="search.input" ng-model-options="{debounce: 500}" type="text" class="form-control"
+                   id="search" name="searchInput" placeholder="Search by image name" required>
         </div>
-        <button ng-click="search('yo')" type="button" class="btn btn-default">Search</button>
     </form>
     <div class="search-results">
-        <ul>
-            <li ng-repeat="result in results.results">
-                <span ng-bind="result.name"></span>
-            </li>
-        </ul>
+        <div class="search-results-box">
+            <spinner ng-show="busy"></spinner>
+            <div ng-hide="busy" class="list-group search-results-box">
+                <a href="" class="list-group-item" ng-repeat="result in results.results">
+                    <span ng-bind="result.name"></span>
+                    <div ng-if="result.star_count > 0" class="pull-right">
+                        <span class="mdi mdi-star"></span>
+                        <span ng-bind="result.star_count"></span>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <pagination ng-if="results.num_pages > 1" total-items="{{ results.num_results }}" items-per-page="25"
+                    pagination-range="9" on-page-change="changePage(pageNumber)"></pagination>
     </div>
 </div>
