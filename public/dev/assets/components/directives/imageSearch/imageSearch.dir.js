@@ -1,11 +1,11 @@
 angular
   .module('util')
-  .directive('dockerHubSearch', dockerHubSearch);
+  .directive('imageSearch', imageSearch);
 
-function dockerHubSearch ($http, $resource) {
+function imageSearch ($http, $resource) {
   return {
     restrict: 'EA',
-    templateUrl: 'components/directives/dockerHubSearch/dockerHubSearch.tpl.html',
+    templateUrl: 'components/directives/imageSearch/imageSearch.tpl.html',
     link: function ($scope, $element, $attr) {
       var SEARCH_URL = 'https://cloudharbor-reverse-proxy.herokuapp.com/https://registry.hub.docker.com/v1/search?q=',
         RESULTS = 25

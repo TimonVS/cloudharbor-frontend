@@ -1,5 +1,5 @@
 @charset "UTF-8";
-.docker-hub-search .search-results-box {
+.docker-image-search .search-results-box {
   height: 500px;
   overflow-y: scroll; }
 
@@ -107,9 +107,6 @@
   40% {
     transform: scale(1);
     -webkit-transform: scale(1); } }
-
-.test {
-  color: red; }
 
 /*! normalize.css v3.0.2 | MIT License | git.io/normalize */
 html {
