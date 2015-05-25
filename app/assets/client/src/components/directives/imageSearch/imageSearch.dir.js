@@ -2,7 +2,7 @@
 
 angular
   .module('util')
-  .directive('imageSearch', imageSearch);
+  .directive('chImageSearch', imageSearch);
 
 function imageSearch (dockerHubApi) {
   return {

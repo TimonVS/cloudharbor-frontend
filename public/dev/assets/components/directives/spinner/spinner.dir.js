@@ -2,7 +2,7 @@
 
 angular
   .module('util')
-  .directive('spinner', spinner);
+  .directive('chSpinner', spinner);
 
 function spinner () {
   return {
