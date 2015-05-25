@@ -1,10 +1,8 @@
 'use strict';
 
-angular.module('app', ['ngRoute', 'util'])
+angular.module('app', ['ngRoute', 'ngResource', 'ngLodash', 'app.util', 'app.containerManagement'])
 
-  angular.module('app').directive('test', function () {
-    return {
-      restrict: 'AEC',
-      template: '<b>Test</b>'
-    };
-  });
+  .config(['$httpProvider', function($httpProvider) {
+    $httpProvider.defaults.useXDomain = true
+    delete $httpProvider.defaults.headers.common['X-Requested-With']
+  }])
