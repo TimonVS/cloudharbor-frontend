@@ -1,9 +1,5 @@
 'use strict';
 
-angular
-  .module('util')
-  .factory('dockerHubApi', dockerHubApi);
-
 function dockerHubApi ($http, $cacheFactory) {
   var apiUrl = 'https://cloudharbor-reverse-proxy.herokuapp.com/https://registry.hub.docker.com/v1/search?q=',
     pages = 25
@@ -33,3 +29,7 @@ function dockerHubApi ($http, $cacheFactory) {
 
   return Image
 }
+
+angular
+  .module('app.util')
+  .factory('dockerHubApi', dockerHubApi);

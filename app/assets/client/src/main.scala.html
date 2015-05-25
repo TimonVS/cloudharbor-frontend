@@ -3,7 +3,7 @@
 @import menu.menuItem
 
 <!DOCTYPE html>
-<html lang="en" ng-app="app" class="no-js">
+<html lang="en" class="no-js">
     <head>
         <title>Cloudharbor | @title</title>
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("/public/images", "favicon.png")">
@@ -29,7 +29,7 @@
 
         <script src="@routes.Assets.at("/public/bower_components", "jquery/dist/jquery.js")"></script>
     </head>
-    <body class="main">
+    <body ng-app="app" class="main">
         <nav class="navmenu navmenu-fixed-left offcanvas-sm" role="navigation">
             <a href="/" class="navmenu-brand">
                 <img src='@routes.Assets.at("/public/images", "logo-small.png")' alt="Cloudharbor logo"/>

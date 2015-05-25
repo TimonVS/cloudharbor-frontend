@@ -13,7 +13,7 @@
                 <p>An error has occurred. <a ng-click="search(search.error.query, search.error.params)" href="">Try again?</a></p>
             </div>
             <div ng-hide="busy" class="list-group search-results-box">
-                <a href="" class="list-group-item" ng-repeat="result in results.results">
+                <a href="" class="list-group-item" ng-click="selectImage(result)" ng-repeat="result in results.results">
                     <span ng-bind="result.name"></span>
                     <div ng-if="result.star_count > 0" class="pull-right">
                         <span class="mdi mdi-star"></span>
