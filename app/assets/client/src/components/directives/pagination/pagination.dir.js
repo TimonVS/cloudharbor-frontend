@@ -21,9 +21,6 @@ function pagination () {
         }
       })
 
-      $scope.numPages = Math.ceil($scope.totalItems / $scope.itemsPerPage)
-      $scope.pages = generatePages($scope.currentPage)
-
       $scope.goToPage = function (num) {
         $scope.currentPage = num
         $scope.pages = generatePages(num)
