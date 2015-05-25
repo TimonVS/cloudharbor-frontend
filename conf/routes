@@ -17,7 +17,17 @@ GET           /user/profile                                     controllers.User
 POST          /user/profile                                     controllers.Users.updateUser
 
 # ContainerManagement
-GET           /management/overview                              controllers.ContainerManagement.overview
+GET         /management/overview                                controllers.ContainerManagement.overview
+GET         /management/containers                              controllers.ContainerManagement.listContainers(serverUrl: String)
+GET         /management/containers/:containerId                 controllers.ContainerManagement.show(serverUrl: String, containerId: String)
+POST        /management/containers/:containerId/start           controllers.ContainerManagement.startContainer(serverUrl: String, containerId: String)
+POST        /management/containers/:containerId/stop            controllers.ContainerManagement.stopContainer(serverUrl: String, containerId: String)
+POST        /management/containers/:containerId/kill            controllers.ContainerManagement.killContainer(serverUrl: String, containerId: String)
+POST        /management/containers/:containerId/pause           controllers.ContainerManagement.pauseContainer(serverUrl: String, containerId: String)
+POST        /management/containers/:containerId/unpause         controllers.ContainerManagement.unPauseContainer(serverUrl: String, containerId: String)
+POST        /management/containers/:containerId/rename          controllers.ContainerManagement.renameContainer(serverUrl: String, containerId: String, newName: String)
+POST        /management/containers/:containerId/remove          controllers.ContainerManagement.removeContainer(serverUrl: String, containerId: String, deleteVolumes: Boolean, force: Boolean)
+GET         /management/ping                                    controllers.ContainerManagement.pingDockerRemoteApi(serverUrl: String)
 
 # ServerManagement
 GET           /servermanagement                                 controllers.ServerManagement.overview
