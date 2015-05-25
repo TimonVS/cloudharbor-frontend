@@ -1,9 +1,5 @@
 'use strict';
 
-angular
-  .module('util')
-  .directive('chPagination', pagination);
-
 function pagination () {
   return {
     restrict: 'EA',
@@ -73,3 +69,7 @@ function pagination () {
     }
   }
 }
+
+angular
+  .module('app.util')
+  .directive('chPagination', pagination)

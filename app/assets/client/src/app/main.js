@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('app', ['ngRoute', 'ngResource', 'ngLodash', 'util'])
+angular.module('app', ['ngRoute', 'ngResource', 'ngLodash', 'app.util', 'app.containerManagement'])
 
-angular.module('app').config(['$httpProvider', function($httpProvider) {
-  $httpProvider.defaults.useXDomain = true
-  delete $httpProvider.defaults.headers.common['X-Requested-With']
-}])
+  .config(['$httpProvider', function($httpProvider) {
+    $httpProvider.defaults.useXDomain = true
+    delete $httpProvider.defaults.headers.common['X-Requested-With']
+  }])

@@ -1,32 +1,33 @@
 'use strict';
 
-angular
-  .module('util')
-  .directive('chImageSearch', imageSearch);
-
 function imageSearch (dockerHubApi) {
   return {
     restrict: 'EA',
     templateUrl: 'components/directives/imageSearch/imageSearch.tpl.html',
-    link: function ($scope, $element, $attr) {
+    link: function ($scope, $element) {
+
+      // ------------------------------------------------------------------
       // Initialization
+      // ------------------------------------------------------------------
+
       $scope.pagination = {
         current: 1
       }
       $scope.results = []
+      $scope.selectedImage = 'test'
+      $scope.search = search
 
-      var inputElement = angular.element($element.find('input')[0])
-
-      // Select existing text upon click
-      inputElement.on('click', function () {
-        inputElement.select()
-      })
+      // ------------------------------------------------------------------
+      // Actions
+      // ------------------------------------------------------------------
 
       $scope.changePage = function (num) {
         search($scope.search.input, {pageNum: num})
       }
 
-      $scope.search = search
+      $scope.selectImage = function (image) {
+        $scope.$emit('imageSelected', image)
+      }
 
       function search (query, params) {
         $scope.busy = true
@@ -44,7 +45,17 @@ function imageSearch (dockerHubApi) {
           })
       }
 
-      // Watch input changes
+      // ------------------------------------------------------------------
+      //
+      // ------------------------------------------------------------------
+
+      var inputElement = angular.element($element.find('input')[0])
+
+      // Select existing text upon click
+      inputElement.on('click', function () {
+        inputElement.select()
+      })
+
       $scope.$watch('search.input', function (query) {
         if (query === undefined) return delete $scope.results
         search(query)
@@ -52,3 +63,7 @@ function imageSearch (dockerHubApi) {
     }
   }
 }
+
+angular
+  .module('app.util')
+  .directive('chImageSearch', imageSearch)

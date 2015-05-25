@@ -3,7 +3,8 @@
 var gulp = require('gulp');
 var paths = gulp.paths;
 var $ = require('gulp-load-plugins')();
-var wiredep = require('wiredep').stream;
+var wiredep = require('wiredep').stream,
+  angularFilesort = require('gulp-angular-filesort')
 
 gulp.task('inject', ['styles', 'scripts'], function () {
   var injectStyles = gulp.src([
@@ -19,8 +20,8 @@ gulp.task('inject', ['styles', 'scripts'], function () {
     '!' + paths.tmp + '/assets/{app,components}/**/*.spec.js',
     '!' + paths.tmp + '/assets/{app,components}/**/*.mock.js'
   ], {
-    read: false
-  });
+    read: true
+  }).pipe(angularFilesort());
 
   var partialsInjectFile = gulp.src(paths.tmp + '/assets/app/templateCacheHtml.js', { read: false });
   var partialsInjectOptions = {
