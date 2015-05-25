@@ -17,7 +17,11 @@ case class Droplet(
                     size: Size,
                     networks: Networks,
                     region: Region
-                    )
+                    ){
+
+  def getIpAddresses: List[String] = this.networks.ipv4.map(_.ipAddress) ++ this.networks.ipv6.map(_.ipAddress)
+
+}
 
 object Droplet {
   implicit val dropletReads: Reads[Droplet] = (

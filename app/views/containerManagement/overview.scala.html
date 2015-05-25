@@ -1,10 +1,47 @@
-@()(implicit request: RequestHeader, user: User)
+@import models.DigitalOcean.Droplet
+@(servers: List[Droplet])(implicit request: RequestHeader, user: User)
+
 
 @main("Container overview") {
-    here is the overview
-
     <div ng-controller="containerManagementCtrl">
         <ch-image-search></ch-image-search>
     </div>
 
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    @for(server <- servers) {
+        @for(ipAddress <- server.getIpAddresses){
+            <script>
+            $.get( "@routes.ContainerManagement.listContainers(ipAddress)", function( data ) {
+                $.each(data, function (i, item) {
+                    var url = "localhost:9000/management/containers/" + data.Id;
+                    $('<tr class="table-row-link" onclick="document.location = url">').append(
+                        $('<td>' ).text(item.Id),
+                        $('<td>').text(item.Image),
+                        $('<td>').text(item.Command),
+                        $('<td>').text(item.Created),
+                        $('<td>' ).text(item.Status)
+                    ).appendTo('#container_table_@server.id');
+                    // $('#records_table').append($tr);
+                    //console.log($tr.wrap('<p>').html());
+                });
+            });
+            </script>
+        }
+    }
+    <div>
+    @for(server <- servers) {
+        <h3>@server.name</h3>
+        <table class="table table-hover" id="container_table_@server.id">
+            <tr>
+                <th>Id</th>
+                <th>Image</th>
+                <th>Command</th>
+                <th>Created</th>
+                <th>Status</th>
+            </tr>
+        </table>
+    }
+    </div>
 }
+
