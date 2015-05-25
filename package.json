@@ -49,6 +49,7 @@
     "wiredep": "~2.2.0"
   },
   "devDependencies": {
+    "gulp-angular-filesort": "^1.1.1",
     "gulp-sass": "^2.0.0",
     "karma": "^0.12.31",
     "karma-cli": "0.0.4",

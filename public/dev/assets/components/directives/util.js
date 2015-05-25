@@ -1,2 +1,4 @@
+'use strict';
+
 angular
-  .module('util', [])
+  .module('app.util', [])
