@@ -2,7 +2,7 @@
 
 angular
   .module('util')
-  .directive('pagination', pagination);
+  .directive('chPagination', pagination);
 
 function pagination () {
   return {

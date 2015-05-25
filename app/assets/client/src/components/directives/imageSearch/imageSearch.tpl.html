@@ -8,7 +8,7 @@
     </form>
     <div class="search-results">
         <div class="search-results-box">
-            <spinner ng-show="busy"></spinner>
+            <ch-spinner ng-show="busy"></ch-spinner>
             <div ng-show="search.error && !results && !busy">
                 <p>An error has occurred. <a ng-click="search(search.error.query, search.error.params)" href="">Try again?</a></p>
             </div>
@@ -22,7 +22,7 @@
                 </a>
             </div>
         </div>
-        <pagination ng-if="results.num_pages > 1" total-items="{{ results.num_results }}" items-per-page="25"
-                    pagination-range="9" on-page-change="changePage(pageNumber)"></pagination>
+        <ch-pagination ng-if="results.num_pages > 1" total-items="{{ results.num_results }}" items-per-page="25"
+                    pagination-range="9" on-page-change="changePage(pageNumber)"></ch-pagination>
     </div>
 </div>
