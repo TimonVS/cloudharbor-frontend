@@ -14,6 +14,7 @@ import play.api.mvc.{Controller, EssentialAction}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
+import scala.io.Source
 
 /**
  * Created by ThomasWorkBook on 17/04/15.
@@ -112,7 +113,9 @@ object ServerManagement extends Controller with Secured {
             val apiKey = cloudService.apiKey
 
             def create(sshKeys: Option[List[BigDecimal]]) = {
-              val droplet = CreateDroplet(data.name, "docker", data.region, data.size, data.backUps, data.ipv6, sshKeys)
+              //TODO: add specified token and existing ssh keys
+              val userData = Source.fromFile(getClass.getResource("/cloud-config.yaml").toURI).mkString
+              val droplet = CreateDroplet(data.name, "coreos-stable", data.region, data.size, data.backUps, data.ipv6, userData, sshKeys)
               cloudAPI.createServer(apiKey, droplet).map(result => result.fold(
                 success => {
                   notificationActor ! NotificationActor.CreateServerNotification(
