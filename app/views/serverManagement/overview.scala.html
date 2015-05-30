@@ -3,6 +3,10 @@
 @(cloudServers: List[Droplet])(implicit request: RequestHeader, user: User)
 
 @main("Server overview") {
+
+    <div ng-controller="serverManagementCtrl as serverManagement">
+    </div>
+
     @if(cloudServers.isEmpty){
         <h4>Please add a digital ocean server</h4>
     }else{
