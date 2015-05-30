@@ -14,6 +14,7 @@ case class CreateDroplet(
                           size: String,
                           backups: Boolean,
                           ipv6: Boolean,
+                          userData: String,
                           sshKeys: Option[List[BigDecimal]])
 
 object CreateDroplet {
@@ -24,6 +25,7 @@ object CreateDroplet {
       and (__ \ "size").write[String]
       and (__ \ "backups").write[Boolean]
       and (__ \ "ipv6").write[Boolean]
+      and (__ \ "user_data").write[String]
       and (__ \ "ssh_keys").writeNullable[List[BigDecimal]]
     )(unlift(CreateDroplet.unapply))
 }
