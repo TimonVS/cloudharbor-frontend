@@ -42,10 +42,16 @@ object ServerManagement extends Controller with Secured {
 
   implicit val context = play.api.libs.concurrent.Execution.Implicits.defaultContext
 
+  /**
+   * Static html page for server overview
+   */
   def overview = withAuth { implicit user => implicit request =>
     Ok(views.html.serverManagement.overview())
   }
 
+  /**
+   * Ajax get request for every server a user has at digital ocean
+   */
   def servers = withAuthAsync { implicit user => implicit request =>
     Server.findByUserId(user.id) match {
         case Some(cloudService) =>
@@ -63,6 +69,9 @@ object ServerManagement extends Controller with Secured {
       }
   }
 
+  /**
+   * Ajax get request for single server
+   */
   def show(serverId: String) = withAuthAsync { implicit user => implicit request =>
     Server.findByUserId(user.id) match {
       case Some(cloudService) =>
@@ -79,6 +88,9 @@ object ServerManagement extends Controller with Secured {
     }
   }
 
+  /**
+   * Ajax post for pausing a server
+   */
   def powerOff(serverId: String) = withAuthAsync { implicit user => implicit request =>
     Server.findByUserId(user.id) match{
       case Some(cloudService) =>
@@ -88,6 +100,9 @@ object ServerManagement extends Controller with Secured {
     }
   }
 
+  /**
+   * Ajax post for starting a server
+   */
   def powerOn(serverId: String) = withAuthAsync { implicit user => implicit request =>
     Server.findByUserId(user.id) match{
       case Some(cloudService) =>
@@ -97,6 +112,9 @@ object ServerManagement extends Controller with Secured {
     }
   }
 
+  /**
+   * Ajax delete for deleting a server
+   */
   def delete(serverId: String) = withAuthAsync { implicit user => implicit request =>
     Server.findByUserId(user.id) match{
       case Some(cloudService) =>
@@ -113,6 +131,9 @@ object ServerManagement extends Controller with Secured {
     }
   }
 
+  /**
+   * Static html page for adding a server
+   */
   def addServer() = withAuth { implicit user => implicit request =>
     Ok(views.html.serverManagement.addCloudService())
   }
@@ -132,10 +153,17 @@ object ServerManagement extends Controller with Secured {
     }
   }
 
+  /**
+   * Static html page for adding a api key
+   */
   def addApiKey() = withAuth{ implicit user => implicit request =>
     Ok(views.html.serverManagement.addCloudServiceInfo())
   }
 
+  /**
+   * Ajax get for retrieving the api key
+   * @return
+   */
   def getApiKey() = withAuth { implicit user => implicit request =>
     Server.findByUserId(user.id) match {
       case Some(server) => Ok(Json.obj("success" -> server.apiKey))
@@ -143,6 +171,9 @@ object ServerManagement extends Controller with Secured {
     }
   }
 
+  /**
+   * Ajax POST for authenticating and saving the api key
+   */
   def authenticateApiKey = withAuthAsync { implicit user => implicit request =>
     request.body.asJson.map{ json =>
       WS.url(s"$serverManagementUrl/authenticate")
