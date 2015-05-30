@@ -5,6 +5,20 @@
 @main("Server overview") {
 
     <div ng-controller="serverManagementCtrl as serverManagement">
+        <button ng-click="serverManagement.get()">Get servers</button>
+        <div>
+            <ul>
+                <li ng-repeat="server in serverManagement.servers">
+                    <p ng-bind="server.name"></p>
+                    <button ng-click="serverManagement.getContainers(server)">Get containers</button>
+                    <ul>
+                        <li ng-repeat="container in server.containers">
+                            <p ng-bind="container.Id"></p>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
 
     @if(cloudServers.isEmpty){
