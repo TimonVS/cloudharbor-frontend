@@ -20,7 +20,7 @@
             </div>
         }
     }
-    @b3.form(routes.ServerManagement.authenticateCloudService()) {
+    @b3.form(routes.ServerManagement.createServer()) {
         @b3.text( cloudServiceForm("name"), '_label -> "Name", 'placeholder -> "Server name" )
         @b3.select( cloudServiceForm("region"), options = regions, '_label -> "Select a region" )
         @b3.select( cloudServiceForm("size"), options = sizes, '_label -> "Select a size" )

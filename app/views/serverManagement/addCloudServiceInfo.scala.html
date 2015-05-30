@@ -11,7 +11,7 @@
             @error
         </div>
     }
-    @b3.form(routes.ServerManagement.authenticateCloudServiceInfo()) {
+    @b3.form(routes.ServerManagement.authenticateCloudService()) {
         @b3.text( cloudServiceInfoAddForm("apiKey"), '_label -> "Api Key", 'placeholder -> "Your Digital Ocean api-key" )
         @b3.submit('class -> "btn btn-default"){ Add }
     }
