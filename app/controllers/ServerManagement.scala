@@ -1,23 +1,14 @@
 package controllers
 
 import java.net.ConnectException
-import java.util.concurrent.TimeUnit
-
 import actors.NotificationActor
-import api.{CloudAPI, DigitalOceanAPI}
-import models.DigitalOcean.{CreateDroplet, CreateSSHKey}
 import models._
 import play.api.Play.current
-import play.api.data.Forms._
-import play.api.data._
 import play.api.libs.concurrent.Akka
 import play.api.libs.json.Json
 import play.api.libs.ws.WS
-import play.api.mvc.{Result, Results, Controller, EssentialAction}
-
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future}
-import scala.io.Source
+import play.api.mvc.{Result, Results, Controller}
+import scala.concurrent.{Future}
 
 /**
  * Created by ThomasWorkBook on 17/04/15.
@@ -30,6 +21,8 @@ object ServerManagement extends Controller with Secured {
 
   val unavailableJsonMessage = Json.obj("error" -> "Sorry, but the Server Management Service is currently not available")
   val unexpectedError = Json.obj("error" -> "Sorry, but an unexpected error occurred")
+
+  lazy val notificationActor = Akka.system.actorOf(NotificationActor.props, name = "notificationActor")
 
   def cloudInfo(apiKey: String): (String, String) = {
     "Cloud-Info" -> (apiKey)
@@ -66,7 +59,7 @@ object ServerManagement extends Controller with Secured {
           }
 
         case None =>
-          Future.successful(Redirect(routes.ServerManagement.addCloudServiceAccount()))
+          Future.successful(Redirect(routes.ServerManagement.addApiKey()))
       }
   }
 
@@ -82,7 +75,7 @@ object ServerManagement extends Controller with Secured {
             case _ => InternalServerError(unexpectedError)
         }
       case None =>
-        Future.successful(Redirect(routes.ServerManagement.addCloudServiceAccount()))
+        Future.successful(Redirect(routes.ServerManagement.addApiKey()))
     }
   }
 
@@ -91,7 +84,7 @@ object ServerManagement extends Controller with Secured {
       case Some(cloudService) =>
         sendEmptyPost(s"$serverManagementUrl/servers/$serverId/stop", cloudService.apiKey)
       case None =>
-        Future.successful(Redirect(routes.ServerManagement.addCloudServiceAccount()))
+        Future.successful(Redirect(routes.ServerManagement.addApiKey()))
     }
   }
 
@@ -100,7 +93,7 @@ object ServerManagement extends Controller with Secured {
       case Some(cloudService) =>
         sendEmptyPost(s"$serverManagementUrl/servers/$serverId/start", cloudService.apiKey)
       case None =>
-        Future.successful(Redirect(routes.ServerManagement.addCloudServiceAccount()))
+        Future.successful(Redirect(routes.ServerManagement.addApiKey()))
     }
   }
 
@@ -116,76 +109,59 @@ object ServerManagement extends Controller with Secured {
             case _ => InternalServerError(unexpectedError)
           }
       case None =>
-        Future.successful(Redirect(routes.ServerManagement.addCloudServiceAccount()))
+        Future.successful(Redirect(routes.ServerManagement.addApiKey()))
     }
   }
 
-  /**
-   * TODO
-   * :::::
-   */
-
-  lazy val notificationActor = Akka.system.actorOf(NotificationActor.props, name = "notificationActor")
-
-  val regions = Seq(("ams2", "Amsterdam 2"), ("ams3", "Amsterdam 3"))
-  val sizes = Seq(
-    ("512mb", "512mb - €5 p/month"),
-    ("1gb", "1gb - €10 p/month"),
-    ("2gb", "2gb - €20 p/month"),
-    ("4gb", "4gb - €40 p/month")
-  )
-
-  val addServerInfoForm: Form[ApiData] = Form(
-    mapping(
-      "apiKey" -> text
-    )(ApiData.apply)(ApiData.unapply)
-  )
-
-  val addServerForm: Form[ServerData] = Form(
-    mapping(
-      "name" -> text(minLength = 1),
-      "region" -> text,
-      "size" -> text,
-      "backUps" -> boolean,
-      "ipv6" -> boolean,
-      "ssh" -> boolean,
-      "name" -> optional(text),
-      "publicKey" -> optional(text)
-    )(ServerData.apply)(ServerData.unapply) verifying (
-      "If you want to add a ssh key please fill in the name and the public key of the ssh key",
-      data => sshCheck(data.ssh, data.sshName, data.sshPublicKey)
-      )
-  )
-
-  def sshCheck(ssh: Boolean, sshName: Option[String], sshPublicKey: Option[String]): Boolean =
-    if(ssh) sshName.isDefined && sshPublicKey.isDefined
-    else true
-
-  // Ok view without form
-  def addCloudService() = withAuth { implicit user => implicit request =>
-    Ok(views.html.serverManagement.addCloudService(addServerForm, regions, sizes))
+  def addServer() = withAuth { implicit user => implicit request =>
+    Ok(views.html.serverManagement.addCloudService())
   }
 
-  // Ok view without form
-  def addCloudServiceAccount() = withAuth{ implicit user => implicit request =>
-    val cloudService = Server.findByUserId(user.id)
-    val addForm: Form[ApiData] = cloudService
-      .map(cs => addServerInfoForm.fill(ApiData(cs.apiKey)))
-      .getOrElse(addServerInfoForm)
-
-    Ok(views.html.serverManagement.addCloudServiceInfo(addForm))
-  }
-
-  // call to ServerManagement where you create a server
-  // route in ServerManagement: /servers/add
   def createServer = withAuthAsync { implicit user => implicit request =>
-    Future.successful(Ok)
+    Server.findByUserId(user.id) match {
+      case Some(server) =>
+        WS.url(s"$serverManagementUrl/servers/add")
+          .withHeaders(cloudInfo(server.apiKey))
+          .post(request.body.asJson.get)
+          .map(r => Ok(r.json))
+          .recover {
+            case _: ConnectException => BadRequest(unavailableJsonMessage)
+            case _ => InternalServerError(unexpectedError)
+          }
+      case None => Future.successful(NotFound(Json.obj("error" -> "Api Key not found")))
+    }
   }
 
-  // call to ServerManagement where you check if the user api key is valid
-  // route in ServerManagement: /authenticate
-  def authenticateCloudService = withAuthAsync { implicit user => implicit request =>
-    Future.successful(Ok)
+  def addApiKey() = withAuth{ implicit user => implicit request =>
+    Ok(views.html.serverManagement.addCloudServiceInfo())
+  }
+
+  def getApiKey() = withAuth { implicit user => implicit request =>
+    Server.findByUserId(user.id) match {
+      case Some(server) => Ok(Json.obj("success" -> server.apiKey))
+      case None => BadRequest(Json.obj("error" -> "No API-key found"))
+    }
+  }
+
+  def authenticateApiKey = withAuthAsync { implicit user => implicit request =>
+    request.body.asJson.map{ json =>
+      WS.url(s"$serverManagementUrl/authenticate")
+        .withHeaders(cloudInfo((json \ "apiKey").as[String]))
+        .get()
+        .map(r =>
+          r.status match{
+            case OK =>
+              Server.create(user.id, (json \ "apiKey").as[String])
+              Ok(r.json)
+            case BAD_REQUEST =>
+              BadRequest(Json.obj("error" -> "API-Key did not work"))
+          }
+        )
+        .recover {
+          case _: ConnectException => BadRequest(unavailableJsonMessage)
+          case _ => InternalServerError(unexpectedError)
+        }
+    } getOrElse Future.successful(BadRequest(Json.obj("error" -> "API-Key needs to be provided")))
   }
 
 }

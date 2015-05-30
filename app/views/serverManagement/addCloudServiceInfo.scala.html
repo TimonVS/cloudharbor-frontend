@@ -1,18 +1,8 @@
-@(cloudServiceInfoAddForm: Form[ApiData])(implicit flash: Flash, request: RequestHeader, user: User)
-@import b3.vertical.fieldConstructor
+@()(implicit flash: Flash, request: RequestHeader, user: User)
+
 
 @main("Add a cloud service api-key account"){
     <h1>Add a Cloud Service api key:</h1>
     <p>Currently we're only supporting Digital Ocean (so make sure it's a Digital Ocean api-key)</p>
-    @flash.get("error").map { error =>
-        <div class="alert alert-danger" role="alert">
-            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-            <span class="sr-only">Error:</span>
-            @error
-        </div>
-    }
-    @b3.form(routes.ServerManagement.authenticateCloudService()) {
-        @b3.text( cloudServiceInfoAddForm("apiKey"), '_label -> "Api Key", 'placeholder -> "Your Digital Ocean api-key" )
-        @b3.submit('class -> "btn btn-default"){ Add }
-    }
+    API KEY FORM
 }
