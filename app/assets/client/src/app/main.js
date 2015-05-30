@@ -5,6 +5,7 @@ angular.module('app', [
   'ngResource',
   'ngLodash',
   'ngMockE2E',
+  'ui.bootstrap',
   'app.util',
   'app.containerManagement',
   'app.serverManagement'
@@ -101,4 +102,8 @@ angular.module('app', [
     $httpBackend.whenPOST(/^\w+.*/).passThrough()
     $httpBackend.whenGET(/server-options/).passThrough()
     $httpBackend.whenGET(/servermanagement\/servers/).passThrough()
+  })
+
+  .constant('accordionConfig', {
+    closeOthers: false
   })

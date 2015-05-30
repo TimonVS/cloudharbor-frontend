@@ -6,6 +6,7 @@ $bower-path: '/public/bower_components/';
 // injector
 // endinjector
 
+@import "../app/containerManagement/containerManagement";
 @import "../components/directives/imageSearch/imageSearch";
 @import "../components/directives/spinner/spinner";
 
