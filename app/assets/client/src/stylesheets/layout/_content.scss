@@ -1,7 +1,7 @@
 .main-content {
+  height: 100%;
   margin-top: $navbar-height;
   z-index: 10000;
-  height: 100%;
 
   @media (min-width: $screen-md-min) {
     left: 300px;
@@ -14,4 +14,11 @@
     padding-left: 25px;
     padding-right: 25px;
   }
+}
+
+.page-title {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
 }

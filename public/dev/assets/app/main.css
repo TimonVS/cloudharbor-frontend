@@ -6784,9 +6784,9 @@ img {
   display: block; }
 
 .main-content {
+  height: 100%;
   margin-top: 50px;
-  z-index: 10000;
-  height: 100%; }
+  z-index: 10000; }
   @media (min-width: 992px) {
     .main-content {
       left: 300px; } }
@@ -6796,6 +6796,12 @@ img {
     max-width: 100%;
     padding-left: 25px;
     padding-right: 25px; } }
+
+.page-title {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee; }
 
 .login {
   color: #fff;
