@@ -5,6 +5,14 @@
 @main("Server overview") {
     <div ng-controller="serverManagementCtrl as serverManagement"></div>
 
+    <div ng-controller="serverManagementFormCtrl as serverManagementForm">
+        <form ng-submit="serverManagementForm.onSubmit()" novalidate>
+            <formly-form model="serverManagementForm.serverModel" fields="serverManagementForm.serverFormFields">
+                <button type="submit" class="btn btn-primary submit-button">Create server</button>
+            </formly-form>
+        </form>
+    </div>
+
     <div class="table-responsive">
         <table class="table table-hover">
             <tr>
