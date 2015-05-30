@@ -1,5 +1,6 @@
 package controllers
 
+import java.net.ConnectException
 import java.util.concurrent.TimeUnit
 
 import actors.NotificationActor
@@ -10,7 +11,9 @@ import play.api.Play.current
 import play.api.data.Forms._
 import play.api.data._
 import play.api.libs.concurrent.Akka
-import play.api.mvc.{Controller, EssentialAction}
+import play.api.libs.json.Json
+import play.api.libs.ws.WS
+import play.api.mvc.{Result, Results, Controller, EssentialAction}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
@@ -22,9 +25,106 @@ import scala.io.Source
  */
 object ServerManagement extends Controller with Secured {
 
+  val serverManagementUrl = current.configuration.getString("serverManagement.url").get + ":" +
+    current.configuration.getInt("serverManagement.port").get
+
+  val unavailableJsonMessage = Json.obj("error" -> "Sorry, but the Server Management Service is currently not available")
+  val unexpectedError = Json.obj("error" -> "Sorry, but an unexpected error occurred")
+
+  def cloudInfo(apiKey: String): (String, String) = {
+    "Cloud-Info" -> (apiKey)
+  }
+
+  def sendEmptyPost(url: String, apiKey: String): Future[Result] =
+    WS.url(url)
+      .withHeaders(cloudInfo(apiKey))
+      .post(Results.EmptyContent()).map(r => r.status match{
+      case NO_CONTENT => Ok(r.json)
+      case NOT_MODIFIED => BadRequest(r.json)
+      case NOT_FOUND => NotFound(r.json)
+      case INTERNAL_SERVER_ERROR => BadRequest(r.json)
+    }) recover{
+      case _: ConnectException => InternalServerError
+    }
+
   implicit val context = play.api.libs.concurrent.Execution.Implicits.defaultContext
 
-  lazy val cloudAPI: CloudAPI = DigitalOceanAPI
+  def overview = withAuth { implicit user => implicit request =>
+    Ok(views.html.serverManagement.overview())
+  }
+
+  def servers = withAuthAsync { implicit user => implicit request =>
+    Server.findByUserId(user.id) match {
+        case Some(cloudService) =>
+          WS.url(s"http://$serverManagementUrl/servers")
+            .withHeaders(cloudInfo(cloudService.apiKey))
+            .get()
+            .map(r => Ok(r.json))
+            .recover {
+            case _: ConnectException => BadRequest(unavailableJsonMessage)
+            case _ => InternalServerError(unexpectedError)
+          }
+
+        case None =>
+          Future.successful(Redirect(routes.ServerManagement.addCloudServiceAccount()))
+      }
+  }
+
+  def show(serverId: String) = withAuthAsync { implicit user => implicit request =>
+    Server.findByUserId(user.id) match {
+      case Some(cloudService) =>
+        WS.url(s"http://$serverManagementUrl/servers/$serverId")
+          .withHeaders(cloudInfo(cloudService.apiKey))
+          .get()
+          .map(r => Ok(r.json))
+          .recover {
+            case _: ConnectException => BadRequest(unavailableJsonMessage)
+            case _ => InternalServerError(unexpectedError)
+        }
+      case None =>
+        Future.successful(Redirect(routes.ServerManagement.addCloudServiceAccount()))
+    }
+  }
+
+  def powerOff(serverId: String) = withAuthAsync { implicit user => implicit request =>
+    Server.findByUserId(user.id) match{
+      case Some(cloudService) =>
+        sendEmptyPost(s"$serverManagementUrl/servers/$serverId/stop", cloudService.apiKey)
+      case None =>
+        Future.successful(Redirect(routes.ServerManagement.addCloudServiceAccount()))
+    }
+  }
+
+  def powerOn(serverId: String) = withAuthAsync { implicit user => implicit request =>
+    Server.findByUserId(user.id) match{
+      case Some(cloudService) =>
+        sendEmptyPost(s"$serverManagementUrl/servers/$serverId/start", cloudService.apiKey)
+      case None =>
+        Future.successful(Redirect(routes.ServerManagement.addCloudServiceAccount()))
+    }
+  }
+
+  def delete(serverId: String) = withAuthAsync { implicit user => implicit request =>
+    Server.findByUserId(user.id) match{
+      case Some(cloudService) =>
+        WS.url(s"$serverManagementUrl/servers/$serverId/delete")
+          .withHeaders(cloudInfo(cloudService.apiKey))
+          .delete()
+          .map(r => Ok(r.json))
+          .recover {
+            case _: ConnectException => BadRequest(unavailableJsonMessage)
+            case _ => InternalServerError(unexpectedError)
+          }
+      case None =>
+        Future.successful(Redirect(routes.ServerManagement.addCloudServiceAccount()))
+    }
+  }
+
+  /**
+   * TODO
+   * :::::
+   */
+
   lazy val notificationActor = Akka.system.actorOf(NotificationActor.props, name = "notificationActor")
 
   val regions = Seq(("ams2", "Amsterdam 2"), ("ams3", "Amsterdam 3"))
@@ -61,40 +161,12 @@ object ServerManagement extends Controller with Secured {
     if(ssh) sshName.isDefined && sshPublicKey.isDefined
     else true
 
-
-  def overviewDefault = withAuth{ implicit user => implicit request =>
-    Redirect(routes.ServerManagement.overview(user.id))
-  }
-
-  def overview(userId: Int) = withAuthAsync { implicit user => implicit request =>
-    Server.findByUserId(user.id) match {
-        case Some(cloudService) =>
-          cloudAPI.getCloudServers(cloudService.apiKey).map(result => result.fold(
-            success => Ok(views.html.serverManagement.overview(success.data)),
-            error => Redirect(routes.ServerManagement.addCloudServiceAccount()).flashing(error.data)
-          ))
-        case None => Future(Redirect(routes.ServerManagement.addCloudServiceAccount())
-          .flashing("error" -> "Add your api-key first"))
-      }
-  }
-
-  def show(cloudServiceId: String) = withAuthAsync { implicit user => implicit request =>
-    Server.findByUserId(user.id) match {
-      case Some(cloudService) =>
-        cloudAPI.getCloudServer(BigDecimal(cloudServiceId), cloudService.apiKey).map(result => result.fold(
-          success => Ok(views.html.serverManagement.show(success.data)),
-          error => Redirect(routes.ServerManagement.addCloudServiceAccount()).flashing(error.data)
-        ))
-      case None =>
-        Future(Redirect(routes.ServerManagement.addCloudService())
-          .flashing("error" -> "Please add a digital ocean api-key first"))
-    }
-  }
-
+  // Ok view without form
   def addCloudService() = withAuth { implicit user => implicit request =>
     Ok(views.html.serverManagement.addCloudService(addServerForm, regions, sizes))
   }
 
+  // Ok view without form
   def addCloudServiceAccount() = withAuth{ implicit user => implicit request =>
     val cloudService = Server.findByUserId(user.id)
     val addForm: Form[ApiData] = cloudService
@@ -104,98 +176,16 @@ object ServerManagement extends Controller with Secured {
     Ok(views.html.serverManagement.addCloudServiceInfo(addForm))
   }
 
+  // call to ServerManagement where you create a server
+  // route in ServerManagement: /servers/add
+  def createServer = withAuthAsync { implicit user => implicit request =>
+    Future.successful(Ok)
+  }
+
+  // call to ServerManagement where you check if the user api key is valid
+  // route in ServerManagement: /authenticate
   def authenticateCloudService = withAuthAsync { implicit user => implicit request =>
-    addServerForm.bindFromRequest().fold(
-      formWithErrors => Future(BadRequest(views.html.serverManagement.addCloudService(formWithErrors, regions, sizes))),
-      data => {
-        Server.findByUserId(user.id) match {
-          case Some(cloudService) =>
-            val apiKey = cloudService.apiKey
-
-            def create(sshKeys: Option[List[BigDecimal]]) = {
-              //TODO: add specified token and existing ssh keys
-              val userData = Source.fromFile(getClass.getResource("/cloud-config.yaml").toURI).mkString
-              val droplet = CreateDroplet(data.name, "coreos-stable", data.region, data.size, data.backUps, data.ipv6, userData, sshKeys)
-              cloudAPI.createServer(apiKey, droplet).map(result => result.fold(
-                success => {
-                  notificationActor ! NotificationActor.CreateServerNotification(
-                    user.id,
-                    NotificationMessages.serverCreated(success.data),
-                    NotificationType.ServerCreate
-                  )
-
-                  Redirect(routes.ServerManagement.overview(user.id))
-                },
-                error => Redirect(routes.ServerManagement.addCloudService()).flashing(error.data)
-              ))
-            }
-
-            if (data.ssh) {
-              val sshKey = CreateSSHKey(data.sshName.get, data.sshPublicKey.get)
-              val result = Await.result(cloudAPI.addSSHKey(apiKey, sshKey), Duration.create(3, TimeUnit.SECONDS))
-              result.fold(
-                success => create(Some(List(success.data))),
-                error => Future(Redirect(routes.ServerManagement.addCloudService()).flashing(error.data))
-              )
-            } else {
-              create(None)
-            }
-          case None => Future(Redirect(routes.ServerManagement.addCloudService()).flashing("error" -> "Add a cloud service first"))
-        }
-      }
-    )
-  }
-
-  def powerOff(cloudServiceId: String) = withAuthAsync { implicit user => implicit request =>
-    val apiKey = Server.findByUserId(user.id).get.apiKey
-
-    cloudAPI.powerOff(cloudServiceId, apiKey).map(result => result.fold(
-      success => Redirect(routes.ServerManagement.show(cloudServiceId)).flashing(success.data),
-      error => Redirect(routes.ServerManagement.show(cloudServiceId)).flashing(error.data)
-    ))
-  }
-
-  def powerOn(cloudServiceId: String): EssentialAction = withAuthAsync { implicit user => implicit request =>
-    val apiKey = Server.findByUserId(user.id).get.apiKey
-
-    cloudAPI.powerOn(cloudServiceId, apiKey).map(result => result.fold(
-      success => Redirect(routes.ServerManagement.show(cloudServiceId)).flashing(success.data),
-      error => Redirect(routes.ServerManagement.show(cloudServiceId)).flashing(error.data)
-    ))
-  }
-
-  def delete(cloudServiceId: String) = withAuthAsync { implicit user => implicit request =>
-    val apiKey = Server.findByUserId(user.id).get.apiKey
-
-    DigitalOceanAPI.delete(cloudServiceId, apiKey).map(result => result.fold(
-      success => {
-        notificationActor ! NotificationActor.CreateServerNotification(
-          user.id,
-          NotificationMessages.serverDeleted(BigDecimal(cloudServiceId)),
-          NotificationType.ServerDelete
-        )
-
-        Redirect(routes.ServerManagement.overview(user.id)).flashing(success.data)
-      },
-      error => Redirect(routes.ServerManagement.show(cloudServiceId)).flashing(error.data)
-    ))
-  }
-
-  def authenticateCloudServiceInfo = withAuthAsync { implicit user => implicit request =>
-    addServerInfoForm.bindFromRequest().fold(
-      forumWithErrors => Future(BadRequest(views.html.serverManagement.addCloudServiceInfo(forumWithErrors))),
-      data => {
-        cloudAPI.authenticate(data.apiKey).map(result => result.fold(
-          success => {
-            Server.findByUserId(user.id) match {
-              case Some(cloudService) => cloudService.copy(apiKey = data.apiKey).save()
-              case None => Server.create(user.id, data.apiKey)
-            }
-            Redirect(routes.ServerManagement.overview(user.id))
-          },
-          error => Redirect(routes.ServerManagement.addCloudServiceAccount()).flashing("error" -> "Api-key did not work!")))
-      }
-    )
+    Future.successful(Ok)
   }
 
 }
