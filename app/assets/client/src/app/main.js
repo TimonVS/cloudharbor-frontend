@@ -4,6 +4,8 @@ angular.module('app', [
   'ngRoute',
   'ngResource',
   'ngLodash',
+  'formly',
+  'formlyBootstrap',
   'ngMockE2E',
   'app.util',
   'app.containerManagement',
