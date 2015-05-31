@@ -1,6 +1,6 @@
 'use strict';
 
-function serverManagementFormCtrl ($http) {
+function serverManagementFormCtrl (CloudService) {
 
   var vm = this
 
@@ -11,10 +11,9 @@ function serverManagementFormCtrl ($http) {
   // Variable assignment
   vm.isOpen = true
   vm.model = {}
-
-  // todo: refactor to resource
-  $http.get('/servermanagement/server-options').then(function (response) {
-    vm.serverOptions = response.data
+  
+  CloudService.serverOptions().$promise.then(function (data) {
+    vm.serverOptions = data
   })
 
   function openForm () {

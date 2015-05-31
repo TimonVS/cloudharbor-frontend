@@ -19,7 +19,7 @@
                         <label for="serverRegion">Server region</label>
                         <select name="serverRegion" class="form-control" id="serverRegion" ng-model="serverManagementForm.serverForm.region"
                         ng-disabled="!serverManagementForm.serverOptions"
-                        ng-options="option.name for option in serverManagementForm.serverOptions.regions" required></select>
+                        ng-options="value.name group by value.group for (label, value) in serverManagementForm.serverOptions.regions" required></select>
                     </div>
 
                     <div class="form-group">

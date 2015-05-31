@@ -13,15 +13,6 @@ angular.module('app', [
   .config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.useXDomain = true
     delete $httpProvider.defaults.headers.common['X-Requested-With']
-
-    /*$httpProvider.interceptors.push(function() {
-      return {
-        'request': function(config) {
-          console.log(config)
-          config.url = 'localhost:9000'
-        }
-      };
-    });*/
   }])
 
   // ------------------------------------------------------------------
