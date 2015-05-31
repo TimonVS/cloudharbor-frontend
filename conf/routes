@@ -31,6 +31,7 @@ DELETE        /servermanagement/servers/:serverId/delete        controllers.Serv
 GET           /servermanagement/add-info                        controllers.ServerManagement.addApiKey
 GET           /servermanagement/api-key                         controllers.ServerManagement.getApiKey
 POST          /servermanagement/add-info                        controllers.ServerManagement.authenticateApiKey
+GET           /servermanagement/server-options                  controllers.ServerManagement.getServerOptions
 
 #TODO
 
