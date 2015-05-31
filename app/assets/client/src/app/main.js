@@ -91,12 +91,14 @@ angular.module('app', [
     })
 
     // mocks current list of servers
-    $httpBackend.whenGET('/mocks/servers').respond(servers);
+    $httpBackend.whenGET('/mocks/servers').respond(servers)
 
     // mocks current list of containers
-    $httpBackend.whenGET('/mocks/containers').respond(containers);
+    $httpBackend.whenGET('/mocks/containers').respond(containers)
 
     // dont mock anything else, specify pass through to avoid error.
-    $httpBackend.whenGET(/^\w+.*/).passThrough();
-    $httpBackend.whenPOST(/^\w+.*/).passThrough();
+    $httpBackend.whenGET(/^\w+.*/).passThrough()
+    $httpBackend.whenPOST(/^\w+.*/).passThrough()
+    $httpBackend.whenGET(/server-options/).passThrough()
+    $httpBackend.whenGET(/servermanagement\/servers/).passThrough()
   })
