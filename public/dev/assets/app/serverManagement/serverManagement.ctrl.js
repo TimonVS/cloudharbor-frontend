@@ -11,10 +11,9 @@ function serverManagementCtrl (Server) {
   vm.get = function () {
     vm.busy = true
 
-    Server.query({}, function (servers, headers) {
-      vm.servers = servers
+    Server.query({}, function (data, headers) {
+      vm.servers = data.servers
       vm.busy = false
-      console.log(servers)
     }, function error () {
 
     })

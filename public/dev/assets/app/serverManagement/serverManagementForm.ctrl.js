@@ -11,7 +11,7 @@ function serverManagementFormCtrl (CloudService) {
   // Variable assignment
   vm.isOpen = true
   vm.model = {}
-  
+
   CloudService.serverOptions().$promise.then(function (data) {
     vm.serverOptions = data
   })
