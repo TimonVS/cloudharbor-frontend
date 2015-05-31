@@ -79,23 +79,31 @@
                 </form>
             </div>
         </div>
-    </div>
 
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <tr>
-                <th>@Messages("server.overview.id")</th>
-                <th>@Messages("server.overview.name")</th>
-                <th>@Messages("server.overview.locked")</th>
-                <th>@Messages("server.overview.status")</th>
-                <th>@Messages("server.overview.image-name")</th>
-                <th>@Messages("server.overview.os")</th>
-                <th>@Messages("server.overview.ip")</th>
-                <th>@Messages("server.overview.region")</th>
-            </tr>
-            add table rows here
-        </table>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <tr>
+                    <th>@Messages("server.overview.id")</th>
+                    <th>@Messages("server.overview.name")</th>
+                    <th>@Messages("server.overview.locked")</th>
+                    <th>@Messages("server.overview.status")</th>
+                    <th>@Messages("server.overview.image-name")</th>
+                    <th>@Messages("server.overview.os")</th>
+                    <th>@Messages("server.overview.ip")</th>
+                    <th>@Messages("server.overview.region")</th>
+                </tr>
+                <tr ng-repeat="server in serverManagement.servers">
+                    <td ng-bind="server.id"></td>
+                    <td ng-bind="server.name"></td>
+                    <td ng-bind="server.locked"></td>
+                    <td ng-bind="server.status"></td>
+                    <td ng-bind="server.image.name"></td>
+                    <td ng-bind="server.image.distribution"></td>
+                    <td ng-bind="server.networks.v4[0].ip_address"></td><!--todo-->
+                    <td ng-bind="server.region.name"></td><!--todo-->
+                </tr>
+            </table>
+            <ch-spinner ng-show="serverManagement.busy"></ch-spinner>
+        </div>
     </div>
-
-    <a class="btn btn-default" href="@routes.ServerManagement.addServer()" role="button">@Messages("server.overview.add-server")</a>
 }
