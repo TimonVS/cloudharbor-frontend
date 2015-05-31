@@ -3,37 +3,41 @@
 # ~~~~
 
 # Home page
-GET         /                                  controllers.Application.index
+GET           /                                                 controllers.Application.index
 
 # Authentication
-GET         /login                             controllers.Auth.login
-GET         /logout                            controllers.Auth.logout
-POST        /authenticate                      controllers.Auth.authenticate
+GET           /login                                            controllers.Auth.login
+GET           /logout                                           controllers.Auth.logout
+POST          /authenticate                                     controllers.Auth.authenticate
 
 # User
-GET         /user/create                       controllers.Users.createUser
-POST        /user/create                       controllers.Users.createUserPost
-GET         /user/profile                      controllers.Users.showUser
-POST        /user/profile                      controllers.Users.updateUser
+GET           /user/create                                      controllers.Users.createUser
+POST          /user/create                                      controllers.Users.createUserPost
+GET           /user/profile                                     controllers.Users.showUser
+POST          /user/profile                                     controllers.Users.updateUser
 
 # ContainerManagement
-GET         /management/overview               controllers.ContainerManagement.overview
+GET           /management/overview                              controllers.ContainerManagement.overview
 
 # ServerManagement
-GET         /cloudservices/overview            controllers.ServerManagement.overviewDefault
-GET         /cloudservices/overview/:id        controllers.ServerManagement.overview(id: Int)
-GET         /cloudservices/:id                 controllers.ServerManagement.show(id: String)
-GET         /cloudservices/add/account         controllers.ServerManagement.addCloudServiceAccount
-POST        /cloudservices/add/account         controllers.ServerManagement.authenticateCloudServiceInfo
-GET         /cloudservices/add/server          controllers.ServerManagement.addCloudService
-POST        /cloudservices/add/server          controllers.ServerManagement.authenticateCloudService
-GET         /cloudservice/stop/:id             controllers.ServerManagement.powerOff(id: String)
-GET         /cloudservice/start/:id            controllers.ServerManagement.powerOn(id: String)
-GET         /cloudservice/delete/:id           controllers.ServerManagement.delete(id: String)
+GET           /servermanagement                                 controllers.ServerManagement.overview
+GET           /servermanagement/servers                         controllers.ServerManagement.servers
+GET           /servermanagement/servers/add                     controllers.ServerManagement.addServer
+POST          /servermanagement/servers/add                     controllers.ServerManagement.createServer
+GET           /servermanagement/servers/:serverId               controllers.ServerManagement.show(serverId: String)
+POST          /servermanagement/servers/:serverId/stop          controllers.ServerManagement.powerOff(serverId: String)
+POST          /servermanagement/servers/:serverId/start         controllers.ServerManagement.powerOn(serverId: String)
+DELETE        /servermanagement/servers/:serverId/delete        controllers.ServerManagement.delete(serverId: String)
+GET           /servermanagement/add-info                        controllers.ServerManagement.addApiKey
+GET           /servermanagement/api-key                         controllers.ServerManagement.getApiKey
+POST          /servermanagement/add-info                        controllers.ServerManagement.authenticateApiKey
+
+#TODO
+
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /images/*file                      controllers.Assets.at(path="/public/images", file)
-GET         /bower_components/*file            controllers.Assets.at(path="/public/bower_components", file)
-GET         /assets/*file                      controllers.Assets.at(path="/public/dev/assets", file)
+GET           /images/*file                                     controllers.Assets.at(path="/public/images", file)
+GET           /bower_components/*file                           controllers.Assets.at(path="/public/bower_components", file)
+GET           /assets/*file                                     controllers.Assets.at(path="/public/dev/assets", file)
 # Map web jar assets from sbt to the /webjars URL path (includes bootstrap & angularjs
-GET         /webjars/*file                     controllers.WebJarAssets.at(file)
+GET           /webjars/*file                                    controllers.WebJarAssets.at(file)
