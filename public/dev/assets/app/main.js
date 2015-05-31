@@ -4,8 +4,6 @@ angular.module('app', [
   'ngRoute',
   'ngResource',
   'ngLodash',
-  'formly',
-  'formlyBootstrap',
   'ngMockE2E',
   'app.util',
   'app.containerManagement',
@@ -15,6 +13,15 @@ angular.module('app', [
   .config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.useXDomain = true
     delete $httpProvider.defaults.headers.common['X-Requested-With']
+
+    /*$httpProvider.interceptors.push(function() {
+      return {
+        'request': function(config) {
+          console.log(config)
+          config.url = 'localhost:9000'
+        }
+      };
+    });*/
   }])
 
   // ------------------------------------------------------------------
@@ -93,12 +100,14 @@ angular.module('app', [
     })
 
     // mocks current list of servers
-    $httpBackend.whenGET('/mocks/servers').respond(servers);
+    $httpBackend.whenGET('/mocks/servers').respond(servers)
 
     // mocks current list of containers
-    $httpBackend.whenGET('/mocks/containers').respond(containers);
+    $httpBackend.whenGET('/mocks/containers').respond(containers)
 
     // dont mock anything else, specify pass through to avoid error.
-    $httpBackend.whenGET(/^\w+.*/).passThrough();
-    $httpBackend.whenPOST(/^\w+.*/).passThrough();
+    $httpBackend.whenGET(/^\w+.*/).passThrough()
+    $httpBackend.whenPOST(/^\w+.*/).passThrough()
+    $httpBackend.whenGET(/server-options/).passThrough()
+    $httpBackend.whenGET(/servermanagement\/servers/).passThrough()
   })

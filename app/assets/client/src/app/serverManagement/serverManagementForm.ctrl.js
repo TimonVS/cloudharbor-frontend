@@ -1,25 +1,25 @@
 'use strict';
 
-function serverManagementFormCtrl ($scope) {
+function serverManagementFormCtrl ($http) {
 
   var vm = this
 
   // Function assignment
+  vm.openForm = openForm
   vm.onSubmit = onSubmit
 
   // Variable assignment
-  vm.serverModel = {}
+  vm.isOpen = true
+  vm.model = {}
 
-  vm.serverFormFields = [
-    {
-      key: 'name',
-      type: 'input',
-      templateOptions: {
-        label: 'Server name',
-        placeholder: 'Enter server name'
-      }
-    }
-  ]
+  // todo: refactor to resource
+  $http.get('/servermanagement/server-options').then(function (response) {
+    vm.serverOptions = response.data
+  })
+
+  function openForm () {
+    vm.isOpen = true
+  }
 
   function onSubmit () {}
 

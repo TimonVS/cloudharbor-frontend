@@ -195,4 +195,20 @@ object ServerManagement extends Controller with Secured {
     } getOrElse Future.successful(BadRequest(Json.obj("error" -> "API-Key needs to be provided")))
   }
 
+  def getServerOptions = withAuthAsync { implicit user => implicit request =>
+    Server.findByUserId(user.id) match {
+      case Some(cloudService) =>
+        WS.url(s"http://$serverManagementUrl/server-options")
+          .withHeaders(cloudInfo(cloudService.apiKey))
+          .get()
+          .map(r => Ok(r.json))
+          .recover {
+          case _: ConnectException => BadRequest(unavailableJsonMessage)
+          case _ => InternalServerError(unexpectedError)
+        }
+      case None =>
+        Future.successful(Redirect(routes.ServerManagement.addApiKey()))
+    }
+  }
+
 }

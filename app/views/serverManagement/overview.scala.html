@@ -3,14 +3,82 @@
 @()(implicit request: RequestHeader, user: User)
 
 @main("Server overview") {
-    <div ng-controller="serverManagementCtrl as serverManagement"></div>
+    <div ng-controller="serverManagementCtrl as serverManagement">
+        <div ng-controller="serverManagementFormCtrl as serverManagementForm">
+            <a href="" class="btn btn-primary" ng-click="serverManagementForm.openForm()">Add server</a>
 
-    <div ng-controller="serverManagementFormCtrl as serverManagementForm">
-        <form ng-submit="serverManagementForm.onSubmit()" novalidate>
-            <formly-form model="serverManagementForm.serverModel" fields="serverManagementForm.serverFormFields">
-                <button type="submit" class="btn btn-primary submit-button">Create server</button>
-            </formly-form>
-        </form>
+            <div class="well" ng-if="serverManagementForm.isOpen">
+                <form name="serverManagementForm.serverForm" ng-submit="serverManagementForm.onSubmit()" novalidate>
+                    <div class="form-group">
+                        <label for="serverName">Server name</label>
+                        <input type="text" class="form-control" id="serverName" placeholder="Enter server name"
+                        ng-model="serverManagementForm.serverForm.name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="serverRegion">Server region</label>
+                        <select name="serverRegion" class="form-control" id="serverRegion" ng-model="serverManagementForm.serverForm.region"
+                        ng-disabled="!serverManagementForm.serverOptions"
+                        ng-options="option.name for option in serverManagementForm.serverOptions.regions" required></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="serverRegion">Server size</label>
+                        <select name="serverRegion" class="form-control" id="serverRegion" ng-model="serverManagementForm.serverForm.size"
+                        ng-disabled="!serverManagementForm.serverOptions || !serverManagementForm.serverForm.region
+                        || !serverManagementForm.serverForm.region.sizes.length"
+                        ng-options="option for option in serverManagementForm.serverForm.region.sizes" required></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="serverName">Discovery token</label>
+                        <input type="text" class="form-control" id="discoveryToken" placeholder="Enter a discovery token"
+                        ng-model="serverManagementForm.serverForm.discoveryToken" required>
+                        <p class="help-block">Use an existing token to .... A new token can be generated on
+                            <a href="https://discovery.etcd.io/new">https://discovery.etcd.io/new</a>.
+                            Leaving this field empty will result in a newly generated token.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label for="backupsEnabled">
+                                <input type="checkbox" name="backupsEnabled" id="backupsEnabled"
+                                ng-model="serverManagementForm.serverForm.backupsEnabled">
+                                Backups enabled
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label for="ipv6Enabled">
+                                <input type="checkbox" name="ipv6Enabled" id="ipv6Enabled"
+                                ng-model="serverManagementForm.serverForm.ipv6Enabled">
+                                IPv6 enabled
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label for="sshEnabled">
+                                <input type="checkbox" name="sshEnabled" id="sshEnabled"
+                                ng-model="serverManagementForm.serverForm.sshEnabled">
+                                SSH enabled
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" ng-if="serverManagementForm.serverForm.sshEnabled === true">
+                        <label for="sshKey">SSH Public Key</label>
+                        <textarea type="text" class="form-control" id="sshKey" placeholder="Enter SSH Public Key"
+                        ng-model="serverManagementForm.serverForm.sshKey" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Create server</button>
+                </form>
+            </div>
+        </div>
     </div>
 
     <div class="table-responsive">
