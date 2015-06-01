@@ -17,7 +17,7 @@ function ServerFactory ($resource, $q, Container) {
       },
       interceptor: {
         response: function (response) {
-          response.resource.$meta = response.data.$metadata
+          response.resource.$meta = response.data.$meta
           return response.resource
         }
       }
