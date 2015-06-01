@@ -10,18 +10,16 @@ function ServerFactory ($resource, $q, Container) {
     query: {
       method: 'GET',
       isArray: true,
-      /*interceptor: {
-        response: function (data) {
-          console.log(data)
-          return data
-        },
-        responseError: function (error) {
-          console.log(error)
-          $q.reject(error)
-        }
-      }*/
       transformResponse: function (data) {
-        return angular.fromJson(data).servers
+        var result = angular.fromJson(data)
+        result.servers.$meta = {}
+        return result.servers
+      },
+      interceptor: {
+        response: function (response) {
+          response.resource.$meta = response.data.$metadata
+          return response.resource
+        }
       }
     }
   })
