@@ -1,14 +1,34 @@
 'use strict';
 
-function ServerFactory ($resource, Container) {
+function ServerFactory ($resource, $q, Container) {
 
-  var Server = $resource('/servermanagement/servers/:id', { id: '@id' }, {
-    query: { method: 'GET' }
+  var Server = $resource('/servermanagement/servers/:action/:id', { id: '@id' }, {
+    create: {
+      method: 'POST',
+      params: { action: 'add' }
+    },
+    query: {
+      method: 'GET',
+      isArray: true,
+      /*interceptor: {
+        response: function (data) {
+          console.log(data)
+          return data
+        },
+        responseError: function (error) {
+          console.log(error)
+          $q.reject(error)
+        }
+      }*/
+      transformResponse: function (data) {
+        return angular.fromJson(data).servers
+      }
+    }
   })
 
   angular.extend(Server.prototype, {
     getContainers: function () {
-      return Container.query()
+      return Container.query({ id: this.networks.v4[0].ip_address })
     }
   })
 

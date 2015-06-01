@@ -141,7 +141,7 @@ object ServerManagement extends Controller with Secured {
   def createServer = withAuthAsync { implicit user => implicit request =>
     Server.findByUserId(user.id) match {
       case Some(server) =>
-        WS.url(s"$serverManagementUrl/servers/add")
+        WS.url(s"http://$serverManagementUrl/servers/add")
           .withHeaders(cloudInfo(server.apiKey))
           .post(request.body.asJson.get)
           .map(r => Ok(r.json))
