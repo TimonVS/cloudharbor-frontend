@@ -41,16 +41,8 @@ object ContainerManagement extends Controller with Secured{
       case _: ConnectException => InternalServerError
     }
 
-  def overview = withAuthAsync{ implicit user => implicit request =>
-    Server.findByUserId(user.id) match {
-      case Some(cloudService) =>
-        cloudAPI.getCloudServers(cloudService.apiKey).map(result => result.fold(
-          success => Ok(views.html.containerManagement.overview(success.data)),
-          error => BadRequest(views.html.containerManagement.overview(List())).flashing(error.data)
-        ))
-      case None => Future(Redirect(routes.ServerManagement.addCloudServiceAccount())
-        .flashing("error" -> "Add your api-key first"))
-    }
+  def overview = withAuth { implicit user => implicit request =>
+    Ok(views.html.containerManagement.overview())
   }
 
   def show(serverUrl: String, containerId: String) = TODO

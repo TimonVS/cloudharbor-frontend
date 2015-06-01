@@ -1,16 +1,17 @@
 @import models.DigitalOcean.Droplet
-@(servers: List[Droplet])(implicit request: RequestHeader, user: User)
+@()(implicit request: RequestHeader, user: User)
 
 
 @main("Container overview") {
     <div ng-controller="containerManagementCtrl as management">
         <accordion class="management-overview">
-            <accordion-group ng-repeat="server in management.servers" is-open="true" class="overview-item">
+            <accordion-group ng-repeat="server in management.servers" ng-click="management.getContainers(server)"
+            is-open="true" class="overview-item">
                 <accordion-heading>
                     <span ng-bind="server.name"></span>
                 </accordion-heading>
                 <div class="containers-list">
-                    <a ng-repeat="container in management.containers" href="" class="containers-list-item">
+                    <a ng-repeat="container in server.containers" href="" class="containers-list-item">
                         <span ng-bind="container.Id" class="item-name"></span>
                         <span class="item-status">Running</span>
                         <span class="item-created"><i class="mdi mdi-clock"></i> 5 hours ago</span>
@@ -18,41 +19,6 @@
                 </div>
             </accordion-group>
         </accordion>
-    </div>
-
-    @for(server <- servers) {
-        @for(ipAddress <- server.getIpAddresses){
-            <script>
-            $.get( "@routes.ContainerManagement.listContainers(ipAddress)", function( data ) {
-                $.each(data, function (i, item) {
-                    var url = "localhost:9000/management/containers/" + data.Id;
-                    $('<tr class="table-row-link" onclick="document.location = url">').append(
-                        $('<td>' ).text(item.Id),
-                        $('<td>').text(item.Image),
-                        $('<td>').text(item.Command),
-                        $('<td>').text(item.Created),
-                        $('<td>' ).text(item.Status)
-                    ).appendTo('#container_table_@server.id');
-                    // $('#records_table').append($tr);
-                    //console.log($tr.wrap('<p>').html());
-                });
-            });
-            </script>
-        }
-    }
-    <div>
-    @for(server <- servers) {
-        <h3>@server.name</h3>
-        <table class="table table-hover" id="container_table_@server.id">
-            <tr>
-                <th>Id</th>
-                <th>Image</th>
-                <th>Command</th>
-                <th>Created</th>
-                <th>Status</th>
-            </tr>
-        </table>
-    }
     </div>
 }
 

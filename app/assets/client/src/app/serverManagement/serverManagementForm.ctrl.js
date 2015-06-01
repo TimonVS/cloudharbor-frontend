@@ -1,6 +1,6 @@
 'use strict';
 
-function serverManagementFormCtrl (CloudService) {
+function serverManagementFormCtrl ($scope, CloudService, Server) {
 
   var vm = this
 
@@ -11,6 +11,7 @@ function serverManagementFormCtrl (CloudService) {
   // Variable assignment
   vm.isOpen = true
   vm.model = {}
+  vm.serverForm = new Server()
 
   CloudService.serverOptions().$promise.then(function (data) {
     vm.serverOptions = data
@@ -20,10 +21,30 @@ function serverManagementFormCtrl (CloudService) {
     vm.isOpen = true
   }
 
-  function onSubmit () {}
+  function onSubmit (form) {
+    if (form.$invalid) return
+
+    vm.busy = true
+
+    Server.create({
+      'name': vm.serverForm.name,
+      'image': 'coreos-stable',
+      'region': vm.serverForm.region.slug,
+      'size': vm.serverForm.size,
+      'ipv6': vm.serverForm.ipv6Enabled || false,
+      'backups': vm.serverForm.backupsEnabled || false,
+      'ssh_keys': [770829]
+    }, success, error)
+
+    function success (response) {
+      $scope.$emit('serverCreated', response)
+    }
+
+    function error (response) {}
+  }
 
   // ------------------------------------------------------------------
-  // Event listeners
+  // Events
   // ------------------------------------------------------------------
 
 

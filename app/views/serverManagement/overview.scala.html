@@ -8,7 +8,7 @@
             <a href="" class="btn btn-primary" ng-click="serverManagementForm.openForm()">Add server</a>
 
             <div class="well" ng-if="serverManagementForm.isOpen">
-                <form name="serverManagementForm.serverForm" ng-submit="serverManagementForm.onSubmit()" novalidate>
+                <form name="serverManagementForm.serverForm" ng-submit="serverManagementForm.onSubmit(serverManagementForm.serverForm)" novalidate>
                     <div class="form-group">
                         <label for="serverName">Server name</label>
                         <input type="text" class="form-control" id="serverName" placeholder="Enter server name"

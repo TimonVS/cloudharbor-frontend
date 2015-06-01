@@ -4,6 +4,7 @@ angular.module('app', [
   'ngRoute',
   'ngResource',
   'ngLodash',
+  'ngAnimate',
   'ngMockE2E',
   'ui.bootstrap',
   'app.util',
@@ -102,6 +103,9 @@ angular.module('app', [
     $httpBackend.whenPOST(/^\w+.*/).passThrough()
     $httpBackend.whenGET(/server-options/).passThrough()
     $httpBackend.whenGET(/servermanagement\/servers/).passThrough()
+    $httpBackend.whenPOST(/servermanagement\/servers\/add/).passThrough()
+    $httpBackend.whenGET(/servermanagement\/servers\/add/).passThrough()
+    $httpBackend.whenGET(/management\/containers/).passThrough()
   })
 
   .constant('accordionConfig', {

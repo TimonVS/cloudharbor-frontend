@@ -18,7 +18,7 @@ POST          /user/profile                                     controllers.User
 
 # ContainerManagement
 GET         /management/overview                                controllers.ContainerManagement.overview
-GET         /management/containers                              controllers.ContainerManagement.listContainers(serverUrl: String)
+GET         /management/containers/:serverUrl                   controllers.ContainerManagement.listContainers(serverUrl: String)
 GET         /management/containers/:containerId                 controllers.ContainerManagement.show(serverUrl: String, containerId: String)
 POST        /management/containers/:containerId/start           controllers.ContainerManagement.startContainer(serverUrl: String, containerId: String)
 POST        /management/containers/:containerId/stop            controllers.ContainerManagement.stopContainer(serverUrl: String, containerId: String)
