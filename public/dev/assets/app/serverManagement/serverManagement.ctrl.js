@@ -1,6 +1,6 @@
 'use strict';
 
-function serverManagementCtrl (Server) {
+function serverManagementCtrl ($scope, Server) {
 
   var vm = this
 
@@ -11,8 +11,8 @@ function serverManagementCtrl (Server) {
   vm.get = function () {
     vm.busy = true
 
-    Server.query({}, function (data, headers) {
-      vm.servers = data.servers
+    Server.query({}, function (data) {
+      vm.servers = data
       vm.busy = false
     }, function error () {
 
@@ -27,6 +27,18 @@ function serverManagementCtrl (Server) {
 
   // inital get
   vm.get()
+
+  // ------------------------------------------------------------------
+  // Events
+  // ------------------------------------------------------------------
+
+  $scope.$on('serverCreated', function (event, data) {
+    event.stopPropagation()
+    console.log(data)
+    Server.get({ id: data.success }).$promise.then(function (response) {
+      vm.servers.push(response)
+    })
+  })
 
 }
 
