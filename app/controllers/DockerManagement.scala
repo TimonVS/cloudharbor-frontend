@@ -8,9 +8,7 @@ import play.api.mvc.Controller
  */
 trait DockerManagement extends Controller {
 
-  val managementUrl = current.configuration.getString("management.url").get + ":" + current.configuration.getInt("management.port").get
+  lazy val managementUrl = current.configuration.getString("management.url").get + ":" + current.configuration.getInt("management.port").get
 
-  def dockerInfo(serverUrl: String): (String, String) = {
-    "Docker-Info" -> (s"$serverUrl:4243")
-  }
+  def dockerInfo(serverUrl: String): (String, String) = "Docker-Info" -> s"$serverUrl:4243"
 }
