@@ -48,6 +48,7 @@ GET           /servermanagement/add-info                         controllers.Ser
 GET           /servermanagement/api-key                          controllers.ServerManagement.getApiKey
 POST          /servermanagement/add-info                         controllers.ServerManagement.authenticateApiKey
 GET           /servermanagement/server-options                   controllers.ServerManagement.getServerOptions
+GET           /servermanagement/ssh-keys                         controllers.ServerManagement.getSSHKeys
 
 #TODO
 
