@@ -1,10 +1,24 @@
+@import models.DigitalOcean.Droplet
 @()(implicit request: RequestHeader, user: User)
 
+
 @main("Container overview") {
-    here is the overview
-
-    <div ng-controller="containerManagementCtrl">
-        <ch-image-search></ch-image-search>
+    <div ng-controller="containerManagementCtrl as management">
+        <accordion class="management-overview">
+            <accordion-group ng-repeat="server in management.servers" ng-click="management.getContainers(server)"
+            is-open="true" class="overview-item">
+                <accordion-heading>
+                    <span ng-bind="server.name"></span>
+                </accordion-heading>
+                <div class="containers-list">
+                    <a ng-repeat="container in server.containers" href="" class="containers-list-item">
+                        <span ng-bind="container.Id" class="item-name"></span>
+                        <span class="item-status">Running</span>
+                        <span class="item-created"><i class="mdi mdi-clock"></i> 5 hours ago</span>
+                    </a>
+                </div>
+            </accordion-group>
+        </accordion>
     </div>
-
 }
+

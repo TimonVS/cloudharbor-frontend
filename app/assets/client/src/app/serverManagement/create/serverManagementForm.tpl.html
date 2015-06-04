@@ -1,0 +1,78 @@
+<div ng-controller="serverManagementFormCtrl as serverForm">
+    <a href="" class="btn btn-primary" ng-click="serverForm.openForm()">Add server</a>
+
+    <div class="well" ng-if="serverForm.isOpen">
+        <form name="serverForm.form" ng-submit="serverForm.onSubmit(serverForm.form)" novalidate>
+            <div class="form-group" ng-class="{ 'has-error' : serverForm.form.serverName.$invalid && !serverForm.form.serverName.$pristine }">
+                <label for="serverName">Server name</label>
+                <input type="text" class="form-control" name="serverName" id="serverName" placeholder="Enter server name"
+                       ng-model="serverForm.form.name" ng-pattern="/[a-zA-Z\.\-0-9]+/g" required>
+                <div ng-show="!serverForm.form.serverName.$pristine && serverForm.form.serverName.$error">
+                    <p ng-show="serverForm.form.serverName.$error.pattern">Your server name must only contain alphanumeric characters, dashes, and periods.</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="serverRegion">Server region</label>
+                <select name="serverRegion" class="form-control" name="serverRegion" id="serverRegion"
+                        ng-model="serverForm.form.region" ng-disabled="!serverForm.serverOptions"
+                        ng-options="value.name group by value.group disable when !value.available for (label, value) in serverForm.serverOptions.regions" required></select>
+            </div>
+
+            <div class="form-group">
+                <label for="serverSize">Server size</label>
+                <select name="serverSize" class="form-control" name="serverSize" id="serverSize"
+                        ng-model="serverForm.form.size"
+                        ng-disabled="!serverForm.serverOptions || !serverForm.form.region
+                        || !serverForm.form.region.sizes.length"
+                        ng-options="option for option in serverForm.form.region.sizes" required></select>
+            </div>
+
+            <div class="form-group">
+                <label for="discoveryToken">Discovery token</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" name="discoveryToken" id="discoveryToken"
+                           placeholder="Enter a discovery token" ng-model="serverForm.form.discovery_token" required>
+                     <span class="input-group-btn">
+                         <button class="btn btn-default" type="button" ng-click="serverForm.generateToken()">
+                             <span class="mdi mdi-refresh"></span>
+                         </button>
+                     </span>
+                </div>
+
+                <p class="help-block">Use an existing token to .... A new token can be generated on
+                    <a href="https://discovery.etcd.io/new" target="_blank">https://discovery.etcd.io/new</a>.
+                    Leaving this field empty will result in a newly generated token.</p>
+            </div>
+
+            <div class="form-group">
+                <label for="sshKeyId">SSH key</label>
+                <select class="form-control" name="sshKeyId" id="sshKeyId" ng-model="serverForm.form.ssh_keys"
+                        ng-options="item.name for item in serverForm.sshKeys" required></select>
+                <p class="help-block">Select a SSH key to ...</p>
+            </div>
+
+            <div class="form-group">
+                <div class="checkbox">
+                    <label for="backupsEnabled">
+                        <input type="checkbox" name="backupsEnabled" id="backupsEnabled"
+                               ng-model="serverForm.form.backups_enabled">
+                        Enable backups
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="checkbox">
+                    <label for="ipv6Enabled">
+                        <input type="checkbox" name="ipv6Enabled" id="ipv6Enabled"
+                               ng-model="serverForm.form.ipv6_enabled">
+                        Enable IPv6
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" ng-disabled="serverForm.form.$invalid">Create server</button>
+        </form>
+    </div>
+</div>
