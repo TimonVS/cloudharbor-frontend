@@ -14,7 +14,6 @@ function imageSearch (dockerHubApi) {
         current: 1
       }
       $scope.results = []
-      $scope.selectedImage = 'test'
       $scope.search = search
 
       // ------------------------------------------------------------------
