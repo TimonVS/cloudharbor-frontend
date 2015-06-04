@@ -6,12 +6,13 @@ $bower-path: '/public/bower_components/';
 // injector
 // endinjector
 
+// Vendor
+@import "public/bower_components/bootstrap-sass-official/assets/stylesheets/_bootstrap.scss";
+
+// Components
 @import "../app/containerManagement/containerManagement";
 @import "../components/directives/imageSearch/imageSearch";
 @import "../components/directives/spinner/spinner";
-
-// Vendor
-@import "public/bower_components/bootstrap-sass-official/assets/stylesheets/_bootstrap.scss";
 
 // bootstrap-jasny
 @import "public/bower_components/bootstrap-jasny/scss/variables";

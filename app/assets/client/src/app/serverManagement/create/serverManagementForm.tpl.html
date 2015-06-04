@@ -28,10 +28,10 @@
                         ng-options="option for option in serverForm.form.region.sizes" required></select>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" ng-class="{ 'has-error' : serverForm.form.discoveryToken.$invalid && !serverForm.form.discoveryToken.$pristine }">
                 <label for="discoveryToken">Discovery token</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" name="discoveryToken" id="discoveryToken"
+                    <input type="url" class="form-control" name="discoveryToken" id="discoveryToken"
                            placeholder="Enter a discovery token" ng-model="serverForm.form.discovery_token" required>
                      <span class="input-group-btn">
                          <button class="btn btn-default" type="button" ng-click="serverForm.generateToken()">
