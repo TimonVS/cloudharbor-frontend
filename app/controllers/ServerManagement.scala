@@ -7,38 +7,26 @@ import play.api.Play.current
 import play.api.libs.concurrent.Akka
 import play.api.libs.json.Json
 import play.api.libs.ws.WS
-import play.api.mvc.{Result, Results, Controller}
+import play.api.mvc.Controller
+import utils.WsUtils
 import scala.concurrent.{Future}
 
 /**
  * Created by ThomasWorkBook on 17/04/15.
  * Controller object for every Server related action
  */
-object ServerManagement extends Controller with Secured {
+object ServerManagement extends Controller with Secured with WsUtils {
 
   val serverManagementUrl = current.configuration.getString("serverManagement.url").get + ":" +
     current.configuration.getInt("serverManagement.port").get
 
-  val unavailableJsonMessage = Json.obj("error" -> "Sorry, but the Server Management Service is currently not available")
-  val unexpectedError = Json.obj("error" -> "Sorry, but an unexpected error occurred")
+  val SERVER_MANAGEMENT = "Server Management"
 
   lazy val notificationActor = Akka.system.actorOf(NotificationActor.props, name = "notificationActor")
 
   def cloudInfo(apiKey: String): (String, String) = {
     "Cloud-Info" -> (apiKey)
   }
-
-  def sendEmptyPost(url: String, apiKey: String): Future[Result] =
-    WS.url(url)
-      .withHeaders(cloudInfo(apiKey))
-      .post(Results.EmptyContent()).map(r => r.status match{
-      case NO_CONTENT => Ok(r.json)
-      case NOT_MODIFIED => BadRequest(r.json)
-      case NOT_FOUND => NotFound(r.json)
-      case INTERNAL_SERVER_ERROR => BadRequest(r.json)
-    }) recover{
-      case _: ConnectException => InternalServerError
-    }
 
   implicit val context = play.api.libs.concurrent.Execution.Implicits.defaultContext
 
@@ -58,11 +46,11 @@ object ServerManagement extends Controller with Secured {
           WS.url(s"http://$serverManagementUrl/servers")
             .withHeaders(cloudInfo(cloudService.apiKey))
             .get()
-            .map(r => Ok(r.json))
+            .map(forwardResponse(_))
             .recover {
-            case _: ConnectException => BadRequest(unavailableJsonMessage)
-            case _ => InternalServerError(unexpectedError)
-          }
+              case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
+              case _ => InternalServerError(unexpectedError)
+            }
 
         case None =>
           Future.successful(Redirect(routes.ServerManagement.addApiKey()))
@@ -78,9 +66,9 @@ object ServerManagement extends Controller with Secured {
         WS.url(s"http://$serverManagementUrl/servers/$serverId")
           .withHeaders(cloudInfo(cloudService.apiKey))
           .get()
-          .map(r => Ok(r.json))
+          .map(forwardResponse(_))
           .recover {
-            case _: ConnectException => BadRequest(unavailableJsonMessage)
+            case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
             case _ => InternalServerError(unexpectedError)
         }
       case None =>
@@ -94,7 +82,7 @@ object ServerManagement extends Controller with Secured {
   def powerOff(serverId: String) = withAuthAsync { implicit user => implicit request =>
     Server.findByUserId(user.id) match{
       case Some(cloudService) =>
-        sendEmptyPost(s"$serverManagementUrl/servers/$serverId/stop", cloudService.apiKey)
+        sendEmptyPost(s"$serverManagementUrl/servers/$serverId/stop", cloudService.apiKey, cloudInfo, SERVER_MANAGEMENT)
       case None =>
         Future.successful(Redirect(routes.ServerManagement.addApiKey()))
     }
@@ -106,7 +94,7 @@ object ServerManagement extends Controller with Secured {
   def powerOn(serverId: String) = withAuthAsync { implicit user => implicit request =>
     Server.findByUserId(user.id) match{
       case Some(cloudService) =>
-        sendEmptyPost(s"$serverManagementUrl/servers/$serverId/start", cloudService.apiKey)
+        sendEmptyPost(s"$serverManagementUrl/servers/$serverId/start", cloudService.apiKey, cloudInfo, SERVER_MANAGEMENT)
       case None =>
         Future.successful(Redirect(routes.ServerManagement.addApiKey()))
     }
@@ -121,9 +109,9 @@ object ServerManagement extends Controller with Secured {
         WS.url(s"$serverManagementUrl/servers/$serverId/delete")
           .withHeaders(cloudInfo(cloudService.apiKey))
           .delete()
-          .map(r => Ok(r.json))
+          .map(forwardResponse(_))
           .recover {
-            case _: ConnectException => BadRequest(unavailableJsonMessage)
+            case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
             case _ => InternalServerError(unexpectedError)
           }
       case None =>
@@ -144,9 +132,9 @@ object ServerManagement extends Controller with Secured {
         WS.url(s"http://$serverManagementUrl/servers/add")
           .withHeaders(cloudInfo(server.apiKey))
           .post(request.body.asJson.get)
-          .map(r => Ok(r.json))
+          .map(forwardResponse(_))
           .recover {
-            case _: ConnectException => BadRequest(unavailableJsonMessage)
+            case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
             case _ => InternalServerError(unexpectedError)
           }
       case None => Future.successful(NotFound(Json.obj("error" -> "Api Key not found")))
@@ -189,7 +177,7 @@ object ServerManagement extends Controller with Secured {
           }
         )
         .recover {
-          case _: ConnectException => BadRequest(unavailableJsonMessage)
+          case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
           case _ => InternalServerError(unexpectedError)
         }
     } getOrElse Future.successful(BadRequest(Json.obj("error" -> "API-Key needs to be provided")))
@@ -201,11 +189,11 @@ object ServerManagement extends Controller with Secured {
         WS.url(s"http://$serverManagementUrl/server-options")
           .withHeaders(cloudInfo(cloudService.apiKey))
           .get()
-          .map(r => Ok(r.json))
+          .map(forwardResponse(_))
           .recover {
-          case _: ConnectException => BadRequest(unavailableJsonMessage)
-          case _ => InternalServerError(unexpectedError)
-        }
+            case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
+            case _ => InternalServerError(unexpectedError)
+          }
       case None =>
         Future.successful(Redirect(routes.ServerManagement.addApiKey()))
     }
