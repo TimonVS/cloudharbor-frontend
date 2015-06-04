@@ -194,9 +194,22 @@ object ServerManagement extends Controller with Secured with WsUtils {
             case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
             case _ => InternalServerError(unexpectedError)
           }
-      case None =>
-        Future.successful(Redirect(routes.ServerManagement.addApiKey()))
+      case None => Future.successful(Redirect(routes.ServerManagement.addApiKey()))
     }
   }
 
+  def getSSHKeys() = withAuthAsync { implicit user => implicit request =>
+    Server.findByUserId(user.id) match {
+      case Some(cloudService) =>
+        WS.url(s"http://$serverManagementUrl/ssh")
+          .withHeaders(cloudInfo(cloudService.apiKey))
+          .get()
+          .map(forwardResponse(_))
+          .recover {
+            case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
+            case _ => InternalServerError(unexpectedError)
+        }
+      case None => Future.successful(Redirect(routes.ServerManagement.addApiKey()))
+    }
+  }
 }
