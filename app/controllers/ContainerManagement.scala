@@ -1,15 +1,11 @@
 package controllers
 
 import java.net.ConnectException
-import controllers.ServerManagement._
-import models.Server
-import play.api.libs.json.Json
 import play.api.libs.ws.WS
-import play.api.mvc.{Results, Result, Controller}
+import play.api.mvc.Controller
 import play.api.Play.current
-import play.api.libs.concurrent.Execution.Implicits._
+import utils.WsUtils
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 /**
  * Created by ThomasWorkBook on 17/04/15.
@@ -18,28 +14,14 @@ import scala.concurrent.Future
  * Implement logging + retry with ping to check if the management service is available
  * TODO: remove hardcoded managementUrl and implement ETCD
  */
-object ContainerManagement extends Controller with Secured{
+object ContainerManagement extends Controller with Secured with WsUtils{
 
   val managementUrl = current.configuration.getString("management.url").get + ":" + current.configuration.getInt("management.port").get
-
-  val unavailableJsonMessage = Json.obj("error" -> "Sorry, but the Container Management Service is currently not available")
-  val unexpectedError = Json.obj("error" -> "Sorry, but an unexpected error occurred")
+  val CONTAINER_MANAGEMENT = "Container Management"
 
   def dockerInfo(serverUrl: String): (String, String) = {
     "Docker-Info" -> (s"$serverUrl:4243")
   }
-
-  def sendEmptyPost(url: String, serverUrl: String): Future[Result] =
-    WS.url(url)
-      .withHeaders(dockerInfo(serverUrl))
-      .post(Results.EmptyContent()).map(r => r.status match{
-        case NO_CONTENT => Ok(r.json)
-        case NOT_MODIFIED => BadRequest(r.json)
-        case NOT_FOUND => NotFound(r.json)
-        case INTERNAL_SERVER_ERROR => BadRequest(r.json)
-    }) recover{
-      case _: ConnectException => InternalServerError
-    }
 
   def overview = withAuth { implicit user => implicit request =>
     Ok(views.html.containerManagement.overview())
@@ -51,23 +33,20 @@ object ContainerManagement extends Controller with Secured{
     WS.url(s"http://$managementUrl/ping")
       .withHeaders(dockerInfo(serverUrl))
       .get()
-      .map{r => r.status match {
-        case OK => Ok(r.json)
-        case _ => BadRequest(r.json)
+      .map(forwardResponse(_))
+      .recover{
+        case _: ConnectException => InternalServerError(unavailableJsonMessage(CONTAINER_MANAGEMENT))
+        case _ => InternalServerError(unexpectedError)
       }
-    } recover{
-      case _: ConnectException => InternalServerError(unavailableJsonMessage)
-      case _ => InternalServerError(unexpectedError)
-    }
   )
 
   def listContainers(serverUrl: String) = withAuthAsync { implicit user => implicit request =>
     WS.url(s"http://$managementUrl/containers")
       .withHeaders(dockerInfo(serverUrl))
       .get()
-      .map(r => Ok(r.json))
+      .map(forwardResponse(_))
       .recover {
-        case _: ConnectException => BadRequest(unavailableJsonMessage)
+        case _: ConnectException => BadRequest(unavailableJsonMessage(CONTAINER_MANAGEMENT))
         case _ => InternalServerError(unexpectedError)
       }
   }
@@ -75,31 +54,31 @@ object ContainerManagement extends Controller with Secured{
   def listContainers(serverUrls: Seq[String]) = play.mvc.Results.TODO
 
   def startContainer(serverUrl: String, containerId: String) = withAuthAsync { implicit user => implicit request =>
-    sendEmptyPost(s"http://$managementUrl/containers/$containerId/start", serverUrl)
+    sendEmptyPost(s"http://$managementUrl/containers/$containerId/start", serverUrl, dockerInfo, CONTAINER_MANAGEMENT)
   }
 
   def stopContainer(serverUrl: String, containerId: String) = withAuthAsync { implicit user => implicit request =>
-    sendEmptyPost(s"http://$managementUrl/containers/$containerId/stop", serverUrl)
+    sendEmptyPost(s"http://$managementUrl/containers/$containerId/stop", serverUrl, dockerInfo, CONTAINER_MANAGEMENT)
   }
 
   def killContainer(serverUrl: String, containerId: String) = withAuthAsync { implicit user => implicit request =>
-    sendEmptyPost(s"http://$managementUrl/containers/$containerId/kill", serverUrl)
+    sendEmptyPost(s"http://$managementUrl/containers/$containerId/kill", serverUrl, dockerInfo, CONTAINER_MANAGEMENT)
   }
 
   def pauseContainer(serverUrl: String, containerId: String) = withAuthAsync { implicit user => implicit request =>
-    sendEmptyPost(s"http://$managementUrl/containers/$containerId/pause", serverUrl)
+    sendEmptyPost(s"http://$managementUrl/containers/$containerId/pause", serverUrl, dockerInfo, CONTAINER_MANAGEMENT)
   }
 
   def unPauseContainer(serverUrl: String, containerId: String) = withAuthAsync { implicit user => implicit request =>
-    sendEmptyPost(s"http://$managementUrl/containers/$containerId/unpause", serverUrl)
+    sendEmptyPost(s"http://$managementUrl/containers/$containerId/unpause", serverUrl, dockerInfo, CONTAINER_MANAGEMENT)
   }
 
   def renameContainer(serverUrl: String, containerId: String, newName: String) = withAuthAsync { implicit user => implicit request =>
-    sendEmptyPost(s"http://$managementUrl/containers/$containerId/rename?newName=$newName", serverUrl)
+    sendEmptyPost(s"http://$managementUrl/containers/$containerId/rename?newName=$newName", serverUrl, dockerInfo, CONTAINER_MANAGEMENT)
   }
 
   def removeContainer(serverUrl: String, containerId: String, deleteVolumes: Boolean, force: Boolean) = withAuthAsync { implicit user => implicit request =>
-    sendEmptyPost(s"http://$managementUrl/containers/$containerId/remove?deleteVolumes=$deleteVolumes&force=$force", serverUrl)
+    sendEmptyPost(s"http://$managementUrl/containers/$containerId/remove?deleteVolumes=$deleteVolumes&force=$force", serverUrl, dockerInfo, CONTAINER_MANAGEMENT)
   }
 }
 

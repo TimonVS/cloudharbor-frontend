@@ -1,4 +1,3 @@
-@charset "UTF-8";
 .overview-item .panel-body {
   padding: 0; }
 
@@ -4354,7 +4353,7 @@ tbody.collapse.in {
   .breadcrumb > li {
     display: inline-block; }
     .breadcrumb > li + li:before {
-      content: "/ ";
+      content: "/\\00a0";
       padding: 0 5px;
       color: #ccc; }
   .breadcrumb > .active {
