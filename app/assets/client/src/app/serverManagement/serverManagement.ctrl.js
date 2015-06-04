@@ -2,20 +2,26 @@
 
 function serverManagementCtrl ($scope, Server) {
 
+  // ------------------------------------------------------------------
+  // Initialization
+  // ------------------------------------------------------------------
+
   var vm = this
 
   vm.servers = []
   vm.offset = 0
   vm.limit = 10
 
+  // ------------------------------------------------------------------
+  // Actions
+  // ------------------------------------------------------------------
+
   vm.get = function () {
     vm.busy = true
 
-    Server.query({}, function (data) {
+    Server.query().$promise.then(function (data) {
       vm.servers = data
       vm.busy = false
-    }, function error () {
-
     })
   }
 
@@ -34,9 +40,9 @@ function serverManagementCtrl ($scope, Server) {
 
   $scope.$on('serverCreated', function (event, data) {
     event.stopPropagation()
-    console.log(data)
+
     Server.get({ id: data.success }).$promise.then(function (response) {
-      vm.servers.push(response)
+      vm.servers.unshift(response)
     })
   })
 

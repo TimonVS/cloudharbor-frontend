@@ -58,8 +58,8 @@ function serverManagementFormCtrl ($scope, $http, CloudService, Server) {
       'image': 'coreos-stable',
       'region': vm.form.region.slug,
       'size': vm.form.size,
-      'ipv6': vm.form.ipv6Enabled || false,
-      'backups': vm.form.backupsEnabled || false,
+      'ipv6': vm.form.ipv6_enabled || false,
+      'backups': vm.form.backups_enabled || false,
       'ssh_keys': [770829]
     }
 
@@ -82,5 +82,5 @@ function serverManagementFormCtrl ($scope, $http, CloudService, Server) {
 }
 
 angular
-  .module('app.containerManagement')
+  .module('app.serverManagement')
   .controller('serverManagementFormCtrl', serverManagementFormCtrl);
