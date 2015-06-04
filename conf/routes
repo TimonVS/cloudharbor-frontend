@@ -3,54 +3,60 @@
 # ~~~~
 
 # Home page
-GET           /                                                 controllers.Application.index
+GET           /                                                  controllers.Application.index
 
 # Authentication
-GET           /login                                            controllers.Auth.login
-GET           /logout                                           controllers.Auth.logout
-POST          /authenticate                                     controllers.Auth.authenticate
+GET           /login                                             controllers.Auth.login
+GET           /logout                                            controllers.Auth.logout
+POST          /authenticate                                      controllers.Auth.authenticate
 
 # User
-GET           /user/create                                      controllers.Users.createUser
-POST          /user/create                                      controllers.Users.createUserPost
-GET           /user/profile                                     controllers.Users.showUser
-POST          /user/profile                                     controllers.Users.updateUser
+GET           /user/create                                       controllers.Users.createUser
+POST          /user/create                                       controllers.Users.createUserPost
+GET           /user/profile                                      controllers.Users.showUser
+POST          /user/profile                                      controllers.Users.updateUser
 
-# ContainerManagement
-GET         /management/overview                                controllers.ContainerManagement.overview
-GET         /management/containers/:serverUrl                   controllers.ContainerManagement.listContainers(serverUrl: String)
-GET         /management/containers/:containerId                 controllers.ContainerManagement.show(serverUrl: String, containerId: String)
-POST        /management/containers/:containerId/start           controllers.ContainerManagement.startContainer(serverUrl: String, containerId: String)
-POST        /management/containers/:containerId/stop            controllers.ContainerManagement.stopContainer(serverUrl: String, containerId: String)
-POST        /management/containers/:containerId/kill            controllers.ContainerManagement.killContainer(serverUrl: String, containerId: String)
-POST        /management/containers/:containerId/pause           controllers.ContainerManagement.pauseContainer(serverUrl: String, containerId: String)
-POST        /management/containers/:containerId/unpause         controllers.ContainerManagement.unPauseContainer(serverUrl: String, containerId: String)
-POST        /management/containers/:containerId/rename          controllers.ContainerManagement.renameContainer(serverUrl: String, containerId: String, newName: String)
-POST        /management/containers/:containerId/remove          controllers.ContainerManagement.removeContainer(serverUrl: String, containerId: String, deleteVolumes: Boolean, force: Boolean)
-GET         /management/ping                                    controllers.ContainerManagement.pingDockerRemoteApi(serverUrl: String)
+# Notificatons
+GET           /notifications                                     controllers.Notifications.notifications
+
+# DockerImagesManagement
+POST          /management/images/:name                           controllers.DockerImagesManagement.createImage(serverUrl: String, name: String)
+
+# DockerContainerManagement
+GET           /management/overview                               controllers.DockerContainerManagement.overview
+GET           /management/containers/:serverUrl                  controllers.DockerContainerManagement.listContainers(serverUrl: String)
+GET           /management/containers/:containerId                controllers.DockerContainerManagement.show(serverUrl: String, containerId: String)
+POST          /management/containers/:containerId/start          controllers.DockerContainerManagement.startContainer(serverUrl: String, containerId: String)
+POST          /management/containers/:containerId/stop           controllers.DockerContainerManagement.stopContainer(serverUrl: String, containerId: String)
+POST          /management/containers/:containerId/kill           controllers.DockerContainerManagement.killContainer(serverUrl: String, containerId: String)
+POST          /management/containers/:containerId/pause          controllers.DockerContainerManagement.pauseContainer(serverUrl: String, containerId: String)
+POST          /management/containers/:containerId/unpause        controllers.DockerContainerManagement.unPauseContainer(serverUrl: String, containerId: String)
+POST          /management/containers/:containerId/rename         controllers.DockerContainerManagement.renameContainer(serverUrl: String, containerId: String, newName: String)
+POST          /management/containers/:containerId/remove         controllers.DockerContainerManagement.removeContainer(serverUrl: String, containerId: String, deleteVolumes: Boolean, force: Boolean)
+GET           /management/ping                                   controllers.DockerContainerManagement.pingDockerRemoteApi(serverUrl: String)
 
 # ServerManagement
-GET           /servermanagement                                 controllers.ServerManagement.overview
-GET           /servermanagement/servers                         controllers.ServerManagement.servers
-GET           /servermanagement/servers/add                     controllers.ServerManagement.addServer
-POST          /servermanagement/servers/add                     controllers.ServerManagement.createServer
-GET           /servermanagement/servers/:serverId               controllers.ServerManagement.show(serverId: String)
-POST          /servermanagement/servers/:serverId/stop          controllers.ServerManagement.powerOff(serverId: String)
-POST          /servermanagement/servers/:serverId/start         controllers.ServerManagement.powerOn(serverId: String)
-DELETE        /servermanagement/servers/:serverId/delete        controllers.ServerManagement.delete(serverId: String)
-GET           /servermanagement/add-info                        controllers.ServerManagement.addApiKey
-GET           /servermanagement/api-key                         controllers.ServerManagement.getApiKey
-POST          /servermanagement/add-info                        controllers.ServerManagement.authenticateApiKey
-GET           /servermanagement/server-options                  controllers.ServerManagement.getServerOptions
+GET           /servermanagement                                  controllers.ServerManagement.overview
+GET           /servermanagement/servers                          controllers.ServerManagement.servers
+GET           /servermanagement/servers/add                      controllers.ServerManagement.addServer
+POST          /servermanagement/servers/add                      controllers.ServerManagement.createServer
+GET           /servermanagement/servers/:serverId                controllers.ServerManagement.show(serverId: String)
+POST          /servermanagement/servers/:serverId/stop           controllers.ServerManagement.powerOff(serverId: String)
+POST          /servermanagement/servers/:serverId/start          controllers.ServerManagement.powerOn(serverId: String)
+DELETE        /servermanagement/servers/:serverId/delete         controllers.ServerManagement.delete(serverId: String)
+GET           /servermanagement/add-info                         controllers.ServerManagement.addApiKey
+GET           /servermanagement/api-key                          controllers.ServerManagement.getApiKey
+POST          /servermanagement/add-info                         controllers.ServerManagement.authenticateApiKey
+GET           /servermanagement/server-options                   controllers.ServerManagement.getServerOptions
 
 #TODO
 
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /images/*file                                      controllers.Assets.at(path="/public/images", file)
-GET         /javascripts/vendor/*file                          controllers.Assets.at(path="/public/javascripts/vendor", file)
-GET         /bower_components/*file                            controllers.Assets.at(path="/public/bower_components", file)
-GET         /assets/*file                                      controllers.Assets.at(path="/public/dev/assets", file)
+GET           /images/*file                                      controllers.Assets.at(path="/public/images", file)
+GET           /javascripts/vendor/*file                          controllers.Assets.at(path="/public/javascripts/vendor", file)
+GET           /bower_components/*file                            controllers.Assets.at(path="/public/bower_components", file)
+GET           /assets/*file                                      controllers.Assets.at(path="/public/dev/assets", file)
 
 # Map web jar assets from sbt to the /webjars URL path (includes bootstrap & angularjs
-GET           /webjars/*file                                    controllers.WebJarAssets.at(file)
+GET           /webjars/*file                                     controllers.WebJarAssets.at(file)

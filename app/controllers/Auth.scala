@@ -1,10 +1,10 @@
 package controllers
 
 import models.{User, UserData}
-import play.api.data._
-import play.api.data.Forms._
-import play.api.mvc.{Security, Action, Controller}
 import org.mindrot.jbcrypt.BCrypt
+import play.api.data.Forms._
+import play.api.data._
+import play.api.mvc.{Action, Controller, Security}
 
 /**
  * Created by ThomasWorkBook on 16/04/15.
@@ -28,14 +28,14 @@ object Auth extends Controller with Secured{
   }
 
   def login = Action { implicit request =>
-    if(request.session.get("username").isDefined) Redirect(routes.ContainerManagement.overview())
+    if (request.session.get("username").isDefined) Redirect(routes.DockerContainerManagement.overview())
     else Ok(views.html.user.login(loginForm))
   }
 
   def authenticate = Action { implicit request =>
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(views.html.user.login(formWithErrors)),
-      user => Redirect(routes.ContainerManagement.overview).withSession(Security.username -> user.username)
+      user => Redirect(routes.DockerContainerManagement.overview).withSession(Security.username -> user.username)
     )
   }
 
