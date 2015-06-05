@@ -1,6 +1,6 @@
 'use strict';
 
-function containerCreateFormCtrl ($scope, $q, $modalInstance, CloudService, Server) {
+function containerCreateFormCtrl ($scope, $modalInstance, Container) {
 
   // ------------------------------------------------------------------
   // Initialization

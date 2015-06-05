@@ -53,6 +53,14 @@ function CloudServiceFactory ($resource) {
 
         return { regions: data.regions }
       }
+    },
+    sshKeys: {
+      method: 'GET',
+      params: { action: 'ssh-keys' },
+      isArray: true,
+      transformResponse: function (data) {
+        return angular.fromJson(data).sshKeys
+      }
     }
   })
 
