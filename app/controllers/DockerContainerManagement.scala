@@ -19,10 +19,6 @@ object DockerContainerManagement extends DockerManagement with Secured with WsUt
 
   val CONTAINER_MANAGEMENT = "Container Management"
 
-  def overview = withAuth { implicit user => implicit request =>
-    Ok(views.html.containerManagement.overview())
-  }
-
   def show(serverUrl: String, containerId: String) = TODO
 
   def pingDockerRemoteApi(serverUrl: String) = withAuthAsync( implicit user => implicit request =>
