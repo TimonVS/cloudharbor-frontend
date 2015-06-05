@@ -1,27 +1,61 @@
 'use strict';
 
 angular.module('app', [
-  'ngRoute',
   'ngResource',
   'ngLodash',
   'ngAnimate',
-  'ngMockE2E',
+  'ui.router',
   'ui.bootstrap',
   'app.util',
   'app.containerManagement',
   'app.serverManagement'
 ])
 
-  .config(['$httpProvider', function($httpProvider) {
+  .config(function($httpProvider, $stateProvider, $urlRouterProvider, $locationProvider) {
+
+    // $http config
     $httpProvider.defaults.useXDomain = true
     delete $httpProvider.defaults.headers.common['X-Requested-With']
-  }])
+
+    // Router config
+    $urlRouterProvider.otherwise('/app/dashboard')
+
+    $locationProvider.html5Mode({
+      enabled: true,
+      requireBase: false
+    })
+
+    $stateProvider
+      .state('dashboard', {
+        url: '/app/dashboard',
+        templateUrl: 'app/dashboard/dashboard.tpl.html'
+      })
+
+      .state('servers', {
+        url: '/app/servers',
+        templateUrl: 'app/serverManagement/overview.tpl.html',
+        controller: 'serverManagementCtrl',
+        controllerAs: 'serverManagement'
+      })
+
+      .state('containers', {
+        url: '/app/containers',
+        templateUrl: 'app/containerManagement/overview.tpl.html',
+        controller: 'containerManagementCtrl',
+        controllerAs: 'containerManagement'
+      })
+  })
+
+  .run(function ($rootScope, $state, $stateParams) {
+    $rootScope.$state = $state;
+    $rootScope.$stateParams = $stateParams
+  })
 
   // ------------------------------------------------------------------
   // Mock API
   // ------------------------------------------------------------------
 
-  .run(function($httpBackend) {
+  /*.run(function($httpBackend) {
     var serverNames = ['devbit.nl', 'back-end', 'Docker test']
     var containerNames = ['container-1', 'container-2', 'container-3']
 
@@ -99,14 +133,14 @@ angular.module('app', [
     $httpBackend.whenGET('/mocks/containers').respond(containers)
 
     // dont mock anything else, specify pass through to avoid error.
-    $httpBackend.whenGET(/^\w+.*/).passThrough()
-    $httpBackend.whenPOST(/^\w+.*/).passThrough()
+    $httpBackend.whenGET(/^\w+.*!/).passThrough()
+    $httpBackend.whenPOST(/^\w+.*!/).passThrough()
     $httpBackend.whenGET(/server-options/).passThrough()
     $httpBackend.whenGET(/servermanagement\/servers/).passThrough()
     $httpBackend.whenPOST(/servermanagement\/servers\/add/).passThrough()
     $httpBackend.whenGET(/servermanagement\/servers\/add/).passThrough()
     $httpBackend.whenGET(/management\/containers/).passThrough()
-  })
+  })*/
 
   .constant('accordionConfig', {
     closeOthers: false

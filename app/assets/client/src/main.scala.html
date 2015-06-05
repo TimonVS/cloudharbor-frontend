@@ -30,7 +30,7 @@
         <script src="@routes.Assets.at("/public/bower_components", "jquery/dist/jquery.js")"></script>
     </head>
     <body ng-app="app" class="main">
-        <nav class="navmenu navmenu-fixed-left offcanvas-sm" role="navigation">
+        @*<nav class="navmenu navmenu-fixed-left offcanvas-sm" role="navigation">
             <a href="/" class="navmenu-brand">
                 <img src='@routes.Assets.at("/public/images", "logo-small.png")' alt="Cloudharbor logo"/>
             </a>
@@ -41,8 +41,13 @@
                 @menuItem("#", Messages("menu.stats"), "mdi-information")
                 @menuItem("#", Messages("menu.settings"), "mdi-settings")
                 @menuItem("#", Messages("menu.help"), "mdi-help-circle")
+
+                <li>
+                    <a href="" ui-sref="about">Test</a>
+                </li>
             </ul>
-        </nav>
+        </nav>*@
+        <ch-nav-menu></ch-nav-menu>
         <div class="main-content">
             <div class="navbar navbar-default navbar-fixed-top">
                 <div class="container">
@@ -96,7 +101,6 @@
 
             <main>
                 <div class="container">
-                    <h1 class="page-title">@title</h1>
                     @content
                 </div>
             </main>
