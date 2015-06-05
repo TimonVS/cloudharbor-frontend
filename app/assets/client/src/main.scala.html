@@ -1,7 +1,5 @@
 @(title: String, backButtonOpt: Option[String] = None)(content: Html)(implicit request: RequestHeader, user: User)
 
-@import menu.menuItem
-
 <!DOCTYPE html>
 <html lang="en" class="no-js">
     <head>
@@ -30,23 +28,6 @@
         <script src="@routes.Assets.at("/public/bower_components", "jquery/dist/jquery.js")"></script>
     </head>
     <body ng-app="app" class="main">
-        @*<nav class="navmenu navmenu-fixed-left offcanvas-sm" role="navigation">
-            <a href="/" class="navmenu-brand">
-                <img src='@routes.Assets.at("/public/images", "logo-small.png")' alt="Cloudharbor logo"/>
-            </a>
-            <ul class="nav navmenu-nav">
-                @menuItem("#", Messages("menu.dashboard"), "mdi-speedometer")
-                @menuItem(routes.ServerManagement.overview.url, Messages("menu.servers"), "mdi-dns")
-                @menuItem(routes.DockerContainerManagement.overview.url, Messages("menu.containers"), "mdi-hexagon-outline")
-                @menuItem("#", Messages("menu.stats"), "mdi-information")
-                @menuItem("#", Messages("menu.settings"), "mdi-settings")
-                @menuItem("#", Messages("menu.help"), "mdi-help-circle")
-
-                <li>
-                    <a href="" ui-sref="about">Test</a>
-                </li>
-            </ul>
-        </nav>*@
         <ch-nav-menu></ch-nav-menu>
         <div class="main-content">
             <div class="navbar navbar-default navbar-fixed-top">

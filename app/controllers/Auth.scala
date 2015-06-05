@@ -28,14 +28,14 @@ object Auth extends Controller with Secured{
   }
 
   def login = Action { implicit request =>
-    if (request.session.get("username").isDefined) Redirect(routes.Application.app("dashboard")) //DockerContainerManagement.overview()
+    if (request.session.get("username").isDefined) Redirect(routes.Application.app("dashboard"))
     else Ok(views.html.user.login(loginForm))
   }
 
   def authenticate = Action { implicit request =>
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(views.html.user.login(formWithErrors)),
-      user => Redirect(routes.DockerContainerManagement.overview).withSession(Security.username -> user.username)
+      user => Redirect(routes.Application.app("dashboard")).withSession(Security.username -> user.username)
     )
   }
 
