@@ -1,0 +1,43 @@
+<nav class="navmenu navmenu-fixed-left offcanvas-sm" role="navigation">
+    <a href="" ui-sref="dashboard" class="navmenu-brand">
+        <img src="/images/logo-small.png" alt="Cloudharbor logo"/>
+    </a>
+    <ul class="nav navmenu-nav">
+        <li ng-class="{ active: $state.includes('dashboard') }">
+            <a href="" ui-sref="dashboard">
+                <span class="mdi mdi-speedometer"></span>
+                Dashboard
+            </a>
+        </li>
+        <li ng-class="{ active: $state.includes('servers') }">
+            <a href="" ui-sref="servers">
+                <span class="mdi mdi-dns"></span>
+                Servers
+            </a>
+        </li>
+        <li ng-class="{ active: $state.includes('containers') }">
+            <a href="" ui-sref="containers">
+                <span class="mdi mdi-hexagon-outline"></span>
+                Containers
+            </a>
+        </li>
+        <li ng-class="{ active: $state.includes('statistics') }">
+            <a href="" ui-sref="statistics">
+                <span class="mdi mdi-information"></span>
+                Statistics
+            </a>
+        </li>
+        <li ng-class="{ active: $state.includes('settings') }">
+            <a href="" ui-sref="settings">
+                <span class="mdi mdi-settings"></span>
+                Settings
+            </a>
+        </li>
+        <li ng-class="{ active: $state.includes('help') }">
+            <a href="" ui-sref="help">
+                <span class="mdi mdi-help-circle"></span>
+                Help
+            </a>
+        </li>
+    </ul>
+</nav>

@@ -1,0 +1,29 @@
+<h1 class="page-title">Server overview</h1>
+
+<div ng-include="'app/serverManagement/create/serverManagementForm.tpl.html'"></div>
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Locked</th>
+            <th>Status</th>
+            <th>Image</th>
+            <th>Operating System</th>
+            <th>IP address</th>
+            <th>Region</th>
+        </tr>
+        <tr ng-repeat="server in serverManagement.servers">
+            <td ng-bind="server.id"></td>
+            <td ng-bind="server.name"></td>
+            <td ng-bind="server.locked"></td>
+            <td ng-bind="server.status"></td>
+            <td ng-bind="server.image.name"></td>
+            <td ng-bind="server.image.distribution"></td>
+            <td ng-bind="server.networks.v4[0].ip_address"></td><!--todo-->
+            <td ng-bind="server.region.name"></td><!--todo-->
+        </tr>
+    </table>
+    <ch-spinner ng-show="serverManagement.busy"></ch-spinner>
+</div>

@@ -1,0 +1,24 @@
+<h1 class="page-title">Container overview</h1>
+
+<div class="management-overview panel-group">
+    <div class="panel panel-default" ng-repeat="server in containerManagement.servers">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <span ng-bind="::server.name"></span>
+                <a href="" class="pull-right" ng-click="containerManagement.getContainers(server)"><span class="mdi mdi-refresh"></span></a>
+                <a href="" class="pull-right" ng-click="containerManagement.createContainer(server)"><span class="mdi mdi-plus"></span></a>
+            </h4>
+        </div>
+        <div class="containers-list">
+            <div class="panel-body" ng-show="!server.containers.length || server.containers.$error">
+                <p class="no-margin" ng-show="!server.containers.length && !server.containers.$error">No containers available, <a href="" ng-click="containerManagement.createContainer(server)">create a new container</a>.</p>
+                <p class="no-margin" ng-show="server.containers.$error">An error occurred while retrieving the containers, <a href="" ng-click="containerManagement.getContainers(server)">try again</a>.</p>
+            </div>
+            <a ng-repeat="container in server.containers" href="" class="containers-list-item">
+                <span ng-bind="::container.Id" class="item-name"></span>
+                <span class="item-status">Running</span>
+                <span class="item-created"><i class="mdi mdi-clock"></i> 5 hours ago</span>
+            </a>
+        </div>
+    </div>
+</div>
