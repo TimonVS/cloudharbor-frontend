@@ -27,7 +27,18 @@ function ServerFactory ($resource, serverCache, Container) {
 
   angular.extend(Server.prototype, {
     getContainers: function () {
-      return Container.query({ id: this.getIp() })
+      var self = this
+
+      this.containers = []
+
+      this.containers = Container.query({ id: this.getIp() }).$promise
+        .then(function (data) {
+          self.containers = data
+        })
+        .catch(function (error) {
+          console.log(error)
+          self.containers.$error = 'Error retrieving containers'
+        })
     },
     getIp: function () {
       var ip
