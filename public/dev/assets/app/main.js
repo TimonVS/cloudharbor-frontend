@@ -30,6 +30,11 @@ angular.module('app', [
     })
 
     $stateProvider
+      .state('content', {
+        abstract: true,
+        templateUrl: 'app/content/content.tpl.html'
+      })
+
       .state('dashboard', {
         url: '/app/dashboard',
         templateUrl: 'app/dashboard/dashboard.tpl.html'
@@ -43,6 +48,18 @@ angular.module('app', [
         resolve: {
           servers: function (Server) {
             return Server.query().$promise
+          }
+        }
+      })
+      .state('servers.show', {
+        url: '/app/servers/show/:id',
+        templateUrl: 'app/serverManagement/show/serverShow.tpl.html',
+        controller: 'serverShowCtrl',
+        controllerAs: 'vm',
+        parent: 'content',
+        resolve: {
+          server: function ($stateParams, Server) {
+            return Server.get({ id: $stateParams.id }).$promise
           }
         }
       })

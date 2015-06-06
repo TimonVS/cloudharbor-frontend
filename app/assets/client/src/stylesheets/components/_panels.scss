@@ -1,0 +1,9 @@
+.panel .listgroup-item {
+  border-radius: 0;
+  border: none;
+  border-top: 1px solid #ddd;
+
+  &:nth-child(1) {
+    border-top: none;
+  }
+}

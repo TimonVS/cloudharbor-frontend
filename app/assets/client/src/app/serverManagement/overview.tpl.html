@@ -23,6 +23,7 @@
             <td ng-bind="server.image.distribution"></td>
             <td ng-bind="server.networks.v4[0].ip_address"></td><!--todo-->
             <td ng-bind="server.region.name"></td><!--todo-->
+            <td><a href="" ui-sref=".show({ id: server.id })">Go</a></td>
         </tr>
     </table>
     <ch-spinner ng-show="serverManagement.busy"></ch-spinner>
