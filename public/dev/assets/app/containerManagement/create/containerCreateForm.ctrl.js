@@ -43,7 +43,7 @@ function containerCreateFormCtrl ($scope, $modalInstance, Container) {
       .then(function (data) {
         vm.busy = false
         $modalInstance.close()
-        $scope.$emit('containerCreated', response)
+        $scope.$emit('containerCreated', data)
       })
       .catch(function (error) {
         vm.busy = false

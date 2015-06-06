@@ -33,21 +33,8 @@ function containerManagementCtrl ($scope, $log, $modal, Server, servers) {
 
   function getAllContainers () {
     vm.servers.forEach(function (server) {
-      getContainers(server)
+      server.getContainers()
     })
-  }
-
-  function getContainers (server) {
-    if (!server.containers) server.containers = []
-
-    server.getContainers().$promise
-      .then(function (data) {
-        server.containers = data
-      })
-      .catch(function (error) {
-        console.log(error)
-        server.containers.$error = 'Error retrieving containers'
-      })
   }
 
   function createContainer (server) {
