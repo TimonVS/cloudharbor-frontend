@@ -37,7 +37,7 @@ function ServerFactory ($resource, serverCache, Container) {
         })
         .catch(function (error) {
           console.log(error)
-          self.containers.$error = 'Error retrieving containers'
+          self.containers.$error = error.data.error
         })
     },
     getIp: function () {
