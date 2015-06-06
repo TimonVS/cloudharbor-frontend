@@ -38,6 +38,8 @@ function serverManagementFormCtrl ($scope, $http, CloudService, Server) {
   function onSubmit (form) {
     if (form.$invalid) return
 
+    vm.busy = true
+
     var request = {
       'name': vm.server.name,
       'image': 'coreos-stable',
@@ -45,18 +47,18 @@ function serverManagementFormCtrl ($scope, $http, CloudService, Server) {
       'size': vm.server.size,
       'ipv6': vm.server.ipv6 || false,
       'backups': vm.server.backups || false,
-      'ssh_keys': [770829]
+      'ssh_keys': [vm.server.ssh_keys.id] //TODO
     }
 
-    vm.busy = true
+    var server = new Server(request)
 
-    Server.create(request, success, error)
-
-    function success (response) {
-      $scope.$emit('serverCreated', response)
-    }
-
-    function error (response) {}
+    server.$create()
+      .then(function (data) {
+        $scope.$emit('serverCreated', data)
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
   }
 
   // ------------------------------------------------------------------

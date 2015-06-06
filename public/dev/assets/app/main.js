@@ -6,18 +6,22 @@ angular.module('app', [
   'ngAnimate',
   'ui.router',
   'ui.bootstrap',
+  'angular-loading-bar',
   'app.util',
   'app.containerManagement',
   'app.serverManagement'
 ])
 
-  .config(function($httpProvider, $stateProvider, $urlRouterProvider, $locationProvider) {
+  .config(function($httpProvider, $stateProvider, $urlRouterProvider, $locationProvider, cfpLoadingBarProvider) {
 
     // $http config
     $httpProvider.defaults.useXDomain = true
     delete $httpProvider.defaults.headers.common['X-Requested-With']
 
-    // Router config
+    // loading bar config
+    cfpLoadingBarProvider.includeSpinner = false
+
+    // router config
     $urlRouterProvider.otherwise('/app/dashboard')
 
     $locationProvider.html5Mode({
@@ -35,14 +39,24 @@ angular.module('app', [
         url: '/app/servers',
         templateUrl: 'app/serverManagement/overview.tpl.html',
         controller: 'serverManagementCtrl',
-        controllerAs: 'serverManagement'
+        controllerAs: 'serverManagement',
+        resolve: {
+          servers: function (Server) {
+            return Server.query().$promise
+          }
+        }
       })
 
       .state('containers', {
         url: '/app/containers',
         templateUrl: 'app/containerManagement/overview.tpl.html',
         controller: 'containerManagementCtrl',
-        controllerAs: 'containerManagement'
+        controllerAs: 'containerManagement',
+        resolve: {
+          servers: function (Server) {
+            return Server.query().$promise
+          }
+        }
       })
   })
 

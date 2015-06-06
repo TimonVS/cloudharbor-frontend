@@ -1,6 +1,6 @@
 'use strict';
 
-function serverManagementCtrl ($scope, Server) {
+function serverManagementCtrl ($scope, Server, serverCache, servers) {
 
   // ------------------------------------------------------------------
   // Initialization
@@ -8,15 +8,13 @@ function serverManagementCtrl ($scope, Server) {
 
   var vm = this
 
-  vm.servers = []
-  vm.offset = 0
-  vm.limit = 10
+  vm.servers = servers
 
   // ------------------------------------------------------------------
   // Actions
   // ------------------------------------------------------------------
 
-  vm.get = function () {
+  vm.getServers = function () {
     vm.busy = true
 
     Server.query().$promise.then(function (data) {
@@ -30,9 +28,6 @@ function serverManagementCtrl ($scope, Server) {
       server.containers = data
     })
   }
-
-  // inital get
-  vm.get()
 
   // ------------------------------------------------------------------
   // Events
