@@ -1,0 +1,75 @@
+<h1 class="page-title" ng-bind="::vm.server.name"></h1>
+
+<div class="alert alert-warning" role="alert" ng-show="vm.server.locked">This server is currently being provisioned, and thus locked from any interaction. Please wait a moment.</div>
+
+<div class="row">
+    <div class="col-sm-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    Server details
+                </h4>
+            </div>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <span class="mdi mdi-cloud"></span>
+                    Digital Ocean
+                </li>
+                <li class="list-group-item">
+                    <span class="mdi mdi-play-circle"></span>
+                    Server active
+                </li>
+                <li class="list-group-item">
+                    <span class="mdi mdi-clock"></span>
+                    Created 5 hours ago
+                </li>
+                <li class="list-group-item">
+                    <span class="mdi mdi-layers"></span>
+                    <span ng-bind="::vm.server.image.distribution"></span> <span ng-bind="::vm.server.image.name"></span>
+                </li>
+                <li class="list-group-item">
+                    <span class="mdi mdi-map-marker"></span>
+                    <span ng-bind="::vm.server.region.name"></span>
+                </li>
+                <li class="list-group-item">
+                    <span class="mdi mdi-server-network"></span>
+                    <span ng-bind="::vm.server.getIp()"></span>
+                </li>
+                <li class="list-group-item">
+                    <span class="mdi mdi-cube-outline"></span>
+                    <span ng-bind="vm.server.containers.length"></span> containers
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-sm-8">
+        <div class="" style="margin-bottom: 20px;">
+            <a href="" class="btn btn-sm btn-primary">
+                <span class="mdi mdi-refresh"></span>
+                Refresh containers
+            </a>
+            <a href="" class="btn btn-sm btn-primary">
+                <span class="mdi mdi-plus"></span>
+                Create new container
+            </a>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    Containers
+                </h4>
+            </div>
+            <div class="containers-list">
+                <div class="panel-body" ng-show="!vm.server.containers.length || vm.server.containers.$error">
+                    <p class="no-margin" ng-show="!vm.server.containers.length && !vm.server.containers.$error">No containers available, <a href="" ng-click="vm.createContainer(server)">create a new container</a>.</p>
+                    <p class="no-margin" ng-show="vm.server.containers.$error"><span ng-bind="vm.server.containers.$error"></span>, <a href="" ng-click="vm.getContainers(server)">try again</a>.</p>
+                </div>
+                <a ng-repeat="container in vm.server.containers" href="" class="containers-list-item">
+                    <span ng-bind="::container.Id" class="item-name"></span>
+                    <span class="item-status">Running</span>
+                    <span class="item-created"><i class="mdi mdi-clock"></i> 5 hours ago</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
