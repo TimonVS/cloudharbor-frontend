@@ -4,7 +4,7 @@
     <div class="panel panel-default" ng-repeat="server in containerManagement.servers">
         <div class="panel-heading">
             <h4 class="panel-title">
-                <span ng-bind="::server.name"></span>
+                <a href="" ui-sref="servers.show({ id: server.id })" ng-bind="::server.name"></a>
                 <a href="" class="pull-right" ng-click="containerManagement.getContainers(server)"><span class="mdi mdi-refresh"></span></a>
                 <a href="" class="pull-right" ng-click="containerManagement.createContainer(server)"><span class="mdi mdi-plus"></span></a>
             </h4>
