@@ -1,6 +1,6 @@
 'use strict';
 
-function ServerFactory ($resource, $q, Container) {
+function ServerFactory ($resource, serverCache, Container) {
 
   var Server = $resource('/servermanagement/servers/:action/:id', { id: '@id' }, {
     create: {
@@ -18,6 +18,7 @@ function ServerFactory ($resource, $q, Container) {
       interceptor: {
         response: function (response) {
           response.resource.$meta = response.data.$meta
+          serverCache.set(response.resource)
           return response.resource
         }
       }
@@ -26,7 +27,14 @@ function ServerFactory ($resource, $q, Container) {
 
   angular.extend(Server.prototype, {
     getContainers: function () {
-      return Container.query({ id: this.networks.v4[0].ip_address })
+      return Container.query({ id: this.getIp() })
+    },
+    getIp: function () {
+      var ip
+      this.networks.v4.forEach(function (network) {
+        if (network.type === 'public') ip = network.ip_address
+      })
+      return ip
     }
   })
 
@@ -34,42 +42,26 @@ function ServerFactory ($resource, $q, Container) {
 
 }
 
-function CloudServiceFactory ($resource) {
+// TODO
+function serverCache ($cacheFactory) {
+  //return $cacheFactory('serverCache')
 
-  var CloudService = $resource('/servermanagement/:action', {}, {
-    serverOptions: {
-      method: 'GET',
-      params: { action: 'server-options' },
-      transformResponse: function (data) {
-        data = angular.fromJson(data)
+  var cache = []
 
-        var regex = /(?:\d*\.)?\d+/g
+  this.get = function () {
+    return cache
+  }
 
-        data.regions.map(function (region) {
-          region.group = region.name.replace(regex, '').trim()
+  this.set = function (data) {
+    cache = data
+  }
 
-          return region
-        })
-
-        return { regions: data.regions }
-      }
-    },
-    sshKeys: {
-      method: 'GET',
-      params: { action: 'ssh-keys' },
-      isArray: true,
-      transformResponse: function (data) {
-        return angular.fromJson(data).sshKeys
-      }
-    }
-  })
-
-  return CloudService
-
+  this.put = function (data) {
+    cache.unshift(data)
+  }
 }
-
 
 angular
   .module('app.serverManagement')
   .factory('Server', ServerFactory)
-  .factory('CloudService', CloudServiceFactory)
+  .service('serverCache', serverCache)

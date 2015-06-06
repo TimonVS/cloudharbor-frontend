@@ -1,12 +1,14 @@
 'use strict';
 
-function containerManagementCtrl ($scope, $log, $modal, Server) {
+function containerManagementCtrl ($scope, $log, $modal, Server, servers) {
 
   // ------------------------------------------------------------------
   // Initialization
   // ------------------------------------------------------------------
 
   var vm = this
+
+  vm.servers = servers
 
   vm.getServers = getServers
   vm.getContainers = getContainers
@@ -49,14 +51,12 @@ function containerManagementCtrl ($scope, $log, $modal, Server) {
   }
 
   function createContainer (server) {
-    var size = 'lg'
-
     var modalInstance = $modal.open({
       animation: false,
       templateUrl: 'app/containerManagement/create/containerCreateForm.tpl.html',
       controller: 'containerCreateForm',
       controllerAs: 'vm',
-      size: size
+      size: 'lg'
     })
 
     modalInstance.result.then(function (selectedItem) {
@@ -66,16 +66,12 @@ function containerManagementCtrl ($scope, $log, $modal, Server) {
     })
   }
 
-  vm.getServers()
+  getAllContainers()
 
   // ------------------------------------------------------------------
   // Event listeners
   // ------------------------------------------------------------------
 
-  $scope.$on('imageSelected', function (event, data) {
-    event.stopPropagation()
-    console.log(data)
-  })
 }
 
 angular

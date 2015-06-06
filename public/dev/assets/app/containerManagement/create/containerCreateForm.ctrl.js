@@ -27,26 +27,27 @@ function containerCreateFormCtrl ($scope, $modalInstance, Container) {
   function submit (form) {
     if (form.$invalid) return
 
-    var request = {
-      'macAddress': '',
-      'networkDisabled': false,
-      'cpuShares': form.cpuShares,
-      'cpuset': ''
-    }
-
     vm.busy = true
 
-    Container.create(request, success, error)
-
-    function success (response) {
-      vm.busy = false
-      $modalInstance.close()
-      $scope.$emit('containerCreated', response)
+    var request = {
+      image: vm.container.image.name,
+      macAddress: '',
+      networkDisabled: false,
+      cpuShares: vm.container.cpuShares,
+      cpuset: ''
     }
 
-    function error (error) {
-      vm.busy = false
-    }
+    var container = new Container(request)
+
+    container.$create()
+      .then(function (data) {
+        vm.busy = false
+        $modalInstance.close()
+        $scope.$emit('containerCreated', response)
+      })
+      .catch(function (error) {
+        vm.busy = false
+      })
   }
 
   // ------------------------------------------------------------------
