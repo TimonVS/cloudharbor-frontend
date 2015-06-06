@@ -5969,6 +5969,9 @@ button.close {
 .containers-list-item .item-status {
   text-align: right; }
 
+.servers-table-item {
+  cursor: pointer; }
+
 .docker-image-search .search-results-box {
   height: 500px;
   overflow-y: scroll; }
