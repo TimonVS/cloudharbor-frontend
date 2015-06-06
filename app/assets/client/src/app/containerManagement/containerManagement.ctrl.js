@@ -11,7 +11,6 @@ function containerManagementCtrl ($scope, $log, $modal, Server, servers) {
   vm.servers = servers
 
   vm.getServers = getServers
-  vm.getContainers = getContainers
   vm.createContainer = createContainer
 
   // ------------------------------------------------------------------
