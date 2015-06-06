@@ -13,7 +13,7 @@
             <th>IP address</th>
             <th>Region</th>
         </tr>
-        <tr ng-repeat="server in serverManagement.servers" class="servers-table-item" ui-sref=".show({ id: server.id })">
+        <tr ng-repeat="server in serverManagement.servers | limitTo:serverManagement.pagination.limit:serverManagement.pagination.from" class="servers-table-item" ui-sref=".show({ id: server.id })">
             <td ng-bind="::server.id"></td>
             <td ng-bind="::server.name"></td>
             <td ng-bind="server.locked"></td>
@@ -25,3 +25,5 @@
     </table>
     <ch-spinner ng-show="serverManagement.busy"></ch-spinner>
 </div>
+
+<ch-pagination total-items="{{ serverManagement.servers.length }}" items-per-page="serverManagement.pagination.limit" on-page-change="serverManagement.changePage(pageNumber)"></ch-pagination>

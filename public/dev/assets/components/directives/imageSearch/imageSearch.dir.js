@@ -23,7 +23,7 @@ function imageSearch (dockerHubApi) {
       // ------------------------------------------------------------------
 
       $scope.changePage = function (num) {
-        search($scope.search.input, {pageNum: num})
+        search($scope.search.input, { pageNum: num })
       }
 
       $scope.selectImage = function (image) {
