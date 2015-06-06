@@ -13,6 +13,16 @@ function containerManagementCtrl ($scope, $log, $modal, Server, servers) {
   vm.getServers = getServers
   vm.createContainer = createContainer
 
+  // Pagination
+  vm.pagination = {
+    limit: 10,
+    from: 0
+  }
+
+  vm.changePage = function (pageNum) {
+    vm.from = (pageNum - 1) * vm.limit
+  }
+
   // ------------------------------------------------------------------
   // Actions
   // ------------------------------------------------------------------

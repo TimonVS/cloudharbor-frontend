@@ -10,6 +10,16 @@ function serverManagementCtrl ($scope, Server, serverCache, servers) {
 
   vm.servers = servers
 
+  // Pagination
+  vm.pagination = {
+    limit: 10,
+    from: 0
+  }
+
+  vm.changePage = function (pageNum) {
+    vm.from = (pageNum - 1) * vm.limit
+  }
+
   // ------------------------------------------------------------------
   // Actions
   // ------------------------------------------------------------------
