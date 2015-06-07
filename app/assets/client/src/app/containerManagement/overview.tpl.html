@@ -1,5 +1,3 @@
-<h1 class="page-title">Container overview</h1>
-
 <div class="management-overview panel-group">
     <div class="panel panel-default" ng-repeat="server in containerManagement.servers | limitTo:containerManagement.pagination.limit:containerManagement.pagination.from">
         <div class="panel-heading">
@@ -22,5 +20,5 @@
         </div>
     </div>
 
-    <ch-pagination total-items="{{ containerManagement.servers.length }}" items-per-page="containerManagement.pagination.limit" on-page-change="containerManagement.changePage(pageNumber)"></ch-pagination>
+    <ch-pagination total-items="{{ containerManagement.servers.length }}" items-per-page="containerManagement.pagination.limit" on-page-change="containerManagements.changePage(pageNumber)"></ch-pagination>
 </div>

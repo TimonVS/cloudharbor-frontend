@@ -7,7 +7,9 @@ angular.module('app', [
   'ui.router',
   'ui.bootstrap',
   'angular-loading-bar',
+  'app.content',
   'app.util',
+  'app.dashboard',
   'app.containerManagement',
   'app.serverManagement'
 ])
@@ -28,53 +30,6 @@ angular.module('app', [
       enabled: true,
       requireBase: false
     })
-
-    $stateProvider
-      .state('content', {
-        abstract: true,
-        templateUrl: 'app/content/content.tpl.html'
-      })
-
-      .state('dashboard', {
-        url: '/app/dashboard',
-        templateUrl: 'app/dashboard/dashboard.tpl.html'
-      })
-
-      .state('servers', {
-        url: '/app/servers',
-        templateUrl: 'app/serverManagement/overview.tpl.html',
-        controller: 'serverManagementCtrl',
-        controllerAs: 'serverManagement',
-        resolve: {
-          servers: function (Server) {
-            return Server.query().$promise
-          }
-        }
-      })
-      .state('servers.show', {
-        url: '/app/servers/show/:id',
-        templateUrl: 'app/serverManagement/show/serverShow.tpl.html',
-        controller: 'serverShowCtrl',
-        controllerAs: 'vm',
-        parent: 'content',
-        resolve: {
-          server: function ($stateParams, Server) {
-            return Server.get({ id: $stateParams.id }).$promise
-          }
-        }
-      })
-
-      .state('containers', {
-        url: '/app/containers',
-        templateUrl: 'app/containerManagement/overview.tpl.html',
-        controller: 'containerManagementCtrl',
-        controllerAs: 'containerManagement',
-        resolve: {
-          servers: function (Server) {
-            return Server.query().$promise
-          }
-        }
-      })
   })
 
   .run(function ($rootScope, $state, $stateParams) {
