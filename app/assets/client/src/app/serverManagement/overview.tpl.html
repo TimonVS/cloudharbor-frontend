@@ -2,8 +2,7 @@
 
 <div class="table-responsive">
     <table class="table table-hover servers-table">
-        <tr>
-            <th>ID</th>
+        <tr class="header-row">
             <th>Name</th>
             <th>Locked</th>
             <th>Status</th>
@@ -14,10 +13,9 @@
         <tr ng-class="{ disabled: server.locked }"
             ng-repeat="server in serverManagement.servers | limitTo:serverManagement.pagination.limit:serverManagement.pagination.from"
             class="servers-table-item" ui-sref="{{ server.locked ? '.' : 'servers.show({ id: server.id })' }}">
-            <td ng-bind="::server.id"></td>
             <td ng-bind="::server.name"></td>
             <td ng-bind="server.locked"></td>
-            <td ng-bind="server.status"></td>
+            <td>{{ server.status | capitalize }}</td>
             <td><span ng-bind="::server.image.distribution"></span> <span ng-bind="::server.image.name"></span></td>
             <td ng-bind="::server.getIp()"></td>
             <td ng-bind="::server.region.name"></td>
