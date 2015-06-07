@@ -1,5 +1,33 @@
+.servers-table {}
+
+.servers-table .header-row {
+  text-transform: uppercase;
+  color: #848484;
+  font-size: 12px;
+  border-bottom: 1px solid #eee;
+
+  &:hover {
+    background-color: transparent;
+  }
+}
+
+.servers-table th,
+.servers-table td {
+  border-top: none !important;
+}
+
+.servers-table td {
+  padding-top: 16px !important;
+  padding-bottom: 16px !important;
+}
+
+.servers-table tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
 .servers-table-item {
   cursor: pointer;
+  border-top: none;
 }
 
 .servers-table-item.disabled {

@@ -8,7 +8,7 @@ angular.module('app', [
   'ui.bootstrap',
   'angular-loading-bar',
   'app.content',
-  'app.util',
+  'app.components',
   'app.dashboard',
   'app.containerManagement',
   'app.serverManagement'
