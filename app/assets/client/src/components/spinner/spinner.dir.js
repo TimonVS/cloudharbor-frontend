@@ -3,7 +3,7 @@
 function spinner () {
   return {
     restrict: 'EA',
-    templateUrl: 'components/directives/spinner/spinner.tpl.html'
+    templateUrl: 'components/spinner/spinner.tpl.html'
   }
 }
 

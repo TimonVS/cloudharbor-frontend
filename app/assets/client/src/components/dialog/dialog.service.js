@@ -9,7 +9,7 @@ function dialogService ($modal, $rootScope) {
       scope: scope,
       size: 'sm',
       animation: false,
-      templateUrl: 'components/directives/dialog/dialog.tpl.html'
+      templateUrl: 'components/dialog/dialog.tpl.html'
     }).result
   }
 
@@ -21,7 +21,7 @@ function dialogService ($modal, $rootScope) {
       scope: scope,
       size: 'sm',
       animation: false,
-      templateUrl: 'components/directives/dialog/dialog.tpl.html'
+      templateUrl: 'components/dialog/dialog.tpl.html'
     }).result
   }
 }
