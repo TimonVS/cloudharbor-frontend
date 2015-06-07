@@ -9,7 +9,7 @@ function pagination () {
       paginationRange: '=',
       onPageChange: '&'
     },
-    templateUrl: 'components/directives/pagination/pagination.tpl.html',
+    templateUrl: 'components/pagination/pagination.tpl.html',
     link: function ($scope, $element, $attr) {
       // todo: refactor
       $attr.$observe('totalItems', function (value) {

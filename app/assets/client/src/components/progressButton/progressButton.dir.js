@@ -3,7 +3,7 @@
 function progressButton () {
   return {
     restrict: 'AE',
-    templateUrl: 'components/directives/progressButton/progressButton.tpl.html',
+    templateUrl: 'components/progressButton/progressButton.tpl.html',
     transclude: true,
     replace: true,
     scope: {
