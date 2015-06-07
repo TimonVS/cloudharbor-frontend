@@ -2,6 +2,8 @@
 @import b3.vertical.fieldConstructor
 
 @main("Profile settings - " + s"${user.username}"){
+    <h1 class="page-title">Profile settings</h1>
+
     @flash.get("succes").map { success =>
         <div class="alert alert-success" role="alert">
             <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>

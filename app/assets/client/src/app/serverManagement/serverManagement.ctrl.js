@@ -1,21 +1,35 @@
 'use strict';
 
-function serverManagementCtrl ($scope, Server) {
+function serverManagementCtrl ($scope, Server, serverCache, servers) {
+
+  // ------------------------------------------------------------------
+  // Initialization
+  // ------------------------------------------------------------------
 
   var vm = this
 
-  vm.servers = []
-  vm.offset = 0
-  vm.limit = 10
+  vm.servers = servers
 
-  vm.get = function () {
+  // Pagination
+  vm.pagination = {
+    limit: 10,
+    from: 0
+  }
+
+  vm.changePage = function (pageNum) {
+    vm.from = (pageNum - 1) * vm.limit
+  }
+
+  // ------------------------------------------------------------------
+  // Actions
+  // ------------------------------------------------------------------
+
+  vm.getServers = function () {
     vm.busy = true
 
-    Server.query({}, function (data) {
+    Server.query().$promise.then(function (data) {
       vm.servers = data
       vm.busy = false
-    }, function error () {
-
     })
   }
 
@@ -25,18 +39,15 @@ function serverManagementCtrl ($scope, Server) {
     })
   }
 
-  // inital get
-  vm.get()
-
   // ------------------------------------------------------------------
   // Events
   // ------------------------------------------------------------------
 
   $scope.$on('serverCreated', function (event, data) {
     event.stopPropagation()
-    console.log(data)
+
     Server.get({ id: data.success }).$promise.then(function (response) {
-      vm.servers.push(response)
+      vm.servers.unshift(response)
     })
   })
 

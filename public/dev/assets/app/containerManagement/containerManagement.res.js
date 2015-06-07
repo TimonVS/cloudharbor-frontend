@@ -1,9 +1,15 @@
 'use strict';
 
-function ContainerFactory ($resource, $q) {
+function ContainerFactory ($resource) {
 
-  var Container = $resource('/management/containers/:id', { id: '@Id' }, {
-    query: { method: 'GET', isArray: true }
+  var Container = $resource('/management/containers/:action/:id', { id: '@id' }, {
+    query: {
+      method: 'GET',
+      isArray: true
+    },
+    create: {
+      method: 'POST'
+    }
   })
 
   return Container

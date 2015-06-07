@@ -1,7 +1,5 @@
 @(title: String, backButtonOpt: Option[String] = None)(content: Html)(implicit request: RequestHeader, user: User)
 
-@import menu.menuItem
-
 <!DOCTYPE html>
 <html lang="en" class="no-js">
     <head>
@@ -30,19 +28,7 @@
         <script src="@routes.Assets.at("/public/bower_components", "jquery/dist/jquery.js")"></script>
     </head>
     <body ng-app="app" class="main">
-        <nav class="navmenu navmenu-fixed-left offcanvas-sm" role="navigation">
-            <a href="/" class="navmenu-brand">
-                <img src='@routes.Assets.at("/public/images", "logo-small.png")' alt="Cloudharbor logo"/>
-            </a>
-            <ul class="nav navmenu-nav">
-                @menuItem("#", Messages("menu.dashboard"), "mdi-speedometer")
-                @menuItem(routes.ServerManagement.overview.url, Messages("menu.servers"), "mdi-dns")
-                @menuItem(routes.DockerContainerManagement.overview.url, Messages("menu.containers"), "mdi-hexagon-outline")
-                @menuItem("#", Messages("menu.stats"), "mdi-information")
-                @menuItem("#", Messages("menu.settings"), "mdi-settings")
-                @menuItem("#", Messages("menu.help"), "mdi-help-circle")
-            </ul>
-        </nav>
+        <ch-nav-menu></ch-nav-menu>
         <div class="main-content">
             <div class="navbar navbar-default navbar-fixed-top">
                 <div class="container">
@@ -95,10 +81,7 @@
             </div>
 
             <main>
-                <div class="container">
-                    <h1 class="page-title">@title</h1>
-                    @content
-                </div>
+                @content
             </main>
 
             <footer></footer>
@@ -126,7 +109,6 @@
     <!-- run `gulp wiredep` to automaticaly populate bower script dependencies -->
     <!-- endbower -->
     <script type='text/javascript' src='@routes.Assets.at("/public/javascripts/vendor", "ui-bootstrap/ui-bootstrap-custom-tpls-0.13.0.js")'></script>
-    @*<script type='text/javascript' src='@routes.Assets.at("/public/javascripts/vendor", "test/ui-bootstrap-tpls-0.13.0.min.js")'></script>*@
     <!-- endbuild -->
 
     <script src="/assets/app/main.js"></script>

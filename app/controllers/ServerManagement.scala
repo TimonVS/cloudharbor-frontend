@@ -31,13 +31,6 @@ object ServerManagement extends Controller with Secured with WsUtils {
   implicit val context = play.api.libs.concurrent.Execution.Implicits.defaultContext
 
   /**
-   * Static html page for server overview
-   */
-  def overview = withAuth { implicit user => implicit request =>
-    Ok(views.html.serverManagement.overview())
-  }
-
-  /**
    * Ajax get request for every server a user has at digital ocean
    */
   def servers = withAuthAsync { implicit user => implicit request =>
@@ -53,7 +46,7 @@ object ServerManagement extends Controller with Secured with WsUtils {
             }
 
         case None =>
-          Future.successful(Redirect(routes.ServerManagement.addApiKey()))
+          Future.successful(Redirect(routes.Application.app("profile")))
       }
   }
 
@@ -72,7 +65,7 @@ object ServerManagement extends Controller with Secured with WsUtils {
             case _ => InternalServerError(unexpectedError)
         }
       case None =>
-        Future.successful(Redirect(routes.ServerManagement.addApiKey()))
+        Future.successful(Redirect(routes.Application.app("profile")))
     }
   }
 
@@ -84,7 +77,7 @@ object ServerManagement extends Controller with Secured with WsUtils {
       case Some(cloudService) =>
         sendEmptyPost(s"$serverManagementUrl/servers/$serverId/stop", cloudService.apiKey, cloudInfo, SERVER_MANAGEMENT)
       case None =>
-        Future.successful(Redirect(routes.ServerManagement.addApiKey()))
+        Future.successful(Redirect(routes.Application.app("profile")))
     }
   }
 
@@ -96,7 +89,7 @@ object ServerManagement extends Controller with Secured with WsUtils {
       case Some(cloudService) =>
         sendEmptyPost(s"$serverManagementUrl/servers/$serverId/start", cloudService.apiKey, cloudInfo, SERVER_MANAGEMENT)
       case None =>
-        Future.successful(Redirect(routes.ServerManagement.addApiKey()))
+        Future.successful(Redirect(routes.Application.app("profile")))
     }
   }
 
@@ -115,15 +108,8 @@ object ServerManagement extends Controller with Secured with WsUtils {
             case _ => InternalServerError(unexpectedError)
           }
       case None =>
-        Future.successful(Redirect(routes.ServerManagement.addApiKey()))
+        Future.successful(Redirect(routes.Application.app("profile")))
     }
-  }
-
-  /**
-   * Static html page for adding a server
-   */
-  def addServer() = withAuth { implicit user => implicit request =>
-    Ok(views.html.serverManagement.addCloudService())
   }
 
   def createServer = withAuthAsync { implicit user => implicit request =>
@@ -139,13 +125,6 @@ object ServerManagement extends Controller with Secured with WsUtils {
           }
       case None => Future.successful(NotFound(Json.obj("error" -> "Api Key not found")))
     }
-  }
-
-  /**
-   * Static html page for adding a api key
-   */
-  def addApiKey() = withAuth{ implicit user => implicit request =>
-    Ok(views.html.serverManagement.addCloudServiceInfo())
   }
 
   /**
@@ -194,7 +173,7 @@ object ServerManagement extends Controller with Secured with WsUtils {
             case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
             case _ => InternalServerError(unexpectedError)
           }
-      case None => Future.successful(Redirect(routes.ServerManagement.addApiKey()))
+      case None => Future.successful(Redirect(routes.Application.app("profile")))
     }
   }
 
@@ -209,7 +188,7 @@ object ServerManagement extends Controller with Secured with WsUtils {
             case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
             case _ => InternalServerError(unexpectedError)
         }
-      case None => Future.successful(Redirect(routes.ServerManagement.addApiKey()))
+      case None => Future.successful(Redirect(routes.Application.app("profile")))
     }
   }
 }

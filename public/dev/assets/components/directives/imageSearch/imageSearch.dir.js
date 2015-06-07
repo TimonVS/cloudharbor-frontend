@@ -4,7 +4,9 @@ function imageSearch (dockerHubApi) {
   return {
     restrict: 'EA',
     templateUrl: 'components/directives/imageSearch/imageSearch.tpl.html',
-    link: function ($scope, $element) {
+    require: 'ngModel',
+    scope: {},
+    link: function ($scope, $element, $attr, $ctrl) {
 
       // ------------------------------------------------------------------
       // Initialization
@@ -21,11 +23,11 @@ function imageSearch (dockerHubApi) {
       // ------------------------------------------------------------------
 
       $scope.changePage = function (num) {
-        search($scope.search.input, {pageNum: num})
+        search($scope.search.input, { pageNum: num })
       }
 
       $scope.selectImage = function (image) {
-        $scope.$emit('imageSelected', image)
+        $ctrl.$setViewValue(image)
       }
 
       function search (query, params) {
