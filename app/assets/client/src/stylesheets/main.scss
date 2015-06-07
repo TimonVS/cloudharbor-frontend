@@ -12,6 +12,7 @@ $bower-path: '/public/bower_components/';
 // Components
 @import "../app/containerManagement/containerManagement";
 @import "../app/serverManagement/serverManagement";
+@import "../app/content/content";
 @import "../components/directives/imageSearch/imageSearch";
 @import "../components/directives/spinner/spinner";
 

@@ -1,5 +1,3 @@
-<h1 class="page-title">Server overview</h1>
-
 <div ng-include="'app/serverManagement/create/serverManagementForm.tpl.html'"></div>
 
 <div class="table-responsive">
@@ -13,7 +11,7 @@
             <th>IP address</th>
             <th>Region</th>
         </tr>
-        <tr ng-repeat="server in serverManagement.servers | limitTo:serverManagement.pagination.limit:serverManagement.pagination.from" class="servers-table-item" ui-sref=".show({ id: server.id })">
+        <tr ng-repeat="server in serverManagement.servers | limitTo:serverManagement.pagination.limit:serverManagement.pagination.from" class="servers-table-item" ui-sref="servers.show({ id: server.id })">
             <td ng-bind="::server.id"></td>
             <td ng-bind="::server.name"></td>
             <td ng-bind="server.locked"></td>
