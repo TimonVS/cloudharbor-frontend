@@ -75,7 +75,7 @@ object ServerManagement extends Controller with Secured with WsUtils {
   def powerOff(serverId: String) = withAuthAsync { implicit user => implicit request =>
     Server.findByUserId(user.id) match{
       case Some(cloudService) =>
-        sendEmptyPost(s"$serverManagementUrl/servers/$serverId/stop", cloudService.apiKey, cloudInfo, SERVER_MANAGEMENT)
+        sendEmptyPost(s"http://$serverManagementUrl/servers/$serverId/stop", cloudService.apiKey, cloudInfo, SERVER_MANAGEMENT)
       case None =>
         Future.successful(Redirect(routes.Application.app("profile")))
     }
@@ -87,7 +87,7 @@ object ServerManagement extends Controller with Secured with WsUtils {
   def powerOn(serverId: String) = withAuthAsync { implicit user => implicit request =>
     Server.findByUserId(user.id) match{
       case Some(cloudService) =>
-        sendEmptyPost(s"$serverManagementUrl/servers/$serverId/start", cloudService.apiKey, cloudInfo, SERVER_MANAGEMENT)
+        sendEmptyPost(s"http://$serverManagementUrl/servers/$serverId/start", cloudService.apiKey, cloudInfo, SERVER_MANAGEMENT)
       case None =>
         Future.successful(Redirect(routes.Application.app("profile")))
     }
@@ -99,7 +99,7 @@ object ServerManagement extends Controller with Secured with WsUtils {
   def delete(serverId: String) = withAuthAsync { implicit user => implicit request =>
     Server.findByUserId(user.id) match{
       case Some(cloudService) =>
-        WS.url(s"$serverManagementUrl/servers/$serverId/delete")
+        WS.url(s"http://$serverManagementUrl/servers/$serverId/delete")
           .withHeaders(cloudInfo(cloudService.apiKey))
           .delete()
           .map(forwardResponse(_))
@@ -143,7 +143,7 @@ object ServerManagement extends Controller with Secured with WsUtils {
    */
   def authenticateApiKey = withAuthAsync { implicit user => implicit request =>
     request.body.asJson.map{ json =>
-      WS.url(s"$serverManagementUrl/authenticate")
+      WS.url(s"http://$serverManagementUrl/authenticate")
         .withHeaders(cloudInfo((json \ "apiKey").as[String]))
         .get()
         .map(r =>
