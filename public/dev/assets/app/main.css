@@ -5995,6 +5995,9 @@ button.close {
 .servers-table-item.disabled {
   cursor: not-allowed; }
 
+.servers-table-item.disabled td {
+  background-color: #f2dede; }
+
 .content-header {
   padding: 20px 0;
   background: #003a99;
