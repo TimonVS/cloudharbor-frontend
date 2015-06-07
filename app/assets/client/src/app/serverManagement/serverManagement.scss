@@ -1,3 +1,7 @@
 .servers-table-item {
   cursor: pointer;
 }
+
+.servers-table-item.disabled {
+  cursor: not-allowed;
+}
