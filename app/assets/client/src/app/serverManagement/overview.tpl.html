@@ -4,7 +4,6 @@
     <table class="table table-hover servers-table">
         <tr class="header-row">
             <th>Name</th>
-            <th>Locked</th>
             <th>Status</th>
             <th>Operating System</th>
             <th>IP address</th>
@@ -13,8 +12,10 @@
         <tr ng-class="{ disabled: server.locked }"
             ng-repeat="server in serverManagement.servers | limitTo:serverManagement.pagination.limit:serverManagement.pagination.from"
             class="servers-table-item" ui-sref="{{ server.locked ? '.' : 'servers.show({ id: server.id })' }}">
-            <td ng-bind="::server.name"></td>
-            <td ng-bind="server.locked"></td>
+            <td>
+                <span ng-if="server.locked" class="mdi mdi-lock"></span>
+                <span ng-bind="::server.name"></span>
+            </td>
             <td>{{ server.status | capitalize }}</td>
             <td><span ng-bind="::server.image.distribution"></span> <span ng-bind="::server.image.name"></span></td>
             <td ng-bind="::server.getIp()"></td>

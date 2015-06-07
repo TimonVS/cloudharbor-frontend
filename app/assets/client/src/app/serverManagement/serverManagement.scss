@@ -33,3 +33,6 @@
 .servers-table-item.disabled {
   cursor: not-allowed;
 }
+.servers-table-item.disabled td {
+  background-color: #f2dede;
+}
