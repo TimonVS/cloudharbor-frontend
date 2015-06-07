@@ -1,0 +1,63 @@
+<div>
+    <div class="modal-header">
+        <h3 class="modal-title">Create container</h3>
+    </div>
+    <div class="modal-body">
+        <form name="vm.form" novalidate>
+
+            <div class="form-group">
+                <div class="btn-group">
+                    <label class="btn btn-primary" ng-model="radioModel" btn-radio="'Docker Hub image'">Docker Hub image</label>
+                    <label class="btn btn-primary" ng-model="radioModel" btn-radio="'DockerFile'">DockerFile</label>
+                </div>
+            </div>
+
+            <ch-image-search ng-model="vm.container.image"></ch-image-search>
+
+            <div class="form-group" ng-class="{ 'has-error' : vm.form.containerName.$invalid && !vm.form.containerName.$pristine }">
+                <label for="containerName">Container name</label>
+                <input type="text" class="form-control" name="containerName" id="containerName" placeholder="Enter container name"
+                       ng-model="vm.container.name" ng-pattern="/[a-zA-Z\.\-0-9]+/g" required>
+                <div ng-show="!vm.form.containerName.$pristine && vm.form.containerName.$error">
+                    <p ng-show="vm.form.containerName.$error.pattern">Your container name must only contain alphanumeric characters, dashes, and periods.</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="cpuShares">CPU shares</label>
+                <input type="number" class="form-control" name="cpuShares" id="cpuShares" placeholder="Enter amount of CPU shares"
+                       ng-model="vm.container.cpuShares" required>
+            </div>
+
+            <div class="form-group">
+                <label for="memoryLimit">Memory limit</label>
+                <input type="number" class="form-control" name="memoryLimit" id="memoryLimit" placeholder="Enter memory limit"
+                       ng-model="vm.container.memory" required>
+            </div>
+
+            <div class="form-group">
+                <div class="checkbox">
+                    <label for="autorestartEnabled">
+                        <input type="checkbox" name="autorestartEnabled" id="autorestartEnabled"
+                               ng-model="vm.container.autorestart">
+                        Enable autorestart
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="checkbox">
+                    <label for="ipv6Enabled">
+                        <input type="checkbox" name="autodestroyEnabled" id="ipv6Enabled"
+                               ng-model="vm.form.autodestroy">
+                        Enable autodestroy
+                    </label>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-disabled="vm.form.$invalid" ng-click="vm.submit(vm.form)">Create container</button>
+        <button class="btn btn-danger" ng-click="vm.cancel()">Cancel</button>
+    </div>
+</div>

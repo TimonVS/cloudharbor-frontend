@@ -5,6 +5,9 @@
 # Home page
 GET           /                                                  controllers.Application.index
 
+GET           /app                                               controllers.Application.index
+GET           /app/*path                                         controllers.Application.app(path)
+
 # Authentication
 GET           /login                                             controllers.Auth.login
 GET           /logout                                            controllers.Auth.logout
@@ -23,7 +26,6 @@ GET           /notifications                                     controllers.Not
 POST          /management/images/:name                           controllers.DockerImagesManagement.createImage(serverUrl: String, name: String)
 
 # DockerContainerManagement
-GET           /management/overview                               controllers.DockerContainerManagement.overview
 GET           /management/containers/:serverUrl                  controllers.DockerContainerManagement.listContainers(serverUrl: String)
 GET           /management/containers/:containerId                controllers.DockerContainerManagement.show(serverUrl: String, containerId: String)
 POST          /management/containers/:containerId/start          controllers.DockerContainerManagement.startContainer(serverUrl: String, containerId: String)
@@ -36,15 +38,12 @@ POST          /management/containers/:containerId/remove         controllers.Doc
 GET           /management/ping                                   controllers.DockerContainerManagement.pingDockerRemoteApi(serverUrl: String)
 
 # ServerManagement
-GET           /servermanagement                                  controllers.ServerManagement.overview
 GET           /servermanagement/servers                          controllers.ServerManagement.servers
-GET           /servermanagement/servers/add                      controllers.ServerManagement.addServer
 POST          /servermanagement/servers/add                      controllers.ServerManagement.createServer
 GET           /servermanagement/servers/:serverId                controllers.ServerManagement.show(serverId: String)
 POST          /servermanagement/servers/:serverId/stop           controllers.ServerManagement.powerOff(serverId: String)
 POST          /servermanagement/servers/:serverId/start          controllers.ServerManagement.powerOn(serverId: String)
 DELETE        /servermanagement/servers/:serverId/delete         controllers.ServerManagement.delete(serverId: String)
-GET           /servermanagement/add-info                         controllers.ServerManagement.addApiKey
 GET           /servermanagement/api-key                          controllers.ServerManagement.getApiKey
 POST          /servermanagement/add-info                         controllers.ServerManagement.authenticateApiKey
 GET           /servermanagement/server-options                   controllers.ServerManagement.getServerOptions

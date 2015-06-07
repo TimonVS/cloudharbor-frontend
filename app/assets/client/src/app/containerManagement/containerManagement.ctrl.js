@@ -1,36 +1,73 @@
 'use strict';
 
-function containerManagementCtrl ($scope, Server) {
+function containerManagementCtrl ($scope, $log, $modal, Server, servers) {
+
+  // ------------------------------------------------------------------
+  // Initialization
+  // ------------------------------------------------------------------
 
   var vm = this
 
-  vm.getServers = function () {
+  vm.servers = servers
+
+  vm.getServers = getServers
+  vm.createContainer = createContainer
+
+  // Pagination
+  vm.pagination = {
+    limit: 10,
+    from: 0
+  }
+
+  vm.changePage = function (pageNum) {
+    vm.from = (pageNum - 1) * vm.limit
+  }
+
+  // ------------------------------------------------------------------
+  // Actions
+  // ------------------------------------------------------------------
+
+  function getServers () {
     vm.busy = true
 
-    Server.query({}, function (data) {
-      vm.servers = data
-      vm.busy = false
-    }, function error () {
+    Server.query().$promise.then(function (data) {
+        vm.servers = data
+        vm.busy = false
+        getAllContainers()
+      })
+      .catch(function (error) {
 
+      })
+  }
+
+  function getAllContainers () {
+    vm.servers.forEach(function (server) {
+      server.getContainers()
     })
   }
 
-  vm.getContainers = function (server) {
-    server.getContainers().$promise.then(function (data) {
-      server.containers = data
+  function createContainer (server) {
+    var modalInstance = $modal.open({
+      animation: false,
+      templateUrl: 'app/containerManagement/create/containerCreateForm.tpl.html',
+      controller: 'containerCreateForm',
+      controllerAs: 'vm',
+      size: 'lg'
+    })
+
+    modalInstance.result.then(function (selectedItem) {
+      vm.selected = selectedItem;
+    }, function () {
+      $log.info('Modal dismissed at: ' + new Date())
     })
   }
 
-  vm.getServers()
+  getAllContainers()
 
   // ------------------------------------------------------------------
   // Event listeners
   // ------------------------------------------------------------------
 
-  $scope.$on('imageSelected', function (event, data) {
-    event.stopPropagation()
-    console.log(data)
-  })
 }
 
 angular

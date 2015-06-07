@@ -9,34 +9,19 @@ function serverManagementFormCtrl ($scope, $http, CloudService, Server) {
   var vm = this
 
   // Function assignment
-  vm.openForm = openForm
   vm.generateToken = generateToken
   vm.onSubmit = onSubmit
 
   // Variable assignment
-  vm.isOpen = true
   vm.form = {}
-  vm.sshKeys = [
-    {
-      'id': 512189,
-      'fingerprint': '3b:16:bf:e4:8b:00:8b:b8:59:8c:a9:d3:f0:19:45:fa',
-      'public_key': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAQQDDHr/jh2Jy4yALcK4JyWbVkPRaWmhck3IgCoeOO3z1e2dBowLh64QAM+Qb72pxekALga2oi4GvT+TlWNhzPH4V example',
-      'name': 'Macbook Timon'
-    }
-  ]
+  vm.server = {}
 
-  // Get available server sizes and regions
-  CloudService.serverOptions().$promise.then(function (data) {
-    vm.serverOptions = data
-  })
+  vm.sshKeys = CloudService.sshKeys()
+  vm.serverOptions = CloudService.serverOptions()
 
   // ------------------------------------------------------------------
   // Actions
   // ------------------------------------------------------------------
-
-  function openForm () {
-    vm.isOpen = true
-  }
 
   function generateToken () {
     if (generateActive) return
@@ -53,25 +38,29 @@ function serverManagementFormCtrl ($scope, $http, CloudService, Server) {
   function onSubmit (form) {
     if (form.$invalid) return
 
-    var request = {
-      'name': vm.form.name,
-      'image': 'coreos-stable',
-      'region': vm.form.region.slug,
-      'size': vm.form.size,
-      'ipv6': vm.form.ipv6Enabled || false,
-      'backups': vm.form.backupsEnabled || false,
-      'ssh_keys': [770829]
-    }
-
     vm.busy = true
 
-    Server.create(request, success, error)
-
-    function success (response) {
-      $scope.$emit('serverCreated', response)
+    var request = {
+      'name': vm.server.name,
+      'image': 'coreos-stable',
+      'region': vm.server.region.slug,
+      'size': vm.server.size,
+      'ipv6': vm.server.ipv6 || false,
+      'backups': vm.server.backups || false,
+      'ssh_keys': [vm.server.ssh_keys.id] //TODO
     }
 
-    function error (response) {}
+    var server = new Server(request)
+
+    server.$create()
+      .then(function (data) {
+        vm.busy = false
+        $scope.$emit('serverCreated', data)
+      })
+      .catch(function (error) {
+        vm.busy = false
+        console.log(error)
+      })
   }
 
   // ------------------------------------------------------------------
@@ -82,5 +71,5 @@ function serverManagementFormCtrl ($scope, $http, CloudService, Server) {
 }
 
 angular
-  .module('app.containerManagement')
+  .module('app.serverManagement')
   .controller('serverManagementFormCtrl', serverManagementFormCtrl);
