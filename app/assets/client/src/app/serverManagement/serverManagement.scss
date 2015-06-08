@@ -36,3 +36,7 @@
 .servers-table-item.disabled td {
   background-color: #f2dede;
 }
+
+.server-actions .btn {
+  @extend .btn-block;
+}

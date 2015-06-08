@@ -3122,16 +3122,20 @@ select[multiple].input-lg, .input-group-lg > select[multiple].form-control,
   line-height: 1.5;
   border-radius: 3px; }
 
-.btn-block {
+.btn-block, .server-actions .btn, .server-actions .navmenu-toggle {
   display: block;
   width: 100%; }
 
-.btn-block + .btn-block {
+.btn-block + .btn-block, .server-actions .btn + .btn-block, .server-actions .navmenu-toggle + .btn-block, .server-actions .btn-block + .btn, .server-actions .btn + .btn, .server-actions .navmenu-toggle + .btn, .server-actions .btn-block + .navmenu-toggle, .server-actions .btn + .navmenu-toggle, .server-actions .navmenu-toggle + .navmenu-toggle {
   margin-top: 5px; }
 
 input[type="submit"].btn-block,
+.server-actions input[type="submit"].btn,
+.server-actions input[type="submit"].navmenu-toggle,
 input[type="reset"].btn-block,
-input[type="button"].btn-block {
+.server-actions input[type="reset"].btn,
+.server-actions input[type="reset"].navmenu-toggle,
+input[type="button"].btn-block, .server-actions input[type="button"].btn, .server-actions input[type="button"].navmenu-toggle {
   width: 100%; }
 
 .fade {
@@ -5268,7 +5272,7 @@ button.close {
     margin-bottom: 0; }
   .modal-footer .btn-group .btn + .btn, .modal-footer .btn-group .navmenu-toggle + .btn, .modal-footer .btn-group .btn + .navmenu-toggle, .modal-footer .btn-group .navmenu-toggle + .navmenu-toggle {
     margin-left: -1px; }
-  .modal-footer .btn-block + .btn-block {
+  .modal-footer .btn-block + .btn-block, .modal-footer .server-actions .btn + .btn-block, .server-actions .modal-footer .btn + .btn-block, .modal-footer .server-actions .navmenu-toggle + .btn-block, .server-actions .modal-footer .navmenu-toggle + .btn-block, .modal-footer .server-actions .btn-block + .btn, .server-actions .modal-footer .btn-block + .btn, .modal-footer .server-actions .btn + .btn, .server-actions .modal-footer .btn + .btn, .modal-footer .server-actions .navmenu-toggle + .btn, .server-actions .modal-footer .navmenu-toggle + .btn, .modal-footer .server-actions .btn-block + .navmenu-toggle, .server-actions .modal-footer .btn-block + .navmenu-toggle, .modal-footer .server-actions .btn + .navmenu-toggle, .server-actions .modal-footer .btn + .navmenu-toggle, .modal-footer .server-actions .navmenu-toggle + .navmenu-toggle, .server-actions .modal-footer .navmenu-toggle + .navmenu-toggle {
     margin-left: 0; }
 
 .modal-scrollbar-measure {

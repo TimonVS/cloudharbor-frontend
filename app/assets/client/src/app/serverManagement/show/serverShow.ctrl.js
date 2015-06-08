@@ -1,6 +1,6 @@
 'use strict';
 
-function serverShowCtrl ($state, Server, server, Dialog) {
+function serverShowCtrl ($state, $timeout, Server, server, Dialog) {
 
   // ------------------------------------------------------------------
   // Initialization
@@ -54,18 +54,19 @@ function serverShowCtrl ($state, Server, server, Dialog) {
           console.log(error)
         })
     })
-    /*return Server.delete({ id: server.id }).$promise
+  }
+
+  function checkStatus () {
+    return server.$get()
       .then(function (data) {
-        console.log(data)
-        $state.go('servers.overview')
+        if (data.locked) return $timeout(checkStatus(), 10000)
+        else vm.server.locked = false
       })
-      .catch(function (error) {
-        console.log(error)
-      })*/
   }
 
   // Get containers if server is turned on
   if (server.status !== 'off') server.getContainers()
+  if (server.locked) checkStatus()
 
 }
 
