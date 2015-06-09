@@ -17,6 +17,22 @@ object ImagesManagement extends DockerManagement with Secured with WsUtils {
 
   val IMAGES_MANAGEMENT = "Images Management"
 
+  def listImages(serverUrl: String) = withAuthAsync { implicit user => implicit request =>
+    forwardGet(s"http://$managementUrl/images", serverUrl, dockerInfo, IMAGES_MANAGEMENT)
+  }
+
+  def inspectImage(serverUrl: String, imageName: String) = withAuthAsync { implicit user => implicit request =>
+    forwardGet(s"http://$managementUrl/images/$imageName", serverUrl, dockerInfo, IMAGES_MANAGEMENT)
+  }
+
+  def historyImage(serverUrl: String, imageName: String) = withAuthAsync { implicit user => implicit request =>
+    forwardGet(s"http://$managementUrl/images/$imageName/history", serverUrl, dockerInfo, IMAGES_MANAGEMENT)
+  }
+
+  def removeImage(serverUrl: String, imageName: String) = withAuthAsync { implicit user => implicit request =>
+    forwardDelete(s"http://$managementUrl/images/$imageName", serverUrl, dockerInfo, IMAGES_MANAGEMENT)
+  }
+
   def createImage(serverUrl: String, imageName: String) = withAuthAsync { implicit user => implicit request =>
     def ok(enumerator: Enumerator[Array[Byte]]) = {
       enumerator.map(new String(_)) |>>> Iteratee.foreach(Notifications.notificationsIn.push)
@@ -25,6 +41,25 @@ object ImagesManagement extends DockerManagement with Secured with WsUtils {
 
     WS.url(s"http://$managementUrl/images/$imageName")
       .withHeaders(dockerInfo(serverUrl))
+      .withMethod("POST")
+      .stream()
+      .map { case (response, enumerator) => response.status match {
+      case OK => ok(enumerator)
+      case _ => InternalServerError(unexpectedError)
+    }
+    } recover {
+      case _: ConnectException => InternalServerError(unavailableJsonMessage(IMAGES_MANAGEMENT))
+      case _ => InternalServerError(unexpectedError)
+    }
+  }
+
+  def pushImage(serverUrl: String, repositoryName: String, imageName: String) = withAuthAsync { implicit user => implicit request =>
+    def ok(enumerator: Enumerator[Array[Byte]]) = {
+      enumerator.map(new String(_)) |>>> Iteratee.foreach(Notifications.notificationsIn.push)
+      Ok("Image is being pushed")
+    }
+
+    WS.url(s"http://$managementUrl/images/$imageName/push/$repositoryName")
       .withMethod("POST")
       .stream()
       .map { case (response, enumerator) => response.status match {

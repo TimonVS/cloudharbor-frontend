@@ -1,6 +1,7 @@
 package controllers
 
 import java.net.ConnectException
+
 import actors.NotificationActor
 import models._
 import play.api.Play.current
@@ -9,7 +10,8 @@ import play.api.libs.json.Json
 import play.api.libs.ws.WS
 import play.api.mvc.Controller
 import utils.WsUtils
-import scala.concurrent.{Future}
+
+import scala.concurrent.Future
 
 /**
  * Created by ThomasWorkBook on 17/04/15.
@@ -17,17 +19,10 @@ import scala.concurrent.{Future}
  */
 object ServerManagement extends Controller with Secured with WsUtils {
 
+  lazy val notificationActor = Akka.system.actorOf(NotificationActor.props, name = "notificationActor")
   val serverManagementUrl = current.configuration.getString("serverManagement.url").get + ":" +
     current.configuration.getInt("serverManagement.port").get
-
   val SERVER_MANAGEMENT = "Server Management"
-
-  lazy val notificationActor = Akka.system.actorOf(NotificationActor.props, name = "notificationActor")
-
-  def cloudInfo(apiKey: String): (String, String) = {
-    "Cloud-Info" -> (apiKey)
-  }
-
   implicit val context = play.api.libs.concurrent.Execution.Implicits.defaultContext
 
   /**
@@ -35,19 +30,19 @@ object ServerManagement extends Controller with Secured with WsUtils {
    */
   def servers = withAuthAsync { implicit user => implicit request =>
     Server.findByUserId(user.id) match {
-        case Some(cloudService) =>
-          WS.url(s"http://$serverManagementUrl/servers")
-            .withHeaders(cloudInfo(cloudService.apiKey))
-            .get()
-            .map(forwardResponse(_))
-            .recover {
-              case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
-              case _ => InternalServerError(unexpectedError)
-            }
+      case Some(cloudService) =>
+        WS.url(s"http://$serverManagementUrl/servers")
+          .withHeaders(cloudInfo(cloudService.apiKey))
+          .get()
+          .map(forwardResponse(_))
+          .recover {
+          case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
+          case _ => InternalServerError(unexpectedError)
+        }
 
-        case None =>
-          Future.successful(Redirect(routes.Application.app("profile")))
-      }
+      case None =>
+        Future.successful(Redirect(routes.Application.app("profile")))
+    }
   }
 
   /**
@@ -61,8 +56,8 @@ object ServerManagement extends Controller with Secured with WsUtils {
           .get()
           .map(forwardResponse(_))
           .recover {
-            case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
-            case _ => InternalServerError(unexpectedError)
+          case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
+          case _ => InternalServerError(unexpectedError)
         }
       case None =>
         Future.successful(Redirect(routes.Application.app("profile")))
@@ -73,9 +68,9 @@ object ServerManagement extends Controller with Secured with WsUtils {
    * Ajax post for pausing a server
    */
   def powerOff(serverId: String) = withAuthAsync { implicit user => implicit request =>
-    Server.findByUserId(user.id) match{
+    Server.findByUserId(user.id) match {
       case Some(cloudService) =>
-        sendEmptyPost(s"http://$serverManagementUrl/servers/$serverId/stop", cloudService.apiKey, cloudInfo, SERVER_MANAGEMENT)
+        forwardPost(s"http://$serverManagementUrl/servers/$serverId/stop", cloudService.apiKey, cloudInfo, SERVER_MANAGEMENT)
       case None =>
         Future.successful(Redirect(routes.Application.app("profile")))
     }
@@ -87,7 +82,7 @@ object ServerManagement extends Controller with Secured with WsUtils {
   def powerOn(serverId: String) = withAuthAsync { implicit user => implicit request =>
     Server.findByUserId(user.id) match{
       case Some(cloudService) =>
-        sendEmptyPost(s"http://$serverManagementUrl/servers/$serverId/start", cloudService.apiKey, cloudInfo, SERVER_MANAGEMENT)
+        forwardPost(s"http://$serverManagementUrl/servers/$serverId/start", cloudService.apiKey, cloudInfo, SERVER_MANAGEMENT)
       case None =>
         Future.successful(Redirect(routes.Application.app("profile")))
     }
@@ -125,6 +120,10 @@ object ServerManagement extends Controller with Secured with WsUtils {
           }
       case None => Future.successful(NotFound(Json.obj("error" -> "Api Key not found")))
     }
+  }
+
+  def cloudInfo(apiKey: String): (String, String) = {
+    "Cloud-Info" -> (apiKey)
   }
 
   /**
