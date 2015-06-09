@@ -25,6 +25,16 @@ object ServerManagement extends Controller with Secured with WsUtils {
   val SERVER_MANAGEMENT = "Server Management"
   implicit val context = play.api.libs.concurrent.Execution.Implicits.defaultContext
 
+  def ping = withAuthAsync { implicit user => implicit request =>
+    WS.url(s"http://$serverManagementUrl/ping")
+      .get()
+      .map(forwardResponse)
+      .recover {
+      case _: ConnectException => InternalServerError(unavailableJsonMessage(SERVER_MANAGEMENT))
+      case _ => InternalServerError(unexpectedError)
+    }
+  }
+
   /**
    * Ajax get request for every server a user has at digital ocean
    */
@@ -34,7 +44,7 @@ object ServerManagement extends Controller with Secured with WsUtils {
         WS.url(s"http://$serverManagementUrl/servers")
           .withHeaders(cloudInfo(cloudService.apiKey))
           .get()
-          .map(forwardResponse(_))
+          .map(forwardResponse)
           .recover {
           case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
           case _ => InternalServerError(unexpectedError)
@@ -54,7 +64,7 @@ object ServerManagement extends Controller with Secured with WsUtils {
         WS.url(s"http://$serverManagementUrl/servers/$serverId")
           .withHeaders(cloudInfo(cloudService.apiKey))
           .get()
-          .map(forwardResponse(_))
+          .map(forwardResponse)
           .recover {
           case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
           case _ => InternalServerError(unexpectedError)
@@ -97,7 +107,7 @@ object ServerManagement extends Controller with Secured with WsUtils {
         WS.url(s"http://$serverManagementUrl/servers/$serverId/delete")
           .withHeaders(cloudInfo(cloudService.apiKey))
           .delete()
-          .map(forwardResponse(_))
+          .map(forwardResponse)
           .recover {
             case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
             case _ => InternalServerError(unexpectedError)
@@ -107,13 +117,17 @@ object ServerManagement extends Controller with Secured with WsUtils {
     }
   }
 
+  def cloudInfo(apiKey: String): (String, String) = {
+    "Cloud-Info" -> apiKey
+  }
+
   def createServer = withAuthAsync { implicit user => implicit request =>
     Server.findByUserId(user.id) match {
       case Some(server) =>
         WS.url(s"http://$serverManagementUrl/servers/add")
           .withHeaders(cloudInfo(server.apiKey))
           .post(request.body.asJson.get)
-          .map(forwardResponse(_))
+          .map(forwardResponse)
           .recover {
             case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
             case _ => InternalServerError(unexpectedError)
@@ -122,15 +136,11 @@ object ServerManagement extends Controller with Secured with WsUtils {
     }
   }
 
-  def cloudInfo(apiKey: String): (String, String) = {
-    "Cloud-Info" -> (apiKey)
-  }
-
   /**
    * Ajax get for retrieving the api key
    * @return
    */
-  def getApiKey() = withAuth { implicit user => implicit request =>
+  def getApiKey = withAuth { implicit user => implicit request =>
     Server.findByUserId(user.id) match {
       case Some(server) => Ok(Json.obj("success" -> server.apiKey))
       case None => BadRequest(Json.obj("error" -> "No API-key found"))
@@ -167,7 +177,7 @@ object ServerManagement extends Controller with Secured with WsUtils {
         WS.url(s"http://$serverManagementUrl/server-options")
           .withHeaders(cloudInfo(cloudService.apiKey))
           .get()
-          .map(forwardResponse(_))
+          .map(forwardResponse)
           .recover {
             case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
             case _ => InternalServerError(unexpectedError)
@@ -176,13 +186,13 @@ object ServerManagement extends Controller with Secured with WsUtils {
     }
   }
 
-  def getSSHKeys() = withAuthAsync { implicit user => implicit request =>
+  def getSSHKeys = withAuthAsync { implicit user => implicit request =>
     Server.findByUserId(user.id) match {
       case Some(cloudService) =>
         WS.url(s"http://$serverManagementUrl/ssh")
           .withHeaders(cloudInfo(cloudService.apiKey))
           .get()
-          .map(forwardResponse(_))
+          .map(forwardResponse)
           .recover {
             case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
             case _ => InternalServerError(unexpectedError)

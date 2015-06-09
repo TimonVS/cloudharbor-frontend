@@ -22,7 +22,9 @@ POST          /user/profile                                      controllers.Use
 # Notificatons
 GET           /notifications                                     controllers.Notifications.notifications
 
-# Deploy
+# Management
+GET        /management/ping               controllers.docker.Management.ping
+GET        /management/docker/ping        controllers.docker.Management.pingDockerRemoteApi(serverUrl: String)
 POST          /management/deploy/:name                           controllers.docker.DeployManagement.deploy(serverUrl: String, name: String)
 
 # ImagesManagement
@@ -43,9 +45,9 @@ POST          /management/containers/:containerId/pause          controllers.doc
 POST          /management/containers/:containerId/unpause        controllers.docker.ContainerManagement.unPauseContainer(serverUrl: String, containerId: String)
 POST          /management/containers/:containerId/rename         controllers.docker.ContainerManagement.renameContainer(serverUrl: String, containerId: String, newName: String)
 POST          /management/containers/:containerId/remove         controllers.docker.ContainerManagement.removeContainer(serverUrl: String, containerId: String, deleteVolumes: Boolean, force: Boolean)
-GET           /management/ping                                   controllers.docker.ContainerManagement.pingDockerRemoteApi(serverUrl: String)
 
 # ServerManagement
+GET        /servermanagement/ping         controllers.ServerManagement.ping
 GET           /servermanagement/servers                          controllers.ServerManagement.servers
 POST          /servermanagement/servers/add                      controllers.ServerManagement.createServer
 GET           /servermanagement/servers/:serverId                controllers.ServerManagement.show(serverId: String)
