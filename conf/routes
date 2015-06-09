@@ -22,20 +22,23 @@ POST          /user/profile                                      controllers.Use
 # Notificatons
 GET           /notifications                                     controllers.Notifications.notifications
 
-# DockerImagesManagement
-POST          /management/images/:name                           controllers.DockerImagesManagement.createImage(serverUrl: String, name: String)
+# Deploy
+POST        /management/deploy/:name                           controllers.docker.DeployManagement.deploy(serverUrl: String, name: String)
 
-# DockerContainerManagement
-GET           /management/containers/:serverUrl                  controllers.DockerContainerManagement.listContainers(serverUrl: String)
-GET           /management/containers/:containerId                controllers.DockerContainerManagement.show(serverUrl: String, containerId: String)
-POST          /management/containers/:containerId/start          controllers.DockerContainerManagement.startContainer(serverUrl: String, containerId: String)
-POST          /management/containers/:containerId/stop           controllers.DockerContainerManagement.stopContainer(serverUrl: String, containerId: String)
-POST          /management/containers/:containerId/kill           controllers.DockerContainerManagement.killContainer(serverUrl: String, containerId: String)
-POST          /management/containers/:containerId/pause          controllers.DockerContainerManagement.pauseContainer(serverUrl: String, containerId: String)
-POST          /management/containers/:containerId/unpause        controllers.DockerContainerManagement.unPauseContainer(serverUrl: String, containerId: String)
-POST          /management/containers/:containerId/rename         controllers.DockerContainerManagement.renameContainer(serverUrl: String, containerId: String, newName: String)
-POST          /management/containers/:containerId/remove         controllers.DockerContainerManagement.removeContainer(serverUrl: String, containerId: String, deleteVolumes: Boolean, force: Boolean)
-GET           /management/ping                                   controllers.DockerContainerManagement.pingDockerRemoteApi(serverUrl: String)
+# ImagesManagement
+POST        /management/images/:name                           controllers.docker.ImagesManagement.createImage(serverUrl: String, name: String)
+
+# ContainerManagement
+GET         /management/containers/:serverUrl                  controllers.docker.ContainerManagement.listContainers(serverUrl: String)
+GET         /management/containers/:containerId                controllers.docker.ContainerManagement.show(serverUrl: String, containerId: String)
+POST        /management/containers/:containerId/start          controllers.docker.ContainerManagement.startContainer(serverUrl: String, containerId: String)
+POST        /management/containers/:containerId/stop           controllers.docker.ContainerManagement.stopContainer(serverUrl: String, containerId: String)
+POST        /management/containers/:containerId/kill           controllers.docker.ContainerManagement.killContainer(serverUrl: String, containerId: String)
+POST        /management/containers/:containerId/pause          controllers.docker.ContainerManagement.pauseContainer(serverUrl: String, containerId: String)
+POST        /management/containers/:containerId/unpause        controllers.docker.ContainerManagement.unPauseContainer(serverUrl: String, containerId: String)
+POST        /management/containers/:containerId/rename         controllers.docker.ContainerManagement.renameContainer(serverUrl: String, containerId: String, newName: String)
+POST        /management/containers/:containerId/remove         controllers.docker.ContainerManagement.removeContainer(serverUrl: String, containerId: String, deleteVolumes: Boolean, force: Boolean)
+GET         /management/ping                                   controllers.docker.ContainerManagement.pingDockerRemoteApi(serverUrl: String)
 
 # ServerManagement
 GET           /servermanagement/servers                          controllers.ServerManagement.servers

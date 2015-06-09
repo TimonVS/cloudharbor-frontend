@@ -1,4 +1,4 @@
-package controllers
+package controllers.docker
 
 import play.api.Play._
 import play.api.mvc.Controller
