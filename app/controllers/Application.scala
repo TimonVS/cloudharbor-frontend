@@ -1,8 +1,7 @@
 package controllers
 
-import controllers.DockerContainerManagement._
-import models.User
-import play.api._
+import controllers.docker.ContainerManagement
+import controllers.docker.ContainerManagement._
 import play.api.mvc._
 
 object Application extends Controller {
