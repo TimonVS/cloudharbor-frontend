@@ -22,17 +22,6 @@ object ContainerManagement extends DockerManagement with Secured with WsUtils {
 
   def show(serverUrl: String, containerId: String) = TODO
 
-  def pingDockerRemoteApi(serverUrl: String) = withAuthAsync( implicit user => implicit request =>
-    WS.url(s"http://$managementUrl/ping")
-      .withHeaders(dockerInfo(serverUrl))
-      .get()
-      .map(forwardResponse)
-      .recover{
-        case _: ConnectException => InternalServerError(unavailableJsonMessage(CONTAINER_MANAGEMENT))
-        case _ => InternalServerError(unexpectedError)
-      }
-  )
-
   def listContainers(serverUrl: String) = withAuthAsync { implicit user => implicit request =>
     WS.url(s"http://$managementUrl/containers")
       .withHeaders(dockerInfo(serverUrl))
