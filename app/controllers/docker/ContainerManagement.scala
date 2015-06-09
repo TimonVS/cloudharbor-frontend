@@ -1,7 +1,8 @@
-package controllers
+package controllers.docker
 
 import java.net.ConnectException
 
+import controllers.Secured
 import play.api.Play.current
 import play.api.libs.ws.WS
 import utils.WsUtils
@@ -15,7 +16,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
  * Implement logging + retry with ping to check if the management service is available
  * TODO: remove hardcoded managementUrl and implement ETCD
  */
-object DockerContainerManagement extends DockerManagement with Secured with WsUtils {
+object ContainerManagement extends DockerManagement with Secured with WsUtils {
 
   val CONTAINER_MANAGEMENT = "Container Management"
 
