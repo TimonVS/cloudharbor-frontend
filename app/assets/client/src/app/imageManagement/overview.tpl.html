@@ -1,0 +1,20 @@
+<div class="management-overview panel-group">
+    <div class="panel panel-default" ng-repeat="server in vm.servers">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a href="" ui-sref="servers.show({ id: server.id })" ng-bind="::server.name"></a>
+                <a href="" class="pull-right" ng-click="vm.getImages(server)"><span class="mdi mdi-refresh"></span></a>
+                <a href="" class="pull-right" ng-click="vm.createImage(server)"><span class="mdi mdi-plus"></span></a>
+            </h4>
+        </div>
+        <div class="containers-list">
+            <div class="panel-body" ng-show="!server.containers.length || server.containers.$error">
+                <p class="no-margin" ng-show="!server.containers.length && !server.containers.$error">No containers available, <a href="" ng-click="containerManagement.createContainer(server)">create a new container</a>.</p>
+                <p class="no-margin" ng-show="server.containers.$error"><span ng-bind="server.containers.$error"></span>, <a href="" ng-click="containerManagement.getContainers(server)">try again</a>.</p>
+            </div>
+            <a ng-repeat="container in server.images" href="" class="containers-list-item">
+                <span>Test</span>
+            </a>
+        </div>
+    </div>
+</div>

@@ -2,13 +2,14 @@
 
 function ContainerFactory ($resource) {
 
-  var Container = $resource('/management/containers/:action/:id', { id: '@id' }, {
+  var Container = $resource('/management/containers/:action/:id/:name', { id: '@id' }, {
     query: {
       method: 'GET',
       isArray: true
     },
     create: {
-      method: 'POST'
+      method: 'POST',
+      params: { name: 'ubuntu', action: 'deploy', serverUrl: '178.62.172.128' }
     }
   })
 
