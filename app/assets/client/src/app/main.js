@@ -12,6 +12,7 @@ angular.module('app', [
   'app.components',
   'app.dashboard',
   'app.user',
+  'app.notification',
   'app.containerManagement',
   'app.serverManagement',
   'app.imageManagement'
