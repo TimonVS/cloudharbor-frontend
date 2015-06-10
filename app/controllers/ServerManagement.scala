@@ -2,15 +2,16 @@ package controllers
 
 import java.net.ConnectException
 
-import actors.NotificationActor
+import actors.NotificationActor.CreateServerNotification
+import models.Notifications.ServerNotification
 import models._
 import play.api.Play.current
-import play.api.libs.concurrent.Akka
 import play.api.libs.json.Json
 import play.api.libs.ws.WS
 import play.api.mvc.Controller
 import utils.WsUtils
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**
@@ -19,11 +20,9 @@ import scala.concurrent.Future
  */
 object ServerManagement extends Controller with Secured with WsUtils {
 
-  lazy val notificationActor = Akka.system.actorOf(NotificationActor.props, name = "notificationActor")
-  val serverManagementUrl = current.configuration.getString("serverManagement.url").get + ":" +
-    current.configuration.getInt("serverManagement.port").get
+  val serverManagementUrl = current.configuration.getString("serverManagement.url").get + ":" + current.configuration.getInt("serverManagement.port").get
   val SERVER_MANAGEMENT = "Server Management"
-  implicit val context = play.api.libs.concurrent.Execution.Implicits.defaultContext
+
 
   def ping = withAuthAsync { implicit user => implicit request =>
     WS.url(s"http://$serverManagementUrl/ping")
@@ -74,6 +73,10 @@ object ServerManagement extends Controller with Secured with WsUtils {
     }
   }
 
+  def cloudInfo(apiKey: String): (String, String) = {
+    "Cloud-Info" -> apiKey
+  }
+
   /**
    * Ajax post for pausing a server
    */
@@ -117,17 +120,15 @@ object ServerManagement extends Controller with Secured with WsUtils {
     }
   }
 
-  def cloudInfo(apiKey: String): (String, String) = {
-    "Cloud-Info" -> apiKey
-  }
-
   def createServer = withAuthAsync { implicit user => implicit request =>
     Server.findByUserId(user.id) match {
       case Some(server) =>
         WS.url(s"http://$serverManagementUrl/servers/add")
           .withHeaders(cloudInfo(server.apiKey))
           .post(request.body.asJson.get)
-          .map(forwardResponse)
+          .map { response =>
+          forwardResponseWithNotification(response, CreateServerNotification(user.id, ServerNotification((response.json \ "success").toString.toInt, "")))
+        }
           .recover {
             case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
             case _ => InternalServerError(unexpectedError)
