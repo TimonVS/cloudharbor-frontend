@@ -13,13 +13,15 @@ import scala.concurrent.ExecutionContext.Implicits.global
  */
 object DeployManagement extends DockerManagement {
 
+  val DEPLOY_MANAGEMENT = "Deploy Management"
+
   def deploy(serverUrl: String, imageName: String) = withAuthAsync { implicit user => implicit request =>
     WS.url(s"http://$managementUrl/deploy/$imageName")
       .withHeaders(dockerInfo(serverUrl))
       .post(request.body.asJson.get)
       .map(forwardResponse)
       .recover {
-      case _: ConnectException => InternalServerError(unavailableJsonMessage(IMAGES_MANAGEMENT))
+      case _: ConnectException => InternalServerError(unavailableJsonMessage(DEPLOY_MANAGEMENT))
       case _ => InternalServerError(unexpectedError)
     }
   }
