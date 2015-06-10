@@ -2,20 +2,21 @@
 
 <div class="table-responsive">
     <table class="table table-hover servers-table">
-        <tr>
-            <th>ID</th>
+        <tr class="header-row">
             <th>Name</th>
-            <th>Locked</th>
             <th>Status</th>
             <th>Operating System</th>
             <th>IP address</th>
             <th>Region</th>
         </tr>
-        <tr ng-repeat="server in serverManagement.servers | limitTo:serverManagement.pagination.limit:serverManagement.pagination.from" class="servers-table-item" ui-sref="servers.show({ id: server.id })">
-            <td ng-bind="::server.id"></td>
-            <td ng-bind="::server.name"></td>
-            <td ng-bind="server.locked"></td>
-            <td ng-bind="server.status"></td>
+        <tr ng-class="{ disabled: server.locked }"
+            ng-repeat="server in serverManagement.servers | limitTo:serverManagement.pagination.limit:serverManagement.pagination.from"
+            class="servers-table-item" ui-sref="{{ server.locked ? '.' : 'servers.show({ id: server.id })' }}">
+            <td>
+                <span ng-if="server.locked" class="mdi mdi-lock"></span>
+                <span ng-bind="::server.name"></span>
+            </td>
+            <td>{{ server.status | capitalize }}</td>
             <td><span ng-bind="::server.image.distribution"></span> <span ng-bind="::server.image.name"></span></td>
             <td ng-bind="::server.getIp()"></td>
             <td ng-bind="::server.region.name"></td>
@@ -24,4 +25,11 @@
     <ch-spinner ng-show="serverManagement.busy"></ch-spinner>
 </div>
 
-<ch-pagination total-items="{{ serverManagement.servers.length }}" items-per-page="serverManagement.pagination.limit" on-page-change="serverManagement.changePage(pageNumber)"></ch-pagination>
+<div class="row">
+    <div class="col-xs-8">
+        <ch-pagination total-items="{{ serverManagement.servers.length }}" items-per-page="{{ serverManagement.pagination.limit }}" on-page-change="serverManagement.changePage(pageNumber)"></ch-pagination>
+    </div>
+    <div class="col-xs-4">
+        <select class="form-control pull-right" ng-options="range for range in serverManagement.pagination.ranges" ng-model="serverManagement.pagination.limit"></select>
+    </div>
+</div>

@@ -3,7 +3,7 @@
 function imageSearch (dockerHubApi) {
   return {
     restrict: 'EA',
-    templateUrl: 'components/directives/imageSearch/imageSearch.tpl.html',
+    templateUrl: 'components/imageSearch/imageSearch.tpl.html',
     require: 'ngModel',
     scope: {},
     link: function ($scope, $element, $attr, $ctrl) {
@@ -66,5 +66,5 @@ function imageSearch (dockerHubApi) {
 }
 
 angular
-  .module('app.util')
+  .module('app.components')
   .directive('chImageSearch', imageSearch)

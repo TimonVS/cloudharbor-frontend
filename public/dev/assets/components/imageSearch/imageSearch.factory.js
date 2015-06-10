@@ -31,5 +31,5 @@ function dockerHubApi ($http, $cacheFactory) {
 }
 
 angular
-  .module('app.util')
+  .module('app.components')
   .factory('dockerHubApi', dockerHubApi);
