@@ -28,7 +28,7 @@ class NotificationActor extends Actor with ActorLogging{
   }
 
   def pushNotification(dbNotification: DBNotification) = {
-    Notifications.notificationsIn.push(Notification(dbNotification.id, dbNotification.userId, dbNotification.message, dbNotification.notificationType))
+    Notifications.notificationsIn.push(Notification(dbNotification.id, dbNotification.userId, Json.parse(dbNotification.message), dbNotification.notificationType))
   }
 
 }
