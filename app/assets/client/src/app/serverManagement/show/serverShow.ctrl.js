@@ -21,8 +21,7 @@ function serverShowCtrl ($state, $timeout, Server, server, Dialog) {
   function startServer () {
     return Server.start({ id: server.id }).$promise
       .then(function (data) {
-        console.log(data)
-        vm.server.status = "active"
+        vm.server.status = 'active'
       })
       .catch(function (error) {
         console.log(error)
@@ -32,8 +31,7 @@ function serverShowCtrl ($state, $timeout, Server, server, Dialog) {
   function stopServer () {
     return Server.stop({ id: server.id }).$promise
       .then(function (data) {
-        console.log(data)
-        vm.server.status = "off"
+        vm.server.status = 'off'
       })
       .catch(function (error) {
         console.log(error)
@@ -47,7 +45,6 @@ function serverShowCtrl ($state, $timeout, Server, server, Dialog) {
     }).then(function () {
       Server.delete({ id: server.id }).$promise
         .then(function (data) {
-          console.log(data)
           $state.go('servers.overview')
         })
         .catch(function (error) {

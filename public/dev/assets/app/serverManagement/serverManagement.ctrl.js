@@ -12,12 +12,13 @@ function serverManagementCtrl ($scope, Server, serverCache, servers) {
 
   // Pagination
   vm.pagination = {
+    from: 0,
     limit: 10,
-    from: 0
+    ranges: [10, 25, 50, 100]
   }
 
   vm.changePage = function (pageNum) {
-    vm.from = (pageNum - 1) * vm.limit
+    vm.pagination.from = (pageNum - 1) * vm.pagination.limit
   }
 
   // ------------------------------------------------------------------

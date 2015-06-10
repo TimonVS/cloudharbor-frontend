@@ -5,7 +5,7 @@ function pagination () {
     restrict: 'EA',
     scope: {
       totalItems: '@',
-      itemsPerPage: '=',
+      itemsPerPage: '@',
       paginationRange: '=',
       onPageChange: '&'
     },
@@ -19,6 +19,11 @@ function pagination () {
           $scope.numPages = Math.ceil($scope.totalItems / $scope.itemsPerPage)
           $scope.pages = generatePages()
         }
+      })
+
+      $attr.$observe('itemsPerPage', function (value) {
+        $scope.numPages = Math.ceil($scope.totalItems / $scope.itemsPerPage)
+        $scope.pages = generatePages()
       })
 
       $scope.goToPage = function (num) {

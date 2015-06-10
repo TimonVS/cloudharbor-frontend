@@ -25,4 +25,11 @@
     <ch-spinner ng-show="serverManagement.busy"></ch-spinner>
 </div>
 
-<ch-pagination total-items="{{ serverManagement.servers.length }}" items-per-page="serverManagement.pagination.limit" on-page-change="serverManagement.changePage(pageNumber)"></ch-pagination>
+<div class="row">
+    <div class="col-xs-8">
+        <ch-pagination total-items="{{ serverManagement.servers.length }}" items-per-page="{{ serverManagement.pagination.limit }}" on-page-change="serverManagement.changePage(pageNumber)"></ch-pagination>
+    </div>
+    <div class="col-xs-4">
+        <select class="form-control pull-right" ng-options="range for range in serverManagement.pagination.ranges" ng-model="serverManagement.pagination.limit"></select>
+    </div>
+</div>
