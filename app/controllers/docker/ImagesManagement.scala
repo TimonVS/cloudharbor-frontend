@@ -2,7 +2,9 @@ package controllers.docker
 
 import java.net.ConnectException
 
-import controllers.{Notifications, Secured}
+import actors.NotificationActor.CreateImageNotification
+import controllers.Secured
+import models.Notifications.ImageNotification
 import play.api.Play._
 import play.api.libs.iteratee.{Enumerator, Iteratee}
 import play.api.libs.ws.WS
@@ -35,7 +37,7 @@ object ImagesManagement extends DockerManagement with Secured with WsUtils {
 
   def createImage(serverUrl: String, imageName: String) = withAuthAsync { implicit user => implicit request =>
     def ok(enumerator: Enumerator[Array[Byte]]) = {
-      enumerator.map(new String(_)) |>>> Iteratee.foreach(Notifications.notificationsIn.push)
+      (enumerator |>>> Iteratee.skipToEof).foreach(_ => notificationActor ! CreateImageNotification(user.id, ImageNotification(imageName, "")))
       Ok("Image is being created")
     }
 
@@ -55,7 +57,6 @@ object ImagesManagement extends DockerManagement with Secured with WsUtils {
 
   def pushImage(serverUrl: String, repositoryName: String, imageName: String) = withAuthAsync { implicit user => implicit request =>
     def ok(enumerator: Enumerator[Array[Byte]]) = {
-      enumerator.map(new String(_)) |>>> Iteratee.foreach(Notifications.notificationsIn.push)
       Ok("Image is being pushed")
     }
 
