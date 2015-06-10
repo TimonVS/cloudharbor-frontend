@@ -20,5 +20,5 @@
         </div>
     </div>
 
-    <ch-pagination total-items="{{ containerManagement.servers.length }}" items-per-page="containerManagement.pagination.limit" on-page-change="containerManagements.changePage(pageNumber)"></ch-pagination>
+    <ch-pagination total-items="{{ containerManagement.servers.length }}" items-per-page="{{ containerManagement.pagination.limit }}" on-page-change="containerManagements.changePage(pageNumber)"></ch-pagination>
 </div>
