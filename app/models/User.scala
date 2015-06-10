@@ -1,7 +1,8 @@
 package models
 
-import scalikejdbc._
+import models.Notifications.DBNotification
 import org.mindrot.jbcrypt.BCrypt
+import scalikejdbc._
 
 case class User(
   id: Int,
@@ -12,7 +13,7 @@ case class User(
   prefix: Option[String] = None,
   lastName: String,
   cloudService: Option[Server],
-  notifications: List[Notification]) {
+  notifications: List[DBNotification]) {
 
   def update(data: UserRegistrationData): User = {
     val dataPassword = data.password.getOrElse(this.password)
@@ -57,7 +58,7 @@ object User extends SQLSyntaxSupport[User] with StandardQueries[User] {
     prefix = rs.get(u.prefix),
     lastName = rs.get(u.lastName),
     cloudService = Server.findByUserId(rs.get(u.id)),
-    notifications = Notification.findByUserId(rs.get(u.id))
+    notifications = DBNotification.findByUserId(rs.get(u.id))
   )
 
   def findByUsername(username: String)(implicit session: DBSession = autoSession): Option[User] = {

@@ -1,12 +1,13 @@
-package models
+package models.Notifications
 
+import models.{Server, StandardQueries}
 import org.joda.time.DateTime
 import scalikejdbc._
 
 /**
  * Created by ThomasWorkBook on 02/05/15.
  */
-case class Notification(
+case class DBNotification(
                        id: Int,
                        userId: Int,
                        message: String,
@@ -14,24 +15,14 @@ case class Notification(
                        notificationType: String,
                        read: Boolean) {
 
-  def save()(implicit session: DBSession = Notification.autoSession): Notification = Notification.save(this)(session)
+  def save()(implicit session: DBSession = DBNotification.autoSession): DBNotification = DBNotification.save(this)(session)
 
-  def destroy()(implicit session: DBSession = Notification.autoSession): Unit = Notification.destroy(this)(session)
+  def destroy()(implicit session: DBSession = DBNotification.autoSession): Unit = DBNotification.destroy(this)(session)
 
 }
 
-object NotificationType extends Enumeration {
-  type NotificationType = Value
-  val ServerCreate, ServerDelete = Value
-}
 
-object NotificationMessages {
-  def serverCreated(id: BigDecimal) = s"You created a server with the id of $id"
-
-  def serverDeleted(id: BigDecimal) = s"You deleted a server with the id of $id"
-}
-
-object Notification extends SQLSyntaxSupport[Notification] with StandardQueries[Notification]{
+object DBNotification extends SQLSyntaxSupport[DBNotification] with StandardQueries[DBNotification] {
 
   override val tableName = "notification"
 
@@ -39,16 +30,17 @@ object Notification extends SQLSyntaxSupport[Notification] with StandardQueries[
 
   override val nameConverters = Map("^notificationType$" -> "type")
 
-  override val sp = Notification.syntax("n")
+  override val sp = DBNotification.syntax("n")
 
   override val autoSession = AutoSession
 
-  override val aliasSyntax = Notification as sp
+  override val aliasSyntax = DBNotification as sp
 
-  override val result: (WrappedResultSet) => Notification = Notification(sp.resultName) _
+  override val result: (WrappedResultSet) => DBNotification = DBNotification(sp.resultName) _
 
-  def apply(cs: SyntaxProvider[Notification])(rs: WrappedResultSet): Notification = apply(cs.resultName)(rs)
-  def apply(cs: ResultName[Notification])(rs: WrappedResultSet): Notification = new Notification(
+  def apply(cs: SyntaxProvider[DBNotification])(rs: WrappedResultSet): DBNotification = apply(cs.resultName)(rs)
+
+  def apply(cs: ResultName[DBNotification])(rs: WrappedResultSet): DBNotification = new DBNotification(
     id = rs.get(cs.id),
     userId = rs.get(cs.userId),
     message = rs.get(cs.message),
@@ -57,7 +49,7 @@ object Notification extends SQLSyntaxSupport[Notification] with StandardQueries[
     read = rs.get(cs.read)
   )
 
-  def findByUserId(userId: Int)(implicit session: DBSession = autoSession): List[Notification] = {
+  def findByUserId(userId: Int)(implicit session: DBSession = autoSession): List[DBNotification] = {
     withSQL{
       select.from(aliasSyntax).where.eq(sp.userId, userId)
     }.map(result).list().apply()
@@ -68,9 +60,9 @@ object Notification extends SQLSyntaxSupport[Notification] with StandardQueries[
               message: String,
               timeStamp: DateTime,
               notificationType: String,
-              read: Boolean = false)(implicit session: DBSession = autoSession): Notification = {
+              read: Boolean = false)(implicit session: DBSession = autoSession): DBNotification = {
     val generatedKey = withSQL {
-      insert.into(Notification).columns(
+      insert.into(DBNotification).columns(
         column.userId,
         column.message,
         column.timeStamp,
@@ -85,7 +77,7 @@ object Notification extends SQLSyntaxSupport[Notification] with StandardQueries[
         )
     }.updateAndReturnGeneratedKey.apply()
 
-    Notification(
+    DBNotification(
       id = generatedKey.toInt,
       userId = userId,
       message = message,
@@ -95,7 +87,7 @@ object Notification extends SQLSyntaxSupport[Notification] with StandardQueries[
     )
   }
 
-  def save(entity: Notification)(implicit session: DBSession = autoSession): Notification = {
+  def save(entity: DBNotification)(implicit session: DBSession = autoSession): DBNotification = {
     withSQL {
       update(Server).set(
         column.id -> entity.id,
@@ -108,7 +100,7 @@ object Notification extends SQLSyntaxSupport[Notification] with StandardQueries[
     entity
   }
 
-  def destroy(entity: Notification)(implicit session: DBSession = autoSession): Unit = {
+  def destroy(entity: DBNotification)(implicit session: DBSession = autoSession): Unit = {
     withSQL { delete.from(Server).where.eq(column.id, entity.id) }.update.apply()
   }
 
