@@ -52,7 +52,7 @@ function serverManagementFormCtrl ($scope, $http, CloudService, Server) {
 
     var server = new Server(request)
 
-    server.$create()
+    return server.$create()
       .then(function (data) {
         vm.busy = false
         $scope.$emit('serverCreated', data)

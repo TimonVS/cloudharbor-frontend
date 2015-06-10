@@ -13,8 +13,8 @@ $bower-path: '/public/bower_components/';
 @import "../app/containerManagement/containerManagement";
 @import "../app/serverManagement/serverManagement";
 @import "../app/content/content";
-@import "../components/directives/imageSearch/imageSearch";
-@import "../components/directives/spinner/spinner";
+@import "../components/imageSearch/imageSearch";
+@import "../components/spinner/spinner";
 
 // bootstrap-jasny
 @import "public/bower_components/bootstrap-jasny/scss/variables";

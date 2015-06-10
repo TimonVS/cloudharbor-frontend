@@ -3,10 +3,10 @@
 function navMenu ($location) {
   return {
     restrict: 'E',
-    templateUrl: 'components/directives/navMenu/navMenu.tpl.html'
+    templateUrl: 'components/navMenu/navMenu.tpl.html'
   }
 }
 
 angular
-  .module('app.util')
+  .module('app.components')
   .directive('chNavMenu', navMenu)

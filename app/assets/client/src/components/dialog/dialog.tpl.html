@@ -1,0 +1,8 @@
+<div class="modal-body">
+    <p ng-bind="message"></p>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-link" ng-click="$dismiss()">{{ dismiss || 'Cancel' }}</button>
+    <button type="submit" class="btn btn-primary" ng-click="$close()">{{ action }}</button>
+</div>

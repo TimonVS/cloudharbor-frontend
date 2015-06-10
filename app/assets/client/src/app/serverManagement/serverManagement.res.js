@@ -2,7 +2,7 @@
 
 function ServerFactory ($resource, serverCache, Container) {
 
-  var Server = $resource('/servermanagement/servers/:action/:id', { id: '@id' }, {
+  var Server = $resource('/servermanagement/servers/:id/:action', { id: '@id' }, {
     create: {
       method: 'POST',
       params: { action: 'add' }
@@ -18,10 +18,21 @@ function ServerFactory ($resource, serverCache, Container) {
       interceptor: {
         response: function (response) {
           response.resource.$meta = response.data.$meta
-          serverCache.set(response.resource)
           return response.resource
         }
       }
+    },
+    start: {
+      method: 'POST',
+      params: { action: 'start' }
+    },
+    stop: {
+      method: 'POST',
+      params: { action: 'stop' }
+    },
+    delete: {
+      method: 'DELETE',
+      params: { action: 'delete' }
     }
   })
 

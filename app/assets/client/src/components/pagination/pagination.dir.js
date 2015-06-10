@@ -5,11 +5,11 @@ function pagination () {
     restrict: 'EA',
     scope: {
       totalItems: '@',
-      itemsPerPage: '=',
+      itemsPerPage: '@',
       paginationRange: '=',
       onPageChange: '&'
     },
-    templateUrl: 'components/directives/pagination/pagination.tpl.html',
+    templateUrl: 'components/pagination/pagination.tpl.html',
     link: function ($scope, $element, $attr) {
       // todo: refactor
       $attr.$observe('totalItems', function (value) {
@@ -19,6 +19,11 @@ function pagination () {
           $scope.numPages = Math.ceil($scope.totalItems / $scope.itemsPerPage)
           $scope.pages = generatePages()
         }
+      })
+
+      $attr.$observe('itemsPerPage', function (value) {
+        $scope.numPages = Math.ceil($scope.totalItems / $scope.itemsPerPage)
+        $scope.pages = generatePages()
       })
 
       $scope.goToPage = function (num) {
@@ -68,5 +73,5 @@ function pagination () {
 }
 
 angular
-  .module('app.util')
+  .module('app.components')
   .directive('chPagination', pagination)
