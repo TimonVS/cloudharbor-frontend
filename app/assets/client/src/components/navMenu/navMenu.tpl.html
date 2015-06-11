@@ -15,6 +15,12 @@
                 Servers
             </a>
         </li>
+        <li ng-class="{ active: $state.includes('images') }">
+            <a href="" ui-sref="images.overview">
+                <span class="mdi mdi-cube-outline"></span>
+                Images
+            </a>
+        </li>
         <li ng-class="{ active: $state.includes('containers') }">
             <a href="" ui-sref="containers.overview">
                 <span class="mdi mdi-cube-outline"></span>

@@ -11,7 +11,8 @@ angular.module('app', [
   'app.components',
   'app.dashboard',
   'app.containerManagement',
-  'app.serverManagement'
+  'app.serverManagement',
+  'app.imageManagement'
 ])
 
   .config(function($httpProvider, $stateProvider, $urlRouterProvider, $locationProvider, cfpLoadingBarProvider) {
