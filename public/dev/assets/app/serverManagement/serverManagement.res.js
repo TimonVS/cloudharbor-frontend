@@ -1,6 +1,6 @@
 'use strict';
 
-function ServerFactory ($resource, serverCache, Container) {
+function ServerFactory ($resource, serverCache, Container, Image) {
 
   var Server = $resource('/servermanagement/servers/:id/:action', { id: '@id' }, {
     create: {
@@ -49,6 +49,20 @@ function ServerFactory ($resource, serverCache, Container) {
         .catch(function (error) {
           console.log(error)
           self.containers.$error = error.data.error
+        })
+    },
+    getImages: function () {
+      var self = this
+
+      this.images = []
+
+      this.images = Image.query({ serverUrl: this.getIp() }).$promise
+        .then(function (data) {
+          self.images = data
+        })
+        .catch(function (error) {
+          console.log(error)
+          self.images.$error = error.data.error
         })
     },
     getIp: function () {
