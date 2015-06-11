@@ -8,6 +8,21 @@ function notificationList (Notifications) {
     scope: {},
     link: function ($scope) {
       $scope.notifications = Notifications.latest
+
+      var source = new EventSource('/notifications');
+
+      source.addEventListener("message", function(e) {
+        console.log(e.data);
+        console.log(angular.fromJson(e.data))
+      }, false);
+
+      source.addEventListener("open", function(e) {
+        console.log("Connection was opened.");
+      }, false);
+
+      source.addEventListener("error", function(e) {
+        console.log("Error - connection was lost.");
+      }, false);
     }
   }
 }
