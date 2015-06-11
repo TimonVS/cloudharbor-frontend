@@ -8,12 +8,12 @@
             </h4>
         </div>
         <div class="containers-list">
-            <div class="panel-body" ng-show="!server.containers.length || server.containers.$error">
-                <p class="no-margin" ng-show="!server.containers.length && !server.containers.$error">No containers available, <a href="" ng-click="containerManagement.createContainer(server)">create a new container</a>.</p>
-                <p class="no-margin" ng-show="server.containers.$error"><span ng-bind="server.containers.$error"></span>, <a href="" ng-click="containerManagement.getContainers(server)">try again</a>.</p>
+            <div class="panel-body" ng-show="!server.images.length || server.images.$error">
+                <p class="no-margin" ng-show="!server.images.length && !server.images.$error">No images available, <a href="" ng-click="vm.createImage(server)">create a new image</a>.</p>
+                <p class="no-margin" ng-show="server.images.$error"><span ng-bind="server.images.$error"></span>, <a href="" ng-click="vm.getImages(server)">try again</a>.</p>
             </div>
-            <a ng-repeat="container in server.images" href="" class="containers-list-item">
-                <span>Test</span>
+            <a ng-repeat="image in server.images" href="" class="containers-list-item">
+                <span ng-bind="image.RepoTags[0]"></span>
             </a>
         </div>
     </div>
