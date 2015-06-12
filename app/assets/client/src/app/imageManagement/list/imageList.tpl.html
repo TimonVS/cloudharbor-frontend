@@ -1,9 +1,5 @@
-<div class="containers-list">
-    <div class="panel-body" ng-show="!server.images.length || server.images.$error">
-        <p class="no-margin" ng-show="!server.images.length && !server.images.$error">No images available, <a href="" ng-click="createImage(server)">create or add a new image</a>.</p>
-        <p class="no-margin" ng-show="server.images.$error"><span ng-bind="server.images.$error"></span>, <a href="" ng-click="getImages(server)">try again</a>.</p>
-    </div>
-    <a ng-repeat="image in server.images" href="" class="containers-list-item">
+<div class="list-group">
+    <a ng-repeat="image in server.images" href="" class="list-group-item">
         <span ng-bind="::image.RepoTags[0]"></span>
     </a>
 </div>

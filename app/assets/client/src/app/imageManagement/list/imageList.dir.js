@@ -6,6 +6,7 @@ function imageList () {
     scope: {
       server: '='
     },
+    replace: true,
     templateUrl: 'app/imageManagement/list/imageList.tpl.html',
     controller: function ($scope) {
       $scope.server.getImages()
