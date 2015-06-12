@@ -6,43 +6,44 @@ function imageSearch (dockerHubApi) {
     templateUrl: 'components/imageSearch/imageSearch.tpl.html',
     require: 'ngModel',
     scope: {},
-    link: function ($scope, $element, $attr, $ctrl) {
+    link: function (scope, element, attrs, ctrl) {
 
       // ------------------------------------------------------------------
       // Initialization
       // ------------------------------------------------------------------
 
-      $scope.pagination = {
+      scope.pagination = {
         current: 1
       }
-      $scope.results = []
-      $scope.search = search
+      scope.results = []
+      scope.search = search
 
       // ------------------------------------------------------------------
       // Actions
       // ------------------------------------------------------------------
 
-      $scope.changePage = function (num) {
-        search($scope.search.input, { pageNum: num })
+      scope.changePage = function (num) {
+        search(scope.search.input, { pageNum: num })
       }
 
-      $scope.selectImage = function (image) {
-        $ctrl.$setViewValue(image)
+      scope.selectImage = function (image) {
+        scope.selected = image
+        ctrl.$setViewValue(image)
       }
 
       function search (query, params) {
-        $scope.busy = true
+        scope.busy = true
 
         dockerHubApi.search(query, params)
           .then(function (response) {
-            $scope.busy = false
+            scope.busy = false
 
             if (response.status !== 200) {
-              $scope.search.error = {query: query, params: params}
+              scope.search.error = {query: query, params: params}
               return
             }
 
-            $scope.results = response.data
+            scope.results = response.data
           })
       }
 
@@ -50,15 +51,15 @@ function imageSearch (dockerHubApi) {
       //
       // ------------------------------------------------------------------
 
-      var inputElement = angular.element($element.find('input')[0])
+      var inputElement = angular.element(element.find('input')[0])
 
       // Select existing text upon click
       inputElement.on('click', function () {
         inputElement.select()
       })
 
-      $scope.$watch('search.input', function (query) {
-        if (query === undefined) return delete $scope.results
+      scope.$watch('search.input', function (query) {
+        if (query === undefined) return delete scope.results
         search(query)
       })
     }
