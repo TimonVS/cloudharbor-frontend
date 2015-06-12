@@ -1,12 +1,13 @@
 'use strict';
 
-function containerCreateFormCtrl ($scope, $modalInstance, server, Container) {
+function imageCreateFormCtrl ($scope, $modalInstance, server, DockerImage) {
 
   // ------------------------------------------------------------------
   // Initialization
   // ------------------------------------------------------------------
 
   var vm = this
+  console.log(server)
 
   // Function assignment
   vm.submit = submit
@@ -14,14 +15,14 @@ function containerCreateFormCtrl ($scope, $modalInstance, server, Container) {
 
   // Variable assignment
   vm.form = {}
-  vm.container = {}
+  vm.image = {}
 
   // ------------------------------------------------------------------
   // Actions
   // ------------------------------------------------------------------
 
   function cancel () {
-    $modalInstance.dismiss('cancel');
+    $modalInstance.dismiss('cancel')
   }
 
   function submit (form) {
@@ -30,20 +31,16 @@ function containerCreateFormCtrl ($scope, $modalInstance, server, Container) {
     vm.busy = true
 
     var request = {
-      image: vm.container.image.name,
-      macAddress: '',
-      networkDisabled: false,
-      cpuShares: vm.container.cpuShares,
-      cpuset: ''
+      name: vm.image.image.name,
     }
 
-    var container = new Container(request)
+    var image = new DockerImage(request)
 
-    container.$create()
+    image.$create({ serverUrl: server.getIp() })
       .then(function (data) {
         vm.busy = false
         $modalInstance.close()
-        $scope.$emit('containerCreated', data)
+        $scope.$emit('imageCreated', data)
       })
       .catch(function (error) {
         vm.busy = false
@@ -58,5 +55,5 @@ function containerCreateFormCtrl ($scope, $modalInstance, server, Container) {
 }
 
 angular
-  .module('app.containerManagement')
-  .controller('containerCreateForm', containerCreateFormCtrl);
+  .module('app.imageManagement')
+  .controller('imageCreateForm', imageCreateFormCtrl);

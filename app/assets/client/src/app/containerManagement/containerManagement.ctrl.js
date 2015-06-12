@@ -33,17 +33,10 @@ function containerManagementCtrl ($scope, $log, $modal, Server, servers) {
     Server.query().$promise.then(function (data) {
         vm.servers = data
         vm.busy = false
-        getAllContainers()
       })
       .catch(function (error) {
 
       })
-  }
-
-  function getAllContainers () {
-    vm.servers.forEach(function (server) {
-      server.getContainers()
-    })
   }
 
   function createContainer (server) {
@@ -52,7 +45,12 @@ function containerManagementCtrl ($scope, $log, $modal, Server, servers) {
       templateUrl: 'app/containerManagement/create/containerCreateForm.tpl.html',
       controller: 'containerCreateForm',
       controllerAs: 'vm',
-      size: 'lg'
+      size: 'lg',
+      resolve: {
+        server: function () {
+          return server
+        }
+      }
     })
 
     modalInstance.result.then(function (selectedItem) {
@@ -61,8 +59,6 @@ function containerManagementCtrl ($scope, $log, $modal, Server, servers) {
       $log.info('Modal dismissed at: ' + new Date())
     })
   }
-
-  getAllContainers()
 
   // ------------------------------------------------------------------
   // Event listeners

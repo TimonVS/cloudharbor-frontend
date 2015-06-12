@@ -1,15 +1,17 @@
 'use strict'
 
-function ImageFactory ($resource) {
+function DockerImageFactory ($resource) {
 
-  var Image = $resource('/management/images/:name/:action', {}, {
-
+  var DockerImage = $resource('/management/images/:name/:action', { name: '@name' }, {
+    create: {
+      method: 'POST'
+    }
   })
 
-  return Image
+  return DockerImage
 
 }
 
 angular
   .module('app.imageManagement')
-  .factory('Image', ImageFactory)
+  .factory('DockerImage', DockerImageFactory)
