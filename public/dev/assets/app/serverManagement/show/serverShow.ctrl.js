@@ -61,10 +61,7 @@ function serverShowCtrl ($state, $timeout, Server, server, Dialog) {
       })
   }
 
-  // Get containers if server is turned on
-  if (server.status !== 'off') server.getContainers()
   if (server.locked) checkStatus()
-
 }
 
 angular

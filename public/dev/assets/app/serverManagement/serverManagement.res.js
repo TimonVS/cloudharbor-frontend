@@ -1,6 +1,6 @@
 'use strict';
 
-function ServerFactory ($resource, serverCache, Container, Image) {
+function ServerFactory ($resource, serverCache, Container, DockerImage) {
 
   var Server = $resource('/servermanagement/servers/:id/:action', { id: '@id' }, {
     create: {
@@ -56,7 +56,7 @@ function ServerFactory ($resource, serverCache, Container, Image) {
 
       this.images = []
 
-      this.images = Image.query({ serverUrl: this.getIp() }).$promise
+      this.images = DockerImage.query({ serverUrl: this.getIp() }).$promise
         .then(function (data) {
           self.images = data
         })

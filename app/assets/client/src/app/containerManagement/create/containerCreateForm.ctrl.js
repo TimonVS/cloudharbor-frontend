@@ -1,6 +1,6 @@
 'use strict';
 
-function containerCreateFormCtrl ($scope, $modalInstance, Container) {
+function containerCreateFormCtrl ($scope, $modalInstance, server, Container) {
 
   // ------------------------------------------------------------------
   // Initialization

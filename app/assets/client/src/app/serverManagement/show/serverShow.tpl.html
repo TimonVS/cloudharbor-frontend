@@ -47,33 +47,30 @@
         </div>
     </div>
     <div class="col-sm-8 col-md-9">
-        <div class="" style="margin-bottom: 20px;">
-            <a href="" class="btn btn-sm btn-primary">
-                <span class="mdi mdi-refresh"></span>
-                Refresh containers
-            </a>
-            <a href="" class="btn btn-sm btn-primary">
-                <span class="mdi mdi-plus"></span>
-                Create new container
-            </a>
-        </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    Containers
-                </h4>
-            </div>
-            <div class="containers-list">
-                <div class="panel-body" ng-show="!vm.server.containers.length || vm.server.containers.$error">
-                    <p class="no-margin" ng-show="!vm.server.containers.length && !vm.server.containers.$error">No containers available, <a href="" ng-click="vm.createContainer(server)">create a new container</a>.</p>
-                    <p class="no-margin" ng-show="vm.server.containers.$error"><span ng-bind="vm.server.containers.$error"></span>, <a href="" ng-click="vm.getContainers(server)">try again</a>.</p>
+
+        <tabset>
+            <tab heading="Containers">
+                <div class="" style="margin: 20px 0;">
+                    <a href="" class="btn btn-sm btn-primary">
+                        <span class="mdi mdi-refresh"></span>
+                        Refresh containers
+                    </a>
+                    <a href="" class="btn btn-sm btn-primary">
+                        <span class="mdi mdi-plus"></span>
+                        Create new container
+                    </a>
                 </div>
-                <a ng-repeat="container in vm.server.containers" href="" class="containers-list-item">
-                    <span ng-bind="::container.Id" class="item-name"></span>
-                    <span class="item-status">Running</span>
-                    <span class="item-created"><i class="mdi mdi-clock"></i> 5 hours ago</span>
-                </a>
-            </div>
-        </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            Containers
+                        </h4>
+                    </div>
+                    <container-list server="vm.server"></container-list>
+                </div>
+            </tab>
+            <tab heading="Images"></tab>
+        </tabset>
+
     </div>
 </div>
