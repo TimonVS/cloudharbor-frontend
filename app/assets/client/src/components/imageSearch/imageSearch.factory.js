@@ -4,7 +4,7 @@ function dockerHubApi ($http, $cacheFactory) {
   var apiUrl = 'https://cloudharbor-reverse-proxy.herokuapp.com/https://registry.hub.docker.com/v1/search?q=',
     pages = 25
 
-  var $httpDefaultCache = $cacheFactory.get('$http');
+  var $httpDefaultCache = $cacheFactory.get('$http')
 
   function Image (params) {
     angular.extend(this, params)
@@ -12,7 +12,7 @@ function dockerHubApi ($http, $cacheFactory) {
 
   Image.search = function (query, params) {
     if (!params) params = {}
-    if (!params.limit) params.limit = 25
+    if (!params.limit) params.limit = 10
     var pageNum = params.pageNum || (params.offset ? Math.ceil(params.offset/params.limit) : 1)
 
     return $http.get(apiUrl + query + '&page=' + pageNum + '&n=' + params.limit, { cache: true })

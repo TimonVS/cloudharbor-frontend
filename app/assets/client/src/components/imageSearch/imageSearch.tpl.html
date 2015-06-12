@@ -2,7 +2,7 @@
     <form name="imageSearch" novalidate>
         <div class="form-group">
             <label for="search">Image name</label>
-            <input ng-model="search.input" ng-model-options="{debounce: 500}" type="text" class="form-control"
+            <input ng-model="search.input" ng-model-options="{ debounce: 500 }" type="text" class="form-control"
                    id="search" name="searchInput" placeholder="Search by image name" required>
         </div>
     </form>
@@ -13,7 +13,8 @@
                 <p>An error has occurred. <a ng-click="search(search.error.query, search.error.params)" href="">Try again?</a></p>
             </div>
             <div ng-hide="busy" class="list-group search-results-box">
-                <a href="" class="list-group-item" ng-click="selectImage(result)" ng-repeat="result in results.results">
+                <a href="" class="list-group-item" ng-click="selectImage(result)" ng-class="{ 'active': result === selected }"
+                   ng-repeat="result in results.results">
                     <span ng-bind="result.name"></span>
                     <div ng-if="result.star_count > 0" class="pull-right">
                         <span class="mdi mdi-star"></span>
@@ -22,7 +23,7 @@
                 </a>
             </div>
         </div>
-        <ch-pagination ng-if="results.num_pages > 1" total-items="{{ results.num_results }}" items-per-page="25"
+        <ch-pagination ng-if="results.num_pages > 1" total-items="{{ results.num_results }}" items-per-page="10"
                     pagination-range="9" on-page-change="changePage(pageNumber)"></ch-pagination>
     </div>
 </div>

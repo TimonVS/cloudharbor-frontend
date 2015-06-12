@@ -34,12 +34,6 @@ function serverManagementCtrl ($scope, Server, serverCache, servers) {
     })
   }
 
-  vm.getContainers = function (server) {
-    server.getContainers().$promise.then(function (data) {
-      server.containers = data
-    })
-  }
-
   // ------------------------------------------------------------------
   // Events
   // ------------------------------------------------------------------

@@ -10,17 +10,34 @@ function imageManagementCtrl ($scope, $log, $modal, Server, servers) {
 
   vm.servers = servers
 
+  vm.createImage = createImage
+
   // ------------------------------------------------------------------
   // Actions
   // ------------------------------------------------------------------
 
-  function getAllImages () {
-    vm.servers.forEach(function (server) {
-      server.getImages()
+  function createImage (server) {
+    var modalInstance = $modal.open({
+      animation: false,
+      templateUrl: 'app/imageManagement/create/imageCreateForm.tpl.html',
+      controller: 'imageCreateForm',
+      controllerAs: 'vm',
+      size: 'lg',
+      resolve: {
+        server: function () {
+          return server
+        }
+      }
     })
-  }
 
-  getAllImages()
+    modalInstance.result
+      .then(function (selectedItem) {
+
+      })
+      .catch(function (error) {
+
+      })
+  }
 
   // ------------------------------------------------------------------
   // Event listeners
