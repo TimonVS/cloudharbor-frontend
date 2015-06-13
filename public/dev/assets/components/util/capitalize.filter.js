@@ -7,5 +7,5 @@ function capitalizeFilter () {
 }
 
 angular
-  .module('app.components', [])
+  .module('app.components')
   .filter('capitalize', capitalizeFilter)

@@ -1,4 +1,11 @@
-<div ng-include="'app/serverManagement/create/serverManagementForm.tpl.html'"></div>
+<a href="" class="btn btn-sm btn-primary" style="margin-bottom: 20px;" ng-click="serverManagement.createServer()">
+    <span class="mdi mdi-plus"></span>
+    Create server
+</a>
+<a href="" class="btn btn-sm btn-primary" style="margin-bottom: 20px;" ng-click="serverManagement.getServers()">
+    <span class="mdi mdi-refresh"></span>
+    Refresh servers
+</a>
 
 <div class="table-responsive">
     <table class="table table-hover servers-table">
