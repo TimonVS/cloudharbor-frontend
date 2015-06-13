@@ -1,6 +1,9 @@
-<div ng-controller="serverManagementFormCtrl as vm">
-    <div class="well">
-        <form name="vm.form" ng-submit="vm.onSubmit(vm.form)" novalidate>
+<div>
+    <div class="modal-header">
+        <h3 class="modal-title">Create a new server</h3>
+    </div>
+    <div class="modal-body">
+        <form name="vm.form" novalidate>
             <div class="form-group" ng-class="{ 'has-error' : vm.form.serverName.$invalid && !vm.form.serverName.$pristine }">
                 <label for="serverName">Server name</label>
                 <input type="text" class="form-control" name="serverName" id="serverName" placeholder="Enter server name"
@@ -13,7 +16,7 @@
             <div class="form-group">
                 <label for="serverRegion">Server region</label>
                 <select name="serverRegion" class="form-control" name="serverRegion" id="serverRegion"
-                        ng-model="vm.server.region" ng-disabled="!vm.serverOptions"
+                        ng-model="vm.server.region" ng-disabled="!vm.serverOptions || !vm.serverOptions.regions.length"
                         ng-options="value.name group by value.group disable when !value.available for (label, value) in vm.serverOptions.regions" required></select>
             </div>
 
@@ -22,7 +25,7 @@
                 <select name="serverSize" class="form-control" name="serverSize" id="serverSize"
                         ng-model="vm.server.size"
                         ng-disabled="!vm.serverOptions || !vm.server.region || !vm.server.region.sizes.length"
-                        ng-options="option for option in vm.server.region.sizes" required></select>
+                        ng-options="option for option in vm.server.region.sizes | sortBySize:option" required></select>
             </div>
 
             <div class="form-group" ng-class="{ 'has-error' : vm.form.discoveryToken.$invalid && !vm.form.discoveryToken.$pristine }">
@@ -30,11 +33,11 @@
                 <div class="input-group">
                     <input type="url" class="form-control" name="discoveryToken" id="discoveryToken"
                            placeholder="Enter a discovery token" ng-model="vm.server.discovery_token">
-                     <span class="input-group-btn">
-                         <button class="btn btn-default" type="button" ng-click="vm.generateToken()">
-                             <span class="mdi mdi-refresh"></span>
-                         </button>
-                     </span>
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" ng-click="vm.generateToken()">
+                            <span class="mdi mdi-refresh"></span>
+                        </button>
+                    </span>
                 </div>
 
                 <p class="help-block">Use an existing token to .... A new token can be generated on
@@ -68,8 +71,10 @@
                     </label>
                 </div>
             </div>
-
-            <ch-progress-button action="vm.onSubmit(vm.form)" ng-disabled="vm.form.$invalid">Create server</ch-progress-button>
         </form>
+    </div>
+    <div class="modal-footer">
+        <ch-progress-button action="vm.submit(vm.form)" ng-disabled="vm.form.$invalid">Create server</ch-progress-button>
+        <button class="btn btn-danger" ng-click="vm.cancel()">Cancel</button>
     </div>
 </div>

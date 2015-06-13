@@ -1,6 +1,6 @@
 'use strict';
 
-function serverManagementFormCtrl ($scope, $http, CloudService, Server) {
+function serverCreateForm ($scope, $http, $modalInstance, CloudService, Server) {
 
   // ------------------------------------------------------------------
   // Initialization
@@ -10,12 +10,14 @@ function serverManagementFormCtrl ($scope, $http, CloudService, Server) {
 
   // Function assignment
   vm.generateToken = generateToken
-  vm.onSubmit = onSubmit
+  vm.submit = submit
+  vm.cancel = cancel
 
   // Variable assignment
   vm.form = {}
   vm.server = {}
 
+  // Requests
   vm.sshKeys = CloudService.sshKeys()
   vm.serverOptions = CloudService.serverOptions()
 
@@ -35,7 +37,11 @@ function serverManagementFormCtrl ($scope, $http, CloudService, Server) {
     })
   }
 
-  function onSubmit (form) {
+  function cancel () {
+    $modalInstance.dismiss()
+  }
+
+  function submit (form) {
     if (form.$invalid) return
 
     vm.busy = true
@@ -55,11 +61,12 @@ function serverManagementFormCtrl ($scope, $http, CloudService, Server) {
     return server.$create()
       .then(function (data) {
         vm.busy = false
-        $scope.$emit('serverCreated', data)
+        $modalInstance.close(data)
+        //$scope.$emit('serverCreated', data)
       })
       .catch(function (error) {
         vm.busy = false
-        console.log(error)
+        // todo: error handling
       })
   }
 
@@ -72,4 +79,4 @@ function serverManagementFormCtrl ($scope, $http, CloudService, Server) {
 
 angular
   .module('app.serverManagement')
-  .controller('serverManagementFormCtrl', serverManagementFormCtrl);
+  .controller('serverCreateFormCtrl', serverCreateForm);

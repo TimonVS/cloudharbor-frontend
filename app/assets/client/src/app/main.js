@@ -18,6 +18,7 @@ angular.module('app', [
   .config(function($httpProvider, $stateProvider, $urlRouterProvider, $locationProvider, cfpLoadingBarProvider) {
 
     // $http config
+    $httpProvider.defaults.timeout = 5000
     $httpProvider.defaults.useXDomain = true
     delete $httpProvider.defaults.headers.common['X-Requested-With']
 

@@ -1,6 +1,6 @@
 'use strict';
 
-function serverManagementCtrl ($scope, Server, serverCache, servers) {
+function serverManagementCtrl ($scope, $modal, Server, serverCache, servers) {
 
   // ------------------------------------------------------------------
   // Initialization
@@ -21,11 +21,14 @@ function serverManagementCtrl ($scope, Server, serverCache, servers) {
     vm.pagination.from = (pageNum - 1) * vm.pagination.limit
   }
 
+  vm.getServers = getServers
+  vm.createServer = createServer
+
   // ------------------------------------------------------------------
   // Actions
   // ------------------------------------------------------------------
 
-  vm.getServers = function () {
+  function getServers () {
     vm.busy = true
 
     Server.query().$promise.then(function (data) {
@@ -34,17 +37,30 @@ function serverManagementCtrl ($scope, Server, serverCache, servers) {
     })
   }
 
+  function createServer () {
+    var modalInstance = $modal.open({
+      animation: false,
+      templateUrl: 'app/serverManagement/create/serverCreateForm.tpl.html',
+      controller: 'serverCreateFormCtrl',
+      controllerAs: 'vm',
+      size: 'lg'
+    })
+
+    modalInstance.result
+      .then(function (data) {
+        // Get server data with id and add the server to the servers array
+        Server.get({ id: data.success }).$promise.then(function (response) {
+          vm.servers.unshift(response)
+        })
+      })
+      .catch(function (error) {
+
+      })
+  }
+
   // ------------------------------------------------------------------
   // Events
   // ------------------------------------------------------------------
-
-  $scope.$on('serverCreated', function (event, data) {
-    event.stopPropagation()
-
-    Server.get({ id: data.success }).$promise.then(function (response) {
-      vm.servers.unshift(response)
-    })
-  })
 
 }
 
