@@ -10,6 +10,7 @@ angular.module('app', [
   'app.content',
   'app.components',
   'app.dashboard',
+  'app.user',
   'app.containerManagement',
   'app.serverManagement',
   'app.imageManagement'
