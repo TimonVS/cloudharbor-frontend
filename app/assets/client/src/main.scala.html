@@ -67,11 +67,11 @@
                                 </ul>
                             </li>
                             <li class="navbar-user dropdown">
-                                <a href="@routes.Users.showUser()" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                     <span>@user.firstName @user.prefix.getOrElse("") @user.lastName</span>
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li><a href="@routes.Users.showUser()">My profile</a></li>
+                                    <li><a href="" ui-sref="user.profile">My profile</a></li>
                                     <li><a href="@routes.Auth.logout()">Log out</a></li>
                                 </ul>
                             </li>
