@@ -1,0 +1,9 @@
+<div class="row">
+    <div class="col-sm-3">
+        <ul class="nav nav-pills nav-stacked">
+            <li ng-class="{ active: $state.includes('user.profile') }"><a href="" ui-sref="user.profile">Profile settings</a></li>
+            <li ng-class="{ active: $state.includes('user.apikeys') }"><a href="" ui-sref="user.apikeys">API keys</a></li>
+        </ul>
+    </div>
+    <div ui-view="content" class="col-sm-9"></div>
+</div>
