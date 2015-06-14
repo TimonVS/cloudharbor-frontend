@@ -8,8 +8,10 @@ function serverShowCtrl ($state, $timeout, Server, server, Dialog) {
 
   var vm = this
 
+  // Variable assignment
   vm.server = server
 
+  // Function assignment
   vm.startServer = startServer
   vm.stopServer = stopServer
   vm.deleteServer = deleteServer

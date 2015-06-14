@@ -1,6 +1,6 @@
 <div class="management-overview">
     <ch-panel-group>
-        <ch-panel ng-repeat="server in vm.servers">
+        <!--<ch-panel ng-repeat="server in vm.servers">
             <ch-panel-heading>
                 <a href="" ui-sref="servers.show({ id: server.id })" ng-bind="::server.name"></a>
                 <a href="" class="pull-right" ng-click="vm.getImages(server)"><span class="mdi mdi-refresh"></span></a>
@@ -12,6 +12,9 @@
             </ch-panel-body>
 
             <image-list server="server"></image-list>
-        </ch-panel>
+        </ch-panel>-->
+
+        <image-list server="server" panel="true"
+                    ng-repeat="server in vm.servers"></image-list>
     </ch-panel-group>
 </div>
