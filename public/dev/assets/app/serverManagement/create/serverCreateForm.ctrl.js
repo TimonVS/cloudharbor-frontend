@@ -62,7 +62,6 @@ function serverCreateForm ($scope, $http, $modalInstance, CloudService, Server) 
       .then(function (data) {
         vm.busy = false
         $modalInstance.close(data)
-        //$scope.$emit('serverCreated', data)
       })
       .catch(function (error) {
         vm.busy = false

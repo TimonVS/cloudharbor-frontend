@@ -1,6 +1,6 @@
 <div class="management-overview">
     <ch-panel-group>
-        <ch-panel ng-repeat="server in containerManagement.servers | limitTo:containerManagement.pagination.limit:containerManagement.pagination.from">
+        <!--<ch-panel ng-repeat="server in containerManagement.servers | limitTo:containerManagement.pagination.limit:containerManagement.pagination.from">
             <ch-panel-heading>
                 <a href="" ui-sref="servers.show({ id: server.id })" ng-bind="::server.name"></a>
                 <a href="" class="pull-right" ng-click="containerManagement.getContainers(server)"><span class="mdi mdi-refresh"></span></a>
@@ -11,7 +11,9 @@
                 <p class="no-margin" ng-show="server.containers.$error"><span ng-bind="server.containers.$error"></span>, <a href="" ng-click="getContainers(server)">try again</a>.</p>
             </ch-panel-body>
             <container-list server="server"></container-list>
-        </ch-panel>
+        </ch-panel>-->
+        <container-list server="server" panel="true"
+                        ng-repeat="server in containerManagement.servers | limitTo:containerManagement.pagination.limit:containerManagement.pagination.from"></container-list>
     </ch-panel-group>
 
     <ch-pagination total-items="{{ containerManagement.servers.length }}" items-per-page="{{ containerManagement.pagination.limit }}" on-page-change="containerManagements.changePage(pageNumber)"></ch-pagination>

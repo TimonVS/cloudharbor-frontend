@@ -1,5 +1,45 @@
-<div class="list-group">
-    <a ng-repeat="image in server.images" href="" class="list-group-item">
-        <span ng-bind="::image.RepoTags[0]"></span>
-    </a>
+<div>
+    <div ng-if="panel">
+        <ch-panel>
+            <ch-panel-heading>
+                <h4 class="panel-title">
+                    <a href="" ui-sref="servers.show({ id: server.id })" ng-bind="server.name"></a>
+                </h4>
+            </ch-panel-heading>
+            <ch-panel-body ng-if="!server.images.length || server.images.$error">
+                <div>
+                    <p class="no-margin" ng-show="!server.images.length && !server.images.$error">No images available, <a href="" ng-click="createImage(server)">add or create a new image</a>.</p>
+                    <p class="no-margin" ng-show="server.images.$error"><span ng-bind="server.images.$error"></span>, <a href="" ng-click="getImages(server)">try again</a>.</p>
+                </div>
+            </ch-panel-body>
+            <div class="list-group" ng-if="server.images.length">
+                <a ng-repeat="image in server.images" href="" class="list-group-item">
+                    <span ng-bind="::image.RepoTags[0]"></span>
+                </a>
+            </div>
+        </ch-panel>
+    </div>
+    <div ng-if="!panel">
+        <div class="" style="margin-bottom: 20px;">
+            <a href="" class="btn btn-sm btn-primary" ng-click="createImage(server)">
+                <span class="mdi mdi-plus"></span>
+                Add or create new image
+            </a>
+            <a href="" class="btn btn-sm btn-primary" ng-click="getImages(server)">
+                <span class="mdi mdi-refresh"></span>
+                Refresh images
+            </a>
+        </div>
+
+        <div ng-if="!server.images.length || server.images.$error">
+            <p class="no-margin" ng-show="!server.images.length && !server.images.$error">No images available, <a href="" ng-click="createImage(server)">add or create a new image</a>.</p>
+            <p class="no-margin" ng-show="server.images.$error"><span ng-bind="server.images.$error"></span>, <a href="" ng-click="getImages(server)">try again</a>.</p>
+        </div>
+
+        <div class="list-group" ng-if="server.images.length">
+            <a ng-repeat="image in server.images" href="" class="list-group-item">
+                <span ng-bind="::image.RepoTags[0]"></span>
+            </a>
+        </div>
+    </div>
 </div>

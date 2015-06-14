@@ -4,14 +4,15 @@
     </div>
     <div class="modal-body">
         <form name="vm.form" novalidate>
-            <div class="form-group">
-                <div class="btn-group">
-                    <label class="btn btn-primary" ng-model="radioModel" btn-radio="'Docker Hub image'">Docker Hub image</label>
-                    <label class="btn btn-primary" ng-model="radioModel" btn-radio="'DockerFile'">DockerFile</label>
-                </div>
-            </div>
-
-            <ch-image-search ng-model="vm.container.image"></ch-image-search>
+            <tabset>
+                <tab heading="Existing images">
+                    <image-select ng-model="vm.container.image" server="vm.server"></image-select>
+                </tab>
+                <tab heading="Docker Hub">
+                    <ch-image-search ng-model="vm.container.image"></ch-image-search>
+                </tab>
+                <tab heading="DockerFile"></tab>
+            </tabset>
 
             <div class="form-group" ng-class="{ 'has-error' : vm.form.containerName.$invalid && !vm.form.containerName.$pristine }">
                 <label for="containerName">Container name</label>
