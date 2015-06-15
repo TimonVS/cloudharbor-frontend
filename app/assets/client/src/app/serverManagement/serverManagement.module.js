@@ -28,6 +28,7 @@ angular
           }
         }
       })
+
       .state('servers.show', {
         url: '/show/:id',
         views: {
@@ -45,6 +46,23 @@ angular
         resolve: {
           server: function ($stateParams, Server) {
             return Server.get({ id: $stateParams.id }).$promise
+          }
+        },
+        redirectTo: 'servers.show.containers'
+      })
+      .state('servers.show.containers', {
+        url: '/containers',
+        views: {
+          'tab-content': {
+            template: '<container-list server="vm.server"></container-list>'
+          }
+        }
+      })
+      .state('servers.show.images', {
+        url: '/images',
+        views: {
+          'tab-content': {
+            template: '<image-list server="vm.server"></image-list>'
           }
         }
       })

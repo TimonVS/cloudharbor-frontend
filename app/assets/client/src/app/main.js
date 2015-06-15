@@ -38,6 +38,14 @@ angular.module('app', [
   .run(function ($rootScope, $state, $stateParams) {
     $rootScope.$state = $state;
     $rootScope.$stateParams = $stateParams
+
+    // A hack to redirect states
+    $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState) {
+      if (toState.redirectTo) {
+        event.preventDefault()
+        $state.go(toState.redirectTo, toParams)
+      }
+    })
   })
 
   // ------------------------------------------------------------------
