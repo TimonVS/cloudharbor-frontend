@@ -47,7 +47,7 @@ POST          /management/containers/:containerId/unpause        controllers.doc
 POST          /management/containers/:containerId/rename         controllers.docker.ContainerManagement.renameContainer(serverUrl: String, containerId: String, newName: String)
 POST          /management/containers/:containerId/remove         controllers.docker.ContainerManagement.removeContainer(serverUrl: String, containerId: String, deleteVolumes: Boolean, force: Boolean)
 
-# ServerManagement
+# ServerManagementController
 GET        /servermanagement/ping         controllers.ServerManagement.ping
 GET           /servermanagement/servers                          controllers.ServerManagement.servers
 POST          /servermanagement/servers/add                      controllers.ServerManagement.createServer

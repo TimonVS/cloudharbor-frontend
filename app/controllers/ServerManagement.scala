@@ -2,8 +2,6 @@ package controllers
 
 import java.net.ConnectException
 
-import actors.NotificationActor.CreateServerNotification
-import models.Notifications.ServerNotification
 import models._
 import play.api.Play.current
 import play.api.libs.json.Json
@@ -18,7 +16,7 @@ import scala.concurrent.Future
  * Created by ThomasWorkBook on 17/04/15.
  * Controller object for every Server related action
  */
-object ServerManagement extends Controller with Secured with WsUtils {
+object ServerManagement extends Controller with Secured with WsUtils with ServerManagementNotifications {
 
   val serverManagementUrl = current.configuration.getString("serverManagement.url").get + ":" + current.configuration.getInt("serverManagement.port").get
   val SERVER_MANAGEMENT = "Server Management"
@@ -73,10 +71,6 @@ object ServerManagement extends Controller with Secured with WsUtils {
     }
   }
 
-  def cloudInfo(apiKey: String): (String, String) = {
-    "Cloud-Info" -> apiKey
-  }
-
   /**
    * Ajax post for pausing a server
    */
@@ -93,7 +87,7 @@ object ServerManagement extends Controller with Secured with WsUtils {
    * Ajax post for starting a server
    */
   def powerOn(serverId: String) = withAuthAsync { implicit user => implicit request =>
-    Server.findByUserId(user.id) match{
+    Server.findByUserId(user.id) match {
       case Some(cloudService) =>
         forwardPost(s"http://$serverManagementUrl/servers/$serverId/start", cloudService.apiKey, cloudInfo, SERVER_MANAGEMENT)
       case None =>
@@ -112,9 +106,9 @@ object ServerManagement extends Controller with Secured with WsUtils {
           .delete()
           .map(forwardResponse)
           .recover {
-            case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
-            case _ => InternalServerError(unexpectedError)
-          }
+          case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
+          case _ => InternalServerError(unexpectedError)
+        }
       case None =>
         Future.successful(Redirect(routes.Application.app("profile")))
     }
@@ -127,7 +121,8 @@ object ServerManagement extends Controller with Secured with WsUtils {
           .withHeaders(cloudInfo(server.apiKey))
           .post(request.body.asJson.get)
           .map { response =>
-          forwardResponseWithNotification(response, CreateServerNotification(user.id, ServerNotification((response.json \ "success").toString.toInt, "")))
+          notifyServerCreated(user.id, (response.json \ "success").as[String], server.apiKey)
+          forwardResponse(response)
         }
           .recover {
             case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
@@ -170,6 +165,10 @@ object ServerManagement extends Controller with Secured with WsUtils {
           case _ => InternalServerError(unexpectedError)
         }
     } getOrElse Future.successful(BadRequest(Json.obj("error" -> "API-Key needs to be provided")))
+  }
+
+  def cloudInfo(apiKey: String): (String, String) = {
+    "Cloud-Info" -> apiKey
   }
 
   def getServerOptions = withAuthAsync { implicit user => implicit request =>
