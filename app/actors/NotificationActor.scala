@@ -12,7 +12,7 @@ import play.api.libs.json.Json
  */
 class NotificationActor extends Actor with ActorLogging{
 
-  def receive = {
+  override def receive = {
     case CreateServerNotification(userId, message) =>
       pushNotification(DBNotification.create(userId, Json.toJson(message).toString, DateTime.now, NotificationType.ServerCreate.toString))
     case DeleteServerNotification(userId, message) =>
