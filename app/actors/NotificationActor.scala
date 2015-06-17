@@ -18,6 +18,8 @@ class NotificationActor extends Actor with ActorLogging{
       pushNotification(DBNotification.create(userId, Json.toJson(message), NotificationType.Container))
     case Image(userId, message) =>
       pushNotification(DBNotification.create(userId, Json.toJson(message), NotificationType.Image))
+    case Error(userId, message) =>
+      pushNotification(DBNotification.create(userId, Json.toJson(message), NotificationType.Error))
   }
 
   def pushNotification(dbNotification: DBNotification) = {
@@ -36,4 +38,6 @@ object NotificationActor{
   case class Container(userId: Int, message: ContainerNotification) extends NotificationActorMessages
 
   case class Image(userId: Int, message: ImageNotification) extends NotificationActorMessages
+
+  case class Error(userId: Int, message: ErrorNotification) extends NotificationActorMessages
 }
