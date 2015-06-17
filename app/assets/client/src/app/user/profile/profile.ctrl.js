@@ -1,16 +1,16 @@
 'use strict'
 
-function profileCtrl () {
+function profileCtrl (user) {
   var vm = this
 
-  vm.user = {
-    userName: 'timonvs',
-    password: 'abc123',
-    passwordRepeat: 'abc123',
-    email: 'timonvanspronsen@outlook.com',
-    firstName: 'Timon',
-    prefix: 'van',
-    lastName: 'Spronsen'
+  vm.user = user
+
+  vm.submit = submit
+
+  function submit (form) {
+    if (form.$invalid) return
+
+    return vm.user.$save()
   }
 }
 
