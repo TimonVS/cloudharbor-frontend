@@ -12,8 +12,9 @@ function userDropdown ($rootScope, $window, User) {
       })
 
       $scope.logout = function () {
-        //User.logout() // todo: wait until login has been fixed
-        $window.location.href = '/'
+        User.logout().$promise.then(function () {
+          $window.location.href = '/'
+        })
       }
     }
   }
