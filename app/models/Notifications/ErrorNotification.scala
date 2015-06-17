@@ -1,6 +1,6 @@
 package models.Notifications
 
-import play.api.libs.json.{Json, Reads}
+import play.api.libs.json.{Json, Writes}
 
 /**
  * Created by Rudie on 17-6-2015.
@@ -8,5 +8,5 @@ import play.api.libs.json.{Json, Reads}
 case class ErrorNotification(message: String)
 
 object ErrorNotification {
-  implicit val writeErrorNotification: Reads[ErrorNotification] = Json.reads[ErrorNotification]
+  implicit val writeErrorNotification: Writes[ErrorNotification] = Json.writes[ErrorNotification]
 }
