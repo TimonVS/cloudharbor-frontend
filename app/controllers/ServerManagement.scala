@@ -210,7 +210,7 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
         .withHeaders(cloudInfo(cloudService.apiKey))
         .post(Results.EmptyContent())
         .map{ response => response.status match{
-            case CREATED => notifyServerRebooted(user.id, (response.json \ "id").as[BigDecimal].toString, cloudService.apiKey, serverId)
+            case CREATED => notifyServerRebooted(user.id, (response.json \ "id").as[BigDecimal], cloudService.apiKey, serverId)
           }
           forwardResponse(response)
         }
