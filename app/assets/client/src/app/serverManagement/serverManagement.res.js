@@ -1,6 +1,6 @@
 'use strict';
 
-function ServerFactory ($resource, serverCache, Container, DockerImage) {
+function ServerFactory ($resource, Container, DockerImage) {
 
   var Server = $resource('/servermanagement/servers/:id/:action', { id: '@id' }, {
     create: {
@@ -97,7 +97,33 @@ function serverCache ($cacheFactory) {
   }
 }
 
+/**
+ * @ngdoc module
+ * @name app.serverManagement
+ * @module app.serverManagement
+ *
+ * @description
+ * The serverManagement module contains all componenents and services to work with server management.
+ */
+
 angular
   .module('app.serverManagement')
+
+/**
+ * @ngdoc factory
+ * @name ServerFactory
+ * @module app.serverManagement
+ *
+ * @description
+ * A {@link $resource} factory to create server instances.
+ *
+ * @usage new Server([params])
+ *
+ * @param {Object=} params An object containing the initial data for the server
+ *
+ * @returns {serverManagement.Server} A new server instance.
+ *
+ * @requires $resource, Container, DockerImage
+ *
+ */
   .factory('Server', ServerFactory)
-  .service('serverCache', serverCache)
