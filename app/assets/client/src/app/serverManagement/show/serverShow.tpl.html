@@ -46,48 +46,20 @@
             </ul>
         </div>
     </div>
+
     <div class="col-sm-8 col-md-9">
-
-        <tabset>
-            <tab heading="Containers">
-                <div class="" style="margin: 20px 0;">
-                    <a href="" class="btn btn-sm btn-primary">
-                        <span class="mdi mdi-plus"></span>
-                        Create new container
-                    </a>
-                    <a href="" class="btn btn-sm btn-primary">
-                        <span class="mdi mdi-refresh"></span>
-                        Refresh containers
-                    </a>
+        <ch-panel class="with-nav-tabs">
+            <ch-panel-heading>
+                <ul class="nav nav-tabs">
+                    <li ui-sref-active="active"><a href="" ui-sref=".containers">Containers</a></li>
+                    <li ui-sref-active="active"><a href="" ui-sref=".images">Images</a></li>
+                </ul>
+            </ch-panel-heading>
+            <ch-panel-body>
+                <div class="tab-content">
+                    <div ui-view="tab-content"></div>
                 </div>
-
-                <div ng-if="!vm.server.containers.length || vm.server.containers.$error">
-                    <p class="no-margin" ng-show="!vm.server.containers.length && !vm.server.containers.$error">No containers available, <a href="" ng-click="vm.createContainer(server)">create a new container</a>.</p>
-                    <p class="no-margin" ng-show="vm.server.containers.$error"><span ng-bind="vm.server.containers.$error"></span>, <a href="" ng-click="vm.getContainers(server)">try again</a>.</p>
-                </div>
-
-                <container-list server="vm.server"></container-list>
-            </tab>
-            <tab heading="Images">
-                <div class="" style="margin: 20px 0;">
-                    <a href="" class="btn btn-sm btn-primary">
-                        <span class="mdi mdi-plus"></span>
-                        Create or add new image
-                    </a>
-                    <a href="" class="btn btn-sm btn-primary">
-                        <span class="mdi mdi-refresh"></span>
-                        Refresh images
-                    </a>
-                </div>
-
-                <div ng-if="!vm.server.images.length || vm.server.images.$error">
-                    <p class="no-margin" ng-show="!vm.server.images.length && !vm.server.images.$error">No images available, <a href="" ng-click="vm.createImage(server)">create or add a new image</a>.</p>
-                    <p class="no-margin" ng-show="vm.server.images.$error"><span ng-bind="vm.server.images.$error"></span>, <a href="" ng-click="vm.getImages(server)">try again</a>.</p>
-                </div>
-
-                <image-list server="vm.server"></image-list>
-            </tab>
-        </tabset>
-
+            </ch-panel-body>
+        </ch-panel>
     </div>
 </div>

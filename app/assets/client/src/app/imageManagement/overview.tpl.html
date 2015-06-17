@@ -1,17 +1,6 @@
 <div class="management-overview">
     <ch-panel-group>
-        <ch-panel ng-repeat="server in vm.servers">
-            <ch-panel-heading>
-                <a href="" ui-sref="servers.show({ id: server.id })" ng-bind="::server.name"></a>
-                <a href="" class="pull-right" ng-click="vm.getImages(server)"><span class="mdi mdi-refresh"></span></a>
-                <a href="" class="pull-right" ng-click="vm.createImage(server)"><span class="mdi mdi-plus"></span></a>
-            </ch-panel-heading>
-            <ch-panel-body ng-if="!server.images.length || server.images.$error">
-                <p class="no-margin" ng-show="!server.images.length && !server.images.$error">No images available, <a href="" ng-click="createImage(server)">create or add a new image</a>.</p>
-                <p class="no-margin" ng-show="server.images.$error"><span ng-bind="server.images.$error"></span>, <a href="" ng-click="getImages(server)">try again</a>.</p>
-            </ch-panel-body>
-
-            <image-list server="server"></image-list>
-        </ch-panel>
+        <image-list server="server" panel="true"
+                    ng-repeat="server in vm.servers"></image-list>
     </ch-panel-group>
 </div>

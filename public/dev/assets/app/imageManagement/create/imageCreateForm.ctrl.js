@@ -39,8 +39,7 @@ function imageCreateFormCtrl ($scope, $modalInstance, server, DockerImage) {
     image.$create({ serverUrl: server.getIp() })
       .then(function (data) {
         vm.busy = false
-        $modalInstance.close()
-        $scope.$emit('imageCreated', data)
+        $modalInstance.close(data)
       })
       .catch(function (error) {
         vm.busy = false

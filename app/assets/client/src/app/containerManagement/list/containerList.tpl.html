@@ -1,7 +1,49 @@
-<div class="list-group">
-    <a ng-repeat="container in containers" href="" class="list-group-item">
-        <span ng-bind="::container.Id" class="item-name"></span>
-        <span class="item-status">Running</span>
-        <span class="item-created"><i class="mdi mdi-clock"></i> 5 hours ago</span>
-    </a>
+<div>
+    <div ng-if="panel">
+        <ch-panel>
+            <ch-panel-heading>
+                <h4 class="panel-title">
+                    <a href="" ui-sref="servers.show({ id: server.id })" ng-bind="server.name"></a>
+                </h4>
+            </ch-panel-heading>
+            <ch-panel-body ng-if="!server.containers.length || server.containers.$error">
+                <div>
+                    <p class="no-margin" ng-show="!server.containers.length && !server.containers.$error">No containers available, <a href="" ng-click="createContainer(server)">create a new container</a>.</p>
+                    <p class="no-margin" ng-show="server.containers.$error"><span ng-bind="server.containers.$error"></span>, <a href="" ng-click="getContainers(server)">try again</a>.</p>
+                </div>
+            </ch-panel-body>
+            <div class="list-group" ng-if="server.containers.length">
+                <a ng-repeat="container in server.containers" href="" class="list-group-item">
+                    <span ng-bind="::container.Id" class="item-name"></span>
+                    <span class="item-status">Running</span>
+                    <span class="item-created"><i class="mdi mdi-clock"></i> 5 hours ago</span>
+                </a>
+            </div>
+        </ch-panel>
+    </div>
+    <div ng-if="!panel">
+        <div class="" style="margin-bottom: 20px;">
+            <a href="" class="btn btn-sm btn-primary" ng-click="createContainer(server)">
+                <span class="mdi mdi-plus"></span>
+                Create new container
+            </a>
+            <a href="" class="btn btn-sm btn-primary" ng-click="getContainers(server)">
+                <span class="mdi mdi-refresh"></span>
+                Refresh containers
+            </a>
+        </div>
+
+        <div ng-if="!server.containers.length || server.containers.$error">
+            <p class="no-margin" ng-show="!server.containers.length && !server.containers.$error">No containers available, <a href="" ng-click="createContainer(server)">create a new container</a>.</p>
+            <p class="no-margin" ng-show="server.containers.$error"><span ng-bind="server.containers.$error"></span>, <a href="" ng-click="getContainers(server)">try again</a>.</p>
+        </div>
+
+        <div class="list-group" ng-if="server.containers.length">
+            <a ng-repeat="container in server.containers" href="" class="list-group-item">
+                <span ng-bind="::container.Id" class="item-name"></span>
+                <span class="item-status">Running</span>
+                <span class="item-created"><i class="mdi mdi-clock"></i> 5 hours ago</span>
+            </a>
+        </div>
+    </div>
 </div>
