@@ -18,7 +18,7 @@ angular.module('app', [
   'app.imageManagement'
 ])
 
-  .config(function($httpProvider, $stateProvider, $urlRouterProvider, $locationProvider, cfpLoadingBarProvider) {
+  .config(function($httpProvider, $stateProvider, $urlRouterProvider, $locationProvider, $provide, cfpLoadingBarProvider) {
 
     // $http config
     $httpProvider.defaults.timeout = 5000

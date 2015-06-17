@@ -1,6 +1,6 @@
 'use strict';
 
-function serverManagementCtrl ($scope, $modal, Server, serverCache, servers) {
+function serverManagementCtrl ($scope, $modal, $state, Server, servers, notifications) {
 
   // ------------------------------------------------------------------
   // Initialization
@@ -29,6 +29,7 @@ function serverManagementCtrl ($scope, $modal, Server, serverCache, servers) {
   vm.getServers = getServers
   vm.createServer = createServer
   vm.orderBy = orderBy
+  vm.goTo = goTo
 
   // ------------------------------------------------------------------
   // Actions
@@ -73,9 +74,31 @@ function serverManagementCtrl ($scope, $modal, Server, serverCache, servers) {
     }
   }
 
+  function goTo (server) {
+    if (server.locked) return
+
+    $state.go('servers.show', { id: server.id })
+  }
+
   // ------------------------------------------------------------------
   // Events
   // ------------------------------------------------------------------
+
+  notifications.get('notification', function (event, notification) {
+    if (notification.message.body === 'Server created') {
+      vm.servers.some(function (server) {
+        if (parseInt(notification.message.id, 10) === server.id) {
+
+          $scope.$apply(function () {
+            server.status = 'Active'
+            server.locked = false
+          })
+
+          return true
+        }
+      })
+    }
+  })
 
 }
 
