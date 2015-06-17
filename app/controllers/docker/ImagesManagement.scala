@@ -2,7 +2,7 @@ package controllers.docker
 
 import java.net.ConnectException
 
-import actors.NotificationActor.CreateImageNotification
+import actors.NotificationActor.Image
 import controllers.Secured
 import models.Notifications.ImageNotification
 import play.api.Play._
@@ -37,7 +37,7 @@ object ImagesManagement extends DockerManagement with Secured with WsUtils {
 
   def createImage(serverUrl: String, imageName: String) = withAuthAsync { implicit user => implicit request =>
     def ok(enumerator: Enumerator[Array[Byte]]) = {
-      (enumerator |>>> Iteratee.skipToEof).foreach(_ => notificationActor ! CreateImageNotification(user.id, ImageNotification(imageName, "")))
+      (enumerator |>>> Iteratee.skipToEof).foreach(_ => notificationActor ! Image(user.id, ImageNotification(imageName, "")))
       Ok("Image is being created")
     }
 
