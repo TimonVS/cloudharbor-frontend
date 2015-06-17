@@ -4,7 +4,6 @@ import actors.NotificationActor._
 import akka.actor.{Actor, ActorLogging, Props}
 import controllers.Notifications
 import models.Notifications._
-import org.joda.time.DateTime
 import play.api.libs.json.Json
 
 /**
@@ -13,24 +12,17 @@ import play.api.libs.json.Json
 class NotificationActor extends Actor with ActorLogging{
 
   override def receive = {
-    case CreateServerNotification(userId, message) =>
-      pushNotification(DBNotification.create(userId, Json.toJson(message).toString, DateTime.now, NotificationType.ServerCreate.toString))
-    case DeleteServerNotification(userId, message) =>
-      pushNotification(DBNotification.create(userId, Json.toJson(message).toString, DateTime.now, NotificationType.ServerDelete.toString))
-    case CreateContainerNotification(userId, message) =>
-      pushNotification(DBNotification.create(userId, Json.toJson(message).toString, DateTime.now, NotificationType.ContainerCreate.toString))
-    case DeleteServerNotification(userId, message) =>
-      pushNotification(DBNotification.create(userId, Json.toJson(message).toString, DateTime.now, NotificationType.ContainerDelete.toString))
-    case CreateImageNotification(userId, message) =>
-      pushNotification(DBNotification.create(userId, Json.toJson(message).toString, DateTime.now, NotificationType.ImageCreate.toString))
-    case DeleteImageNotification(userId, message) =>
-      pushNotification(DBNotification.create(userId, Json.toJson(message).toString, DateTime.now, NotificationType.ImageDelete.toString))
+    case Server(userId, message) =>
+      pushNotification(DBNotification.create(userId, Json.toJson(message), NotificationType.Server))
+    case Container(userId, message) =>
+      pushNotification(DBNotification.create(userId, Json.toJson(message), NotificationType.Container))
+    case Image(userId, message) =>
+      pushNotification(DBNotification.create(userId, Json.toJson(message), NotificationType.Image))
   }
 
   def pushNotification(dbNotification: DBNotification) = {
     Notifications.notificationsIn.push(Notification(dbNotification.id, dbNotification.userId, Json.parse(dbNotification.message), dbNotification.notificationType))
   }
-
 }
 
 object NotificationActor{
@@ -39,15 +31,9 @@ object NotificationActor{
 
   trait NotificationActorMessages
 
-  case class CreateServerNotification(userId: Int, message: ServerNotification) extends NotificationActorMessages
+  case class Server(userId: Int, message: ServerNotification) extends NotificationActorMessages
 
-  case class DeleteServerNotification(userId: Int, message: ServerNotification) extends NotificationActorMessages
+  case class Container(userId: Int, message: ContainerNotification) extends NotificationActorMessages
 
-  case class CreateContainerNotification(userId: Int, message: ContainerNotification) extends NotificationActorMessages
-
-  case class DeleteContainerNotification(userId: Int, message: ContainerNotification) extends NotificationActorMessages
-
-  case class CreateImageNotification(userId: Int, message: ImageNotification) extends NotificationActorMessages
-
-  case class DeleteImageNotification(userId: Int, message: ImageNotification) extends NotificationActorMessages
+  case class Image(userId: Int, message: ImageNotification) extends NotificationActorMessages
 }
