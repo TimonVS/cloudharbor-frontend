@@ -10,14 +10,14 @@ GET           /app/*path                                         controllers.App
 
 # Authentication
 GET           /login                                             controllers.Auth.login
-GET           /logout                                            controllers.Auth.logout
 POST          /authenticate                                      controllers.Auth.authenticate
 
 # User
-GET           /user/create                                       controllers.Users.createUser
-POST          /user/create                                       controllers.Users.createUserPost
-GET           /user/profile                                      controllers.Users.showUser
-POST          /user/profile                                      controllers.Users.updateUser
+GET           /user                                              controllers.Users.getUser
+PUT           /user                                              controllers.Users.saveUser
+POST          /user                                              controllers.Users.createUser
+DELETE        /user                                              controllers.Users.deleteUser(userId: Option[Int] ?= None)
+POST          /user/logout                                       controllers.Users.logout
 
 # Notificatons
 GET           /notifications                                     controllers.Notifications.notifications
@@ -47,7 +47,7 @@ POST          /management/containers/:containerId/rename         controllers.doc
 POST          /management/containers/:containerId/remove         controllers.docker.ContainerManagement.removeContainer(serverUrl: String, containerId: String, deleteVolumes: Boolean, force: Boolean)
 
 # ServerManagementController
-GET        /servermanagement/ping         controllers.ServerManagement.ping
+GET           /servermanagement/ping                             controllers.ServerManagement.ping
 GET           /servermanagement/servers                          controllers.ServerManagement.servers
 POST          /servermanagement/servers/add                      controllers.ServerManagement.createServer
 GET           /servermanagement/servers/:serverId                controllers.ServerManagement.show(serverId: String)
