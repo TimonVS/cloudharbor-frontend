@@ -29,4 +29,13 @@ trait ServerManagementNotifications {
 
     repeatActor ! Repeat(repeat, done)
   }
+
+  def notifyServerRebooted(userId: Int, actionId: String, apiKey: String, serverId: String) = {
+    def repeat() = WS.url(s"http://$serverManagementUrl/actions/$actionId")
+      .withHeaders("Cloud-Info" -> apiKey)
+      .get()
+      .map(response => (response.json \ "status").as[String] == "completed")
+
+    //def done() = notificationActor ! ServerRebootedNotification(userId, ServerNotification(serverId, "Server rebooted"))
+  }
 }
