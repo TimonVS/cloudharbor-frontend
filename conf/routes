@@ -25,7 +25,7 @@ GET           /notifications                                     controllers.Not
 # Management
 GET        /management/ping               controllers.docker.Management.ping
 GET        /management/docker/ping        controllers.docker.Management.pingDockerRemoteApi(serverUrl: String)
-POST          /management/deploy/:name                           controllers.docker.DeployManagement.deploy(serverUrl: String, name: String)
+POST        /management/deploy/:name        controllers.docker.DeployManagement.deploy(serverUrl: String, name: String, repo: Option[String] ?= None, tag: Option[String] ?= None)
 
 # ImagesManagement
 GET           /management/images                                 controllers.docker.ImagesManagement.listImages(serverUrl: String)
@@ -36,7 +36,6 @@ GET           /management/images/:name/history                   controllers.doc
 POST          /management/images/:name/push/:repo                controllers.docker.ImagesManagement.pushImage(serverUrl: String, repo: String, name: String)
 
 # ContainerManagement
-POST          /management/containers/:name                       controllers.docker.DeployManagement.deploy(serverUrl: String, name: String)
 GET           /management/containers/:serverUrl                  controllers.docker.ContainerManagement.listContainers(serverUrl: String)
 GET           /management/containers/:containerId                controllers.docker.ContainerManagement.show(serverUrl: String, containerId: String)
 POST          /management/containers/:containerId/start          controllers.docker.ContainerManagement.startContainer(serverUrl: String, containerId: String)
