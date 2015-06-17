@@ -36,7 +36,7 @@
         </tr>
         <tr ng-class="{ disabled: server.locked }"
             ng-repeat="server in serverManagement.servers | limitTo:serverManagement.pagination.limit:serverManagement.pagination.from | orderBy:serverManagement.sortType:serverManagement.sortReverse | filter:serverManagement.searchQuery"
-            class="servers-table-item" ui-sref="{{ server.locked ? '.' : 'servers.show({ id: server.id })' }}">
+            class="servers-table-item" ng-click="serverManagement.goTo(server)">
             <td>
                 <span ng-if="server.locked" class="mdi mdi-lock"></span>
                 <span ng-bind="::server.name"></span>
