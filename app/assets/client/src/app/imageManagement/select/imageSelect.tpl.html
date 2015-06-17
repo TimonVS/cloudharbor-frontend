@@ -1,0 +1,6 @@
+<div class="list-group">
+    <a ng-repeat="image in server.images" href="" class="list-group-item"
+       ng-click="selectImage(image)" ng-class="{ 'active': image === selected }">
+        <span ng-bind="::image.RepoTags[0]"></span>
+    </a>
+</div>

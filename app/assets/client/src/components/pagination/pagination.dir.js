@@ -11,7 +11,6 @@ function pagination () {
     },
     templateUrl: 'components/pagination/pagination.tpl.html',
     link: function ($scope, $element, $attr) {
-      // todo: refactor
       $attr.$observe('totalItems', function (value) {
         if (value) {
           $scope.totalItems = value
@@ -58,9 +57,9 @@ function pagination () {
           return i
         } else if (paginationRange < $scope.numPages) {
           if ($scope.numPages - halfWay < currentNum) {
-            return $scope.numPages - paginationRange + i;
+            return $scope.numPages - paginationRange + i
           } else if (halfWay < currentNum) {
-            return currentNum - halfWay + i;
+            return currentNum - halfWay + i
           } else {
             return i
           }

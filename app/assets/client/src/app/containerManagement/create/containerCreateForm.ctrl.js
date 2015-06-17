@@ -13,6 +13,7 @@ function containerCreateFormCtrl ($scope, $modalInstance, server, Container) {
   vm.cancel = cancel
 
   // Variable assignment
+  vm.server = server
   vm.form = {}
   vm.container = {}
 
@@ -30,7 +31,7 @@ function containerCreateFormCtrl ($scope, $modalInstance, server, Container) {
     vm.busy = true
 
     var request = {
-      image: vm.container.image.name,
+      image: vm.container.image.RepoTags[0], // name
       macAddress: '',
       networkDisabled: false,
       cpuShares: vm.container.cpuShares,
