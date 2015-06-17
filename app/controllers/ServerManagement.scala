@@ -6,7 +6,7 @@ import models._
 import play.api.Play.current
 import play.api.libs.json.Json
 import play.api.libs.ws.WS
-import play.api.mvc.Controller
+import play.api.mvc.{Results, Controller}
 import utils.WsUtils
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -202,5 +202,22 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
         }
       case None => Future.successful(Redirect(routes.Application.app("profile")))
     }
+  }
+
+  def reboot(serverId: String) = withAuthAsync { implicit user => implicit request =>
+    ServerSettings.findByUserId(user.id) map { cloudService =>
+      WS.url(s"http://$serverManagementUrl/servers/$serverId/reboot")
+        .withHeaders(cloudInfo(cloudService.apiKey))
+        .post(Results.EmptyContent())
+        .map{ response => response.status match{
+            case CREATED => notifyServerRebooted(user.id, (response.json \ "id").as[BigDecimal].toString, cloudService.apiKey, serverId)
+          }
+          forwardResponse(response)
+        }
+        .recover {
+          case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
+          case _ => InternalServerError(unexpectedError)
+      }
+    } getOrElse Future.successful(Redirect(routes.Application.app("profile")))
   }
 }

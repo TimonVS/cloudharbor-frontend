@@ -54,6 +54,7 @@ GET           /servermanagement/servers/:serverId                controllers.Ser
 POST          /servermanagement/servers/:serverId/stop           controllers.ServerManagement.powerOff(serverId: String)
 POST          /servermanagement/servers/:serverId/start          controllers.ServerManagement.powerOn(serverId: String)
 DELETE        /servermanagement/servers/:serverId/delete         controllers.ServerManagement.delete(serverId: String)
+POST          /servermanagement/servers/:serverId/reboot         controllers.ServerManagement.reboot(serverId: String)
 GET           /servermanagement/api-key                          controllers.ServerManagement.getApiKey
 POST          /servermanagement/add-info                         controllers.ServerManagement.authenticateApiKey
 GET           /servermanagement/server-options                   controllers.ServerManagement.getServerOptions
