@@ -2,7 +2,7 @@ package controllers
 
 import models.User
 import play.api.mvc._
-
+import play.api.mvc.BodyParsers.parse.json
 import scala.concurrent.Future
 
 /**
@@ -30,4 +30,5 @@ trait Secured {
       Action.async(request => f(user)(request))
     }
   }
+
 }

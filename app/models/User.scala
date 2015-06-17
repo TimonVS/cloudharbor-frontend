@@ -12,7 +12,7 @@ case class User(
   firstName: String,
   prefix: Option[String] = None,
   lastName: String,
-  cloudService: Option[Server],
+  cloudService: Option[ServerSettings],
   notifications: List[DBNotification]) {
 
   def update(data: UserRegistrationData): User = {
@@ -30,6 +30,8 @@ case class User(
   def save()(implicit session: DBSession = User.autoSession): User = User.save(this)(session)
 
   def destroy()(implicit session: DBSession = User.autoSession): Unit = User.destroy(this)(session)
+
+  def toUserProfile = UserProfile(username, None, email, firstName, prefix, lastName)
 
 }
 
@@ -57,7 +59,7 @@ object User extends SQLSyntaxSupport[User] with StandardQueries[User] {
     firstName = rs.get(u.firstName),
     prefix = rs.get(u.prefix),
     lastName = rs.get(u.lastName),
-    cloudService = Server.findByUserId(rs.get(u.id)),
+    cloudService = ServerSettings.findByUserId(rs.get(u.id)),
     notifications = DBNotification.findByUserId(rs.get(u.id))
   )
 

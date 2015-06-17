@@ -39,6 +39,7 @@ object Auth extends Controller with Secured{
     )
   }
 
+  @Deprecated // use Users.logout
   def logout = Action {
     Redirect(routes.Auth.login).withNewSession.flashing(
       "succes" -> "You are now logged out"
