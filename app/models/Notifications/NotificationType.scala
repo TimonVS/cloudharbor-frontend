@@ -5,5 +5,5 @@ package models.Notifications
  */
 object NotificationType extends Enumeration {
   type NotificationType = Value
-  val ServerCreate, ServerDelete, ContainerCreate, ContainerDelete, ImageCreate, ImageDelete = Value
+  val Server, Container, Image = Value
 }

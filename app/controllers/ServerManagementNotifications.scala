@@ -1,6 +1,6 @@
 package controllers
 
-import actors.NotificationActor.CreateServerNotification
+import actors.NotificationActor.Server
 import actors.RepeatActor.Repeat
 import actors.{NotificationActor, RepeatActor}
 import models.Notifications.ServerNotification
@@ -25,7 +25,7 @@ trait ServerManagementNotifications {
       .get()
       .map(response => (response.json \ "status").as[String] == "active")
 
-    def done() = notificationActor ! CreateServerNotification(userId, ServerNotification(serverId, "Server created"))
+    def done() = notificationActor ! Server(userId, ServerNotification(serverId, "Server created"))
 
     repeatActor ! Repeat(repeat, done)
   }
