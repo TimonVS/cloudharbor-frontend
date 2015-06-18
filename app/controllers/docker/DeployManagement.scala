@@ -28,7 +28,7 @@ object DeployManagement extends DockerManagement with WsUtils with Secured {
     }.flatMap { _ =>
       WS.url(s"http://$managementUrl/containers/create").withHeaders(dockerInfo(serverUrl)).post(request.body.asJson.get)
     }.map { result => result.status match {
-      case OK => notificationActor ! Container(user.id, ContainerNotification((result.json \ "Id").as[String], "Container is created"))
+      case OK => notificationActor ! Container(user.id, ContainerNotification((result.json \ "Id").as[String], "Container is created", "active"))
       case _ => notificationActor ! Error(user.id, ErrorNotification("Error while creating container"))
     }
     }

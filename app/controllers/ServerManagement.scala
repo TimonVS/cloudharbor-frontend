@@ -120,8 +120,9 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
         WS.url(s"http://$serverManagementUrl/servers/add")
           .withHeaders(cloudInfo(server.apiKey))
           .post(request.body.asJson.get)
-          .map { response =>
-          notifyServerCreated(user.id, (response.json \ "success").as[String], server.apiKey)
+          .map { response => response.status match {
+          case CREATED => notifyServerCreated(user.id, (response.json \ "success").as[String], server.apiKey)
+        }
           forwardResponse(response)
         }
           .recover {
@@ -130,6 +131,10 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
           }
       case None => Future.successful(NotFound(Json.obj("error" -> "Api Key not found")))
     }
+  }
+
+  def cloudInfo(apiKey: String): (String, String) = {
+    "Cloud-Info" -> apiKey
   }
 
   /**
@@ -167,10 +172,6 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
           case _ => InternalServerError(unexpectedError)
         }
     } getOrElse Future.successful(BadRequest(Json.obj("error" -> "API-Key needs to be provided")))
-  }
-
-  def cloudInfo(apiKey: String): (String, String) = {
-    "Cloud-Info" -> apiKey
   }
 
   def getServerOptions = withAuthAsync { implicit user => implicit request =>
