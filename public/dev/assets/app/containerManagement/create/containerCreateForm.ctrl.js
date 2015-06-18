@@ -40,7 +40,7 @@ function containerCreateFormCtrl ($scope, $modalInstance, server, Container) {
 
     var container = new Container(request)
 
-    container.$create()
+    container.$create({ serverUrl: server.getIp() })
       .then(function (data) {
         vm.busy = false
         $modalInstance.close()

@@ -25,7 +25,7 @@ GET           /notifications                                     controllers.Not
 # Management
 GET        /management/ping               controllers.docker.Management.ping
 GET        /management/docker/ping        controllers.docker.Management.pingDockerRemoteApi(serverUrl: String)
-POST        /management/deploy/:name        controllers.docker.DeployManagement.deploy(serverUrl: String, name: String, repo: Option[String] ?= None, tag: Option[String] ?= None)
+POST        /management/containers/deploy/:name        controllers.docker.DeployManagement.deploy(serverUrl: String, name: String, repo: Option[String] ?= None, tag: Option[String] ?= None)
 
 # ImagesManagement
 GET           /management/images                                 controllers.docker.ImagesManagement.listImages(serverUrl: String)
