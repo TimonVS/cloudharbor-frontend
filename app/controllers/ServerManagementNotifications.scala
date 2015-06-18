@@ -25,7 +25,7 @@ trait ServerManagementNotifications {
       .get()
       .map(response => (response.json \ "status").as[String] == "active")
 
-    def done() = notificationActor ! Server(userId, ServerNotification(serverId, "Server created"))
+    def done() = notificationActor ! Server(userId, ServerNotification(serverId, "Server created", "active"))
 
     repeatActor ! Repeat(repeat, done)
   }
