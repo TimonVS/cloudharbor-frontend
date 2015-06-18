@@ -9,47 +9,47 @@ class CloudServiceSpec extends Specification {
 
   "Server" should {
 
-    val cs = Server.syntax("cs")
+    val cs = ServerSettings.syntax("cs")
 
     "find by primary keys" in new AutoRollback {
-      val maybeFound = Server.find(123)
+      val maybeFound = ServerSettings.find(123)
       maybeFound.isDefined should beTrue
     }
     "find by where clauses" in new AutoRollback {
-      val maybeFound = Server.findBy(sqls.eq(cs.id, 123))
+      val maybeFound = ServerSettings.findBy(sqls.eq(cs.id, 123))
       maybeFound.isDefined should beTrue
     }
     "find all records" in new AutoRollback {
-      val allResults = Server.findAll()
+      val allResults = ServerSettings.findAll()
       allResults.size should be_>(0)
     }
     "count all records" in new AutoRollback {
-      val count = Server.countAll()
+      val count = ServerSettings.countAll()
       count should be_>(0L)
     }
     "find all by where clauses" in new AutoRollback {
-      val results = Server.findAllBy(sqls.eq(cs.id, 123))
+      val results = ServerSettings.findAllBy(sqls.eq(cs.id, 123))
       results.size should be_>(0)
     }
     "count by where clauses" in new AutoRollback {
-      val count = Server.countBy(sqls.eq(cs.id, 123))
+      val count = ServerSettings.countBy(sqls.eq(cs.id, 123))
       count should be_>(0L)
     }
     "create new record" in new AutoRollback {
-      val created = Server.create(userId = 123, apiKey = "MyString")
+      val created = ServerSettings.create(userId = 123, apiKey = "MyString")
       created should not beNull
     }
     "save a record" in new AutoRollback {
-      val entity = Server.findAll().head
+      val entity = ServerSettings.findAll().head
       // TODO modify something
       val modified = entity
-      val updated = Server.save(modified)
+      val updated = ServerSettings.save(modified)
       updated should not equalTo(entity)
     }
     "destroy a record" in new AutoRollback {
-      val entity = Server.findAll().head
-      Server.destroy(entity)
-      val shouldBeNone = Server.find(123)
+      val entity = ServerSettings.findAll().head
+      ServerSettings.destroy(entity)
+      val shouldBeNone = ServerSettings.find(123)
       shouldBeNone.isDefined should beFalse
     }
   }

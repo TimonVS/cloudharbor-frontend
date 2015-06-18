@@ -1,7 +1,7 @@
 package models.Notifications
 
 import models.Notifications.NotificationType.NotificationType
-import models.{Server, StandardQueries}
+import models.{ServerSettings, StandardQueries}
 import org.joda.time.DateTime
 import play.api.libs.json.JsValue
 import scalikejdbc._
@@ -94,7 +94,7 @@ object DBNotification extends SQLSyntaxSupport[DBNotification] with StandardQuer
 
   def save(entity: DBNotification)(implicit session: DBSession = autoSession): DBNotification = {
     withSQL {
-      update(Server).set(
+      update(DBNotification).set(
         column.id -> entity.id,
         column.message -> entity.message,
         column.timeStamp -> entity.timeStamp,
@@ -106,7 +106,7 @@ object DBNotification extends SQLSyntaxSupport[DBNotification] with StandardQuer
   }
 
   def destroy(entity: DBNotification)(implicit session: DBSession = autoSession): Unit = {
-    withSQL { delete.from(Server).where.eq(column.id, entity.id) }.update.apply()
+    withSQL { delete.from(DBNotification).where.eq(column.id, entity.id) }.update.apply()
   }
 
 }
