@@ -1,16 +1,17 @@
 package models.Notifications
 
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{JsPath, Writes}
+import play.api.libs.json._
 
 /**
  * Created by Rudie on 10-6-2015.
  */
-case class ContainerNotification(containerId: String, body: String)
+case class ContainerNotification(containerId: String, body: String, status: String)
 
 object ContainerNotification {
   implicit val containerNotificationWrites: Writes[ContainerNotification] = (
-    (JsPath \ "id").write[String] and
-      (JsPath \ "body").write[String]
+    (__ \ "id").write[String] and
+      (__ \ "body").write[String] and
+      (__ \ "status").write[String]
     )(unlift(ContainerNotification.unapply))
 }
