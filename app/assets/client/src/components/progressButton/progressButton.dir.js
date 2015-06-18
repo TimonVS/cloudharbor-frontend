@@ -18,9 +18,15 @@ function progressButton () {
 
       $element.bind('click', function () {
         $attr.$set('disabled', true)
-        $scope.action().finally(function () {
+
+        try {
+          $scope.action().finally(function () {
+            $attr.$set('disabled', false)
+          })
+        }
+        catch (error) {
           $attr.$set('disabled', false)
-        })
+        }
       })
     }
   }

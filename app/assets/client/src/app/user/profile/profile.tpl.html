@@ -1,8 +1,8 @@
 <form name="vm.form" novalidate>
-    <div class="form-group" ng-class="{ 'has-error' : vm.form.userName.$invalid && !vm.form.userName.$pristine }">
-        <label for="userName">Username</label>
-        <input type="text" class="form-control" name="userName" id="userName" placeholder="Enter username"
-               ng-model="vm.user.userName" required>
+    <div class="form-group" ng-class="{ 'has-error' : vm.form.username.$invalid && !vm.form.username.$pristine }">
+        <label for="username">username</label>
+        <input type="text" class="form-control" name="username" id="username" placeholder="Enter username"
+               ng-model="vm.user.username" required>
     </div>
 
     <div class="form-group" ng-class="{ 'has-error' : vm.form.password.$invalid && !vm.form.password.$pristine }">
@@ -42,5 +42,5 @@
                ng-model="vm.user.lastName" required>
     </div>
 
-    <input type="submit" class="btn btn-primary" value="Update profile">
+    <ch-progress-button action="vm.submit(vm.form)" ng-disabled="vm.form.$invalid">Update profile</ch-progress-button>
 </form>

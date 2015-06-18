@@ -35,7 +35,7 @@ angular.module('app', [
     })
   })
 
-  .run(function ($rootScope, $state, $stateParams) {
+  .run(function ($rootScope, $state, $stateParams, User) {
     $rootScope.$state = $state;
     $rootScope.$stateParams = $stateParams
 
@@ -46,6 +46,8 @@ angular.module('app', [
         $state.go(toState.redirectTo, toParams)
       }
     })
+
+    $rootScope.currentUser = User.get().$promise
   })
 
   // ------------------------------------------------------------------

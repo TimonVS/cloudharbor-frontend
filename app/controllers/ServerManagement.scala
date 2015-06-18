@@ -36,7 +36,7 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
    * Ajax get request for every server a user has at digital ocean
    */
   def servers = withAuthAsync { implicit user => implicit request =>
-    Server.findByUserId(user.id) match {
+    ServerSettings.findByUserId(user.id) match {
       case Some(cloudService) =>
         WS.url(s"http://$serverManagementUrl/servers")
           .withHeaders(cloudInfo(cloudService.apiKey))
@@ -56,7 +56,7 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
    * Ajax get request for single server
    */
   def show(serverId: String) = withAuthAsync { implicit user => implicit request =>
-    Server.findByUserId(user.id) match {
+    ServerSettings.findByUserId(user.id) match {
       case Some(cloudService) =>
         WS.url(s"http://$serverManagementUrl/servers/$serverId")
           .withHeaders(cloudInfo(cloudService.apiKey))
@@ -75,7 +75,7 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
    * Ajax post for pausing a server
    */
   def powerOff(serverId: String) = withAuthAsync { implicit user => implicit request =>
-    Server.findByUserId(user.id) match {
+    ServerSettings.findByUserId(user.id) match {
       case Some(cloudService) =>
         forwardPost(s"http://$serverManagementUrl/servers/$serverId/stop", cloudService.apiKey, cloudInfo, SERVER_MANAGEMENT)
       case None =>
@@ -87,7 +87,7 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
    * Ajax post for starting a server
    */
   def powerOn(serverId: String) = withAuthAsync { implicit user => implicit request =>
-    Server.findByUserId(user.id) match {
+    ServerSettings.findByUserId(user.id) match {
       case Some(cloudService) =>
         forwardPost(s"http://$serverManagementUrl/servers/$serverId/start", cloudService.apiKey, cloudInfo, SERVER_MANAGEMENT)
       case None =>
@@ -99,7 +99,7 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
    * Ajax delete for deleting a server
    */
   def delete(serverId: String) = withAuthAsync { implicit user => implicit request =>
-    Server.findByUserId(user.id) match{
+    ServerSettings.findByUserId(user.id) match{
       case Some(cloudService) =>
         WS.url(s"http://$serverManagementUrl/servers/$serverId/delete")
           .withHeaders(cloudInfo(cloudService.apiKey))
@@ -115,7 +115,7 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
   }
 
   def createServer = withAuthAsync { implicit user => implicit request =>
-    Server.findByUserId(user.id) match {
+    ServerSettings.findByUserId(user.id) match {
       case Some(server) =>
         WS.url(s"http://$serverManagementUrl/servers/add")
           .withHeaders(cloudInfo(server.apiKey))
@@ -137,7 +137,7 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
    * @return
    */
   def getApiKey = withAuth { implicit user => implicit request =>
-    Server.findByUserId(user.id) match {
+    ServerSettings.findByUserId(user.id) match {
       case Some(server) => Ok(Json.obj("success" -> server.apiKey))
       case None => BadRequest(Json.obj("error" -> "No API-key found"))
     }
@@ -154,7 +154,9 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
         .map(r =>
           r.status match{
             case OK =>
-              Server.create(user.id, (json \ "apiKey").as[String])
+              ServerSettings.findByUserId(user.id) map {serverSettings =>
+                serverSettings.copy(apiKey = (json \ "apiKey").as[String]).save()
+              } getOrElse ServerSettings.create(user.id, (json \ "apiKey").as[String])
               Ok(r.json)
             case BAD_REQUEST =>
               BadRequest(Json.obj("error" -> "API-Key did not work"))
@@ -172,7 +174,7 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
   }
 
   def getServerOptions = withAuthAsync { implicit user => implicit request =>
-    Server.findByUserId(user.id) match {
+    ServerSettings.findByUserId(user.id) match {
       case Some(cloudService) =>
         WS.url(s"http://$serverManagementUrl/server-options")
           .withHeaders(cloudInfo(cloudService.apiKey))
@@ -187,7 +189,7 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
   }
 
   def getSSHKeys = withAuthAsync { implicit user => implicit request =>
-    Server.findByUserId(user.id) match {
+    ServerSettings.findByUserId(user.id) match {
       case Some(cloudService) =>
         WS.url(s"http://$serverManagementUrl/ssh")
           .withHeaders(cloudInfo(cloudService.apiKey))

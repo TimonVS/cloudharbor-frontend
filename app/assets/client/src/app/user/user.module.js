@@ -28,7 +28,9 @@ angular
           }
         },
         resolve: {
-
+          user: function (User) {
+            return User.get().$promise
+          }
         }
       })
       .state('user.apikeys', {
