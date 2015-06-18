@@ -9,7 +9,7 @@ function ContainerFactory ($resource) {
     },
     create: {
       method: 'POST',
-      params: { name: 'hello-world:latest', serverUrl: '188.226.234.229' }
+      params: { name: 'hello-world', tag: 'latest', action: 'deploy' }
     }
   })
 

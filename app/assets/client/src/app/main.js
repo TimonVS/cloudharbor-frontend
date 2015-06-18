@@ -7,6 +7,7 @@ angular.module('app', [
   'ui.router',
   'ui.bootstrap',
   'angular-loading-bar',
+  'yaru22.angular-timeago',
   'app.content',
   'app.components',
   'app.dashboard',
