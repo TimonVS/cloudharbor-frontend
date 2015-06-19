@@ -5973,6 +5973,13 @@ button.close {
 .containers-list-item .item-status {
   text-align: right; }
 
+.server-overview-actions,
+.server-overview-search {
+  margin-bottom: 20px; }
+
+.server-overview-pager {
+  margin: 20px 0; }
+
 .servers-table .header-row {
   text-transform: uppercase;
   color: #848484;
