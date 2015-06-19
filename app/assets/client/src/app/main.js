@@ -12,12 +12,13 @@ angular.module('app', [
   'app.components',
   'app.dashboard',
   'app.user',
+  'app.notification',
   'app.containerManagement',
   'app.serverManagement',
   'app.imageManagement'
 ])
 
-  .config(function($httpProvider, $stateProvider, $urlRouterProvider, $locationProvider, cfpLoadingBarProvider) {
+  .config(function($httpProvider, $stateProvider, $urlRouterProvider, $locationProvider, $provide, cfpLoadingBarProvider) {
 
     // $http config
     $httpProvider.defaults.timeout = 5000
