@@ -10,6 +10,11 @@ function serverManagementCtrl ($scope, $modal, Server, serverCache, servers) {
 
   vm.servers = servers
 
+  // Sorting and search
+  vm.sortType = 'name'
+  vm.sortReverse = false
+  vm.searchQuery = ''
+
   // Pagination
   vm.pagination = {
     from: 0,
@@ -23,6 +28,7 @@ function serverManagementCtrl ($scope, $modal, Server, serverCache, servers) {
 
   vm.getServers = getServers
   vm.createServer = createServer
+  vm.orderBy = orderBy
 
   // ------------------------------------------------------------------
   // Actions
@@ -56,6 +62,15 @@ function serverManagementCtrl ($scope, $modal, Server, serverCache, servers) {
       .catch(function (error) {
 
       })
+  }
+
+  function orderBy (name) {
+    if (name === vm.sortType) {
+      vm.sortReverse = !vm.sortReverse
+    } else {
+      vm.sortReverse = false
+      vm.sortType = name
+    }
   }
 
   // ------------------------------------------------------------------

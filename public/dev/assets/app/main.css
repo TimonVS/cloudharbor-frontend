@@ -5977,9 +5977,16 @@ button.close {
   text-transform: uppercase;
   color: #848484;
   font-size: 12px;
-  border-bottom: 1px solid #eee; }
+  border-bottom: 1px solid #eee;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none; }
   .servers-table .header-row:hover {
     background-color: transparent; }
+
+.servers-table th[ng-click] {
+  cursor: pointer; }
 
 .servers-table th,
 .servers-table td {
