@@ -7,17 +7,35 @@
     Refresh servers
 </a>
 
+<div class="input-group">
+    <div class="input-group-addon"><span class="mdi mdi-magnify"></span></div>
+
+    <input type="text" class="form-control" placeholder="Search servers" ng-model="serverManagement.searchQuery">
+
+</div>
+
 <div class="table-responsive">
     <table class="table table-hover servers-table">
         <tr class="header-row">
-            <th>Name</th>
-            <th>Status</th>
+            <th ng-click="serverManagement.orderBy('name')">
+                Name
+                <span ng-show="serverManagement.sortType == 'name'" class="mdi" ng-class="serverManagement.sortReverse ? 'mdi-chevron-up' : 'mdi-chevron-down'"></span>
+            </th>
+            <th ng-click="serverManagement.orderBy('status')">
+                Status
+                <span ng-show="serverManagement.sortType == 'status'" class="mdi" ng-class="serverManagement.sortReverse ? 'mdi-chevron-up' : 'mdi-chevron-down'"></span>
+            </th>
             <th>Operating System</th>
-            <th>IP address</th>
-            <th>Region</th>
+            <th>
+                IP address
+            </th>
+            <th ng-click="serverManagement.orderBy('region')">
+                Region
+                <span ng-show="serverManagement.sortType == 'region'" class="mdi" ng-class="serverManagement.sortReverse ? 'mdi-chevron-up' : 'mdi-chevron-down'"></span>
+            </th>
         </tr>
         <tr ng-class="{ disabled: server.locked }"
-            ng-repeat="server in serverManagement.servers | limitTo:serverManagement.pagination.limit:serverManagement.pagination.from"
+            ng-repeat="server in serverManagement.servers | limitTo:serverManagement.pagination.limit:serverManagement.pagination.from | orderBy:serverManagement.sortType:serverManagement.sortReverse | filter:serverManagement.searchQuery"
             class="servers-table-item" ui-sref="{{ server.locked ? '.' : 'servers.show({ id: server.id })' }}">
             <td>
                 <span ng-if="server.locked" class="mdi mdi-lock"></span>

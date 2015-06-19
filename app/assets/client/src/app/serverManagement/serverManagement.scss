@@ -5,10 +5,15 @@
   color: #848484;
   font-size: 12px;
   border-bottom: 1px solid #eee;
+  user-select: none;
 
   &:hover {
     background-color: transparent;
   }
+}
+
+.servers-table th[ng-click] {
+  cursor: pointer;
 }
 
 .servers-table th,
