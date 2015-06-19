@@ -1,18 +1,28 @@
-<a href="" class="btn btn-sm btn-primary" style="margin-bottom: 20px;" ng-click="serverManagement.createServer()">
-    <span class="mdi mdi-plus"></span>
-    Create server
-</a>
-<a href="" class="btn btn-sm btn-primary" style="margin-bottom: 20px;" ng-click="serverManagement.getServers()">
-    <span class="mdi mdi-refresh"></span>
-    Refresh servers
-</a>
+<div class="row">
+    <div class="col-sm-8">
+        <div class="server-overview-actions">
+            <a href="" class="btn btn-md btn-primary" ng-click="serverManagement.createServer()">
+                <span class="mdi mdi-plus"></span>
+                Create server
+            </a>
+            <a href="" class="btn btn-md btn-primary" ng-click="serverManagement.getServers()">
+                <span class="mdi mdi-refresh"></span>
+                Refresh servers
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="server-overview-search input-group">
+        <div class="input-group-addon"><span class="mdi mdi-magnify"></span></div>
 
-<div class="input-group">
-    <div class="input-group-addon"><span class="mdi mdi-magnify"></span></div>
-
-    <input type="text" class="form-control" placeholder="Search servers" ng-model="serverManagement.searchQuery">
-
+        <input type="text" class="form-control" placeholder="Search servers" ng-model="serverManagement.searchQuery">
+        </div>
+    </div>
 </div>
+
+
+
+
 
 <div class="table-responsive">
     <table class="table table-hover servers-table">
@@ -51,10 +61,10 @@
 </div>
 
 <div class="row">
-    <div class="col-xs-8">
+    <div class="col-xs-8 col-sm-10">
         <ch-pagination total-items="{{ serverManagement.servers.length }}" items-per-page="{{ serverManagement.pagination.limit }}" on-page-change="serverManagement.changePage(pageNumber)"></ch-pagination>
     </div>
-    <div class="col-xs-4">
-        <select class="form-control pull-right" ng-options="range for range in serverManagement.pagination.ranges" ng-model="serverManagement.pagination.limit"></select>
+    <div class="col-xs-4 col-sm-2">
+        <select class="server-overview-pager form-control pull-right" ng-options="range for range in serverManagement.pagination.ranges" ng-model="serverManagement.pagination.limit"></select>
     </div>
 </div>
