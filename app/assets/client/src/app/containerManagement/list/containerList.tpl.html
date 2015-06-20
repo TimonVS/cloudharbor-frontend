@@ -13,10 +13,9 @@
                 </div>
             </ch-panel-body>
             <div class="list-group" ng-if="server.containers.length">
-                <a ng-repeat="container in server.containers | limitTo:pagination.limit:pagination.from" href="" class="list-group-item">
+                <a ng-repeat="container in server.containers | limitTo:pagination.limit:pagination.from" href="" class="list-group-item containers-list-item" ui-sref="containers.detail({ id: container.Id, serverUrl: server.getIp() })">
                     <span ng-bind="::container.Id" class="item-name"></span>
-                    <span class="item-status">Running</span>
-                    <span class="item-created"><i class="mdi mdi-clock"></i> 5 hours ago</span>
+                    <span class="item-created"><i class="mdi mdi-clock"></i> {{ container.Created | convertTimestamp | timeAgo }}</span>
                 </a>
             </div>
             <div class="panel-body" ng-if="server.containers.length > pagination.limit">
@@ -49,10 +48,9 @@
         </div>
 
         <div class="list-group" ng-if="server.containers.length">
-            <a ng-repeat="container in server.containers | limitTo:pagination.limit:pagination.from" href="" class="list-group-item">
+            <a ng-repeat="container in server.containers | limitTo:pagination.limit:pagination.from" href="" class="list-group-item containers-list-item" ui-sref="containers.detail({ id: container.Id, serverUrl: server.getIp() })">
                 <span ng-bind="::container.Id" class="item-name"></span>
-                <span class="item-status">Running</span>
-                <span class="item-created"><i class="mdi mdi-clock"></i> 5 hours ago</span>
+                <span class="item-created"><i class="mdi mdi-clock"></i> {{ container.Created | convertTimestamp | timeAgo }}</span>
             </a>
         </div>
 
