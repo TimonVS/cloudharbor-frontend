@@ -48,6 +48,11 @@ trait WsUtils {
         case _ => Results.InternalServerError(unexpectedError)
       }
 
+  def unavailableJsonMessage(service: String) = Json.obj("error" -> s"Sorry, but the $service is currently not available")
+
+  def forwardResponse(response: WSResponse): Result =
+    Results.Status(response.status)(response.body)
+
   def forwardDelete[T](url: String, headerContent: T, createHeader: T => (String, String), service: String): Future[Result] =
     WS.url(url)
       .withHeaders(createHeader(headerContent))
@@ -57,8 +62,4 @@ trait WsUtils {
       case _: ConnectException => Results.InternalServerError(unavailableJsonMessage(service))
       case _ => Results.InternalServerError(unexpectedError)
     }
-
-  def unavailableJsonMessage(service: String) = Json.obj("error" -> s"Sorry, but the $service is currently not available")
-
-  def forwardResponse(response: WSResponse): Result = Results.Status(response.status)(response.body)
 }
