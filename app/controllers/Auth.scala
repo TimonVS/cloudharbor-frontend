@@ -5,6 +5,7 @@ import org.mindrot.jbcrypt.BCrypt
 import play.api.data.Forms._
 import play.api.data._
 import play.api.mvc.{Action, Controller, Security}
+import utils.Secured
 
 /**
  * Created by ThomasWorkBook on 16/04/15.
