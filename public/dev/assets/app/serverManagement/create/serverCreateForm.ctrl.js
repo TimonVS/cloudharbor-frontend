@@ -32,7 +32,7 @@ function serverCreateForm ($scope, $http, $modalInstance, CloudService, Server) 
 
     // todo: implement in back-end
     $http.get('https://cloudharbor-reverse-proxy.herokuapp.com/https://discovery.etcd.io/new').then(function (response) {
-      vm.form.discovery_token = response.data
+      vm.server.discovery_token = response.data
       generateActive = false
     })
   }
@@ -51,6 +51,7 @@ function serverCreateForm ($scope, $http, $modalInstance, CloudService, Server) 
       'image': 'coreos-stable',
       'region': vm.server.region.slug,
       'size': vm.server.size,
+      'etcd': vm.server.discovery_token,
       'ipv6': vm.server.ipv6 || false,
       'backups': vm.server.backups || false,
       'ssh_keys': [vm.server.ssh_keys.id] //TODO
