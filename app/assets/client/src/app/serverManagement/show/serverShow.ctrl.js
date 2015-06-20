@@ -1,6 +1,6 @@
 'use strict';
 
-function serverShowCtrl ($state, $timeout, Server, server, Dialog) {
+function serverShowCtrl ($scope, $state, $timeout, Server, server, Dialog, notifications) {
 
   // ------------------------------------------------------------------
   // Initialization
@@ -14,6 +14,7 @@ function serverShowCtrl ($state, $timeout, Server, server, Dialog) {
   // Function assignment
   vm.startServer = startServer
   vm.stopServer = stopServer
+  vm.rebootServer = rebootServer
   vm.deleteServer = deleteServer
 
   // ------------------------------------------------------------------
@@ -23,7 +24,7 @@ function serverShowCtrl ($state, $timeout, Server, server, Dialog) {
   function startServer () {
     return Server.start({ id: server.id }).$promise
       .then(function (data) {
-        vm.server.status = 'active'
+        vm.server.status = data.status
       })
       .catch(function (error) {
         console.log(error)
@@ -34,6 +35,16 @@ function serverShowCtrl ($state, $timeout, Server, server, Dialog) {
     return Server.stop({ id: server.id }).$promise
       .then(function (data) {
         vm.server.status = 'off'
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+  }
+
+  function rebootServer () {
+    return Server.reboot({ id: server.id }).$promise
+      .then(function (data) {
+        vm.server.status = data.status
       })
       .catch(function (error) {
         console.log(error)
@@ -64,6 +75,17 @@ function serverShowCtrl ($state, $timeout, Server, server, Dialog) {
   }
 
   if (server.locked) checkStatus()
+
+  // ------------------------------------------------------------------
+  // Events
+  // ------------------------------------------------------------------
+
+  notifications.get('notification', function (event, notification) {
+    if (notification.message.body === 'Server rebooted') {
+      vm.server.status = notification.message.status
+    }
+  })
+
 }
 
 angular
