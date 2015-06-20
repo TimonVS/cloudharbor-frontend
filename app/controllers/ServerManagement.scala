@@ -2,11 +2,13 @@ package controllers
 
 import java.net.ConnectException
 
+import actors.NotificationActor.Error
+import models.Notifications.ErrorNotification
 import models._
 import play.api.Play.current
 import play.api.libs.json.Json
 import play.api.libs.ws.WS
-import play.api.mvc.{Results, Controller}
+import play.api.mvc.{Controller, Results}
 import utils.WsUtils
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -50,6 +52,10 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
       case None =>
         Future.successful(Redirect(routes.Application.app("profile")))
     }
+  }
+
+  def cloudInfo(apiKey: String): (String, String) = {
+    "Cloud-Info" -> apiKey
   }
 
   /**
@@ -121,7 +127,8 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
           .withHeaders(cloudInfo(server.apiKey))
           .post(request.body.asJson.get)
           .map { response => response.status match {
-          case CREATED => notifyServerCreated(user.id, (response.json \ "success").as[String], server.apiKey)
+          case OK => notifyServerCreated(user.id, (response.json \ "success").as[String], server.apiKey)
+          case _ => notificationActor ! Error(user.id, ErrorNotification("Server could not be created"))
         }
           forwardResponse(response)
         }
@@ -131,10 +138,6 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
           }
       case None => Future.successful(NotFound(Json.obj("error" -> "Api Key not found")))
     }
-  }
-
-  def cloudInfo(apiKey: String): (String, String) = {
-    "Cloud-Info" -> apiKey
   }
 
   /**
