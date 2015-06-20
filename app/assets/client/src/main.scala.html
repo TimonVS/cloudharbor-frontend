@@ -1,9 +1,9 @@
 @(title: String, backButtonOpt: Option[String] = None)(content: Html)(implicit request: RequestHeader, user: User)
 
 <!DOCTYPE html>
-<html lang="en" class="no-js">
+<html lang="en" class="no-js" ng-app="app">
     <head>
-        <title>Cloudharbor | @title</title>
+        <title>{{ pageTitle }} | Cloudharbor</title>
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("/public/images", "favicon.png")">
 
         <!-- build:css({public/dev,src}) /assets/app/vendor.css -->
@@ -27,7 +27,7 @@
 
         <script src="@routes.Assets.at("/public/bower_components", "jquery/dist/jquery.js")"></script>
     </head>
-    <body ng-app="app" class="main">
+    <body class="main">
         <ch-nav-menu></ch-nav-menu>
         <div class="main-content">
             <div class="navbar navbar-default navbar-fixed-top">

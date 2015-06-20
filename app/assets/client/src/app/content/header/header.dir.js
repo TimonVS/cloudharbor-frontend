@@ -1,11 +1,14 @@
 'use strict';
 
-function header () {
+function header ($rootScope) {
   return {
     restrict: 'E',
     templateUrl: 'app/content/header/header.tpl.html',
     scope: {
       title: '@'
+    },
+    controller: function ($scope) {
+      $rootScope.pageTitle = $scope.title
     }
   }
 }
