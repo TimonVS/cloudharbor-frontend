@@ -13,11 +13,21 @@
                 </div>
             </ch-panel-body>
             <div class="list-group" ng-if="server.containers.length">
-                <a ng-repeat="container in server.containers" href="" class="list-group-item">
+                <a ng-repeat="container in server.containers | limitTo:pagination.limit:pagination.from" href="" class="list-group-item">
                     <span ng-bind="::container.Id" class="item-name"></span>
                     <span class="item-status">Running</span>
                     <span class="item-created"><i class="mdi mdi-clock"></i> 5 hours ago</span>
                 </a>
+            </div>
+            <div class="panel-body" ng-if="server.containers.length > pagination.limit">
+                <div class="row panel-pagination-controls">
+                    <div class="col-xs-8 col-sm-10">
+                        <ch-pagination total-items="{{ server.containers.length }}" items-per-page="{{ pagination.limit }}" on-page-change="changePage(pageNumber)"></ch-pagination>
+                    </div>
+                    <div class="col-xs-4 col-sm-2">
+                        <select class="pager form-control pull-right" ng-options="range for range in pagination.ranges" ng-model="pagination.limit"></select>
+                    </div>
+                </div>
             </div>
         </ch-panel>
     </div>
@@ -39,11 +49,20 @@
         </div>
 
         <div class="list-group" ng-if="server.containers.length">
-            <a ng-repeat="container in server.containers" href="" class="list-group-item">
+            <a ng-repeat="container in server.containers | limitTo:pagination.limit:pagination.from" href="" class="list-group-item">
                 <span ng-bind="::container.Id" class="item-name"></span>
                 <span class="item-status">Running</span>
                 <span class="item-created"><i class="mdi mdi-clock"></i> 5 hours ago</span>
             </a>
+        </div>
+
+        <div class="row panel-pagination-controls" ng-if="server.containers.length > pagination.limit">
+            <div class="col-xs-8 col-sm-10">
+                <ch-pagination total-items="{{ server.containers.length }}" items-per-page="{{ pagination.limit }}" on-page-change="changePage(pageNumber)"></ch-pagination>
+            </div>
+            <div class="col-xs-4 col-sm-2">
+                <select class="pager form-control pull-right" ng-options="range for range in pagination.ranges" ng-model="pagination.limit"></select>
+            </div>
         </div>
     </div>
 </div>

@@ -10,9 +10,30 @@ function containerList ($modal, $log) {
     replace: true,
     templateUrl: 'app/containerManagement/list/containerList.tpl.html',
     controller: function ($scope) {
-      $scope.createContainer = createContainer
+
+      // ------------------------------------------------------------------
+      // Initialization
+      // ------------------------------------------------------------------
 
       if ($scope.server.status !== 'off') $scope.server.getContainers()
+
+      // Pagination
+      $scope.pagination = {
+        from: 0,
+        limit: 15,
+        ranges: [15, 25, 50, 100]
+      }
+
+      $scope.changePage = function (pageNum) {
+        $scope.pagination.from = (pageNum - 1) * $scope.pagination.limit
+      }
+
+      // Function assignment
+      $scope.createContainer = createContainer
+
+      // ------------------------------------------------------------------
+      // Actions
+      // ------------------------------------------------------------------
 
       function createContainer (server) {
         var modalInstance = $modal.open({

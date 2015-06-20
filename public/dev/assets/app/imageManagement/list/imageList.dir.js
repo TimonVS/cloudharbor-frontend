@@ -17,6 +17,18 @@ function imageList ($modal, $log) {
 
       if ($scope.server.status !== 'off') $scope.server.getImages()
 
+      // Pagination
+      $scope.pagination = {
+        from: 0,
+        limit: 15,
+        ranges: [15, 25, 50, 100]
+      }
+
+      $scope.changePage = function (pageNum) {
+        $scope.pagination.from = (pageNum - 1) * $scope.pagination.limit
+      }
+
+      // Function assignment
       $scope.createImage = createImage
 
       // ------------------------------------------------------------------

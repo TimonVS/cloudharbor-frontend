@@ -6144,6 +6144,10 @@ button.close {
 .panel.with-nav-tabs .nav-justified {
   margin-bottom: -1px; }
 
+.panel-pagination-controls .pagination,
+.panel-pagination-controls .pager {
+  margin: 0; }
+
 /********************************************************************/
 /*** PANEL DEFAULT ***/
 .with-nav-tabs.panel-default .nav-tabs > li > a,
