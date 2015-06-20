@@ -1,6 +1,6 @@
 'use strict';
 
-function serverShowCtrl ($scope, $state, $timeout, Server, server, Dialog, notifications) {
+function serverShowCtrl ($state, $timeout, Server, server, Dialog, notifications, Container) {
 
   // ------------------------------------------------------------------
   // Initialization
