@@ -28,7 +28,7 @@ angular
         }
       })
       .state('containers.detail', {
-        url: '/detail/:id',
+        url: '/detail/:serverUrl/:id',
         views: {
           'content@content': {
             templateUrl: 'app/containerManagement/detail/containerDetail.tpl.html',
