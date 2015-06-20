@@ -30,6 +30,10 @@ function ServerFactory ($resource, serverCache, Container, DockerImage) {
       method: 'POST',
       params: { action: 'stop' }
     },
+    reboot: {
+      method: 'POST',
+      params: { action: 'reboot' }
+    },
     delete: {
       method: 'DELETE',
       params: { action: 'delete' }
