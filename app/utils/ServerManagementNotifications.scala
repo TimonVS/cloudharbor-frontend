@@ -1,4 +1,4 @@
-package controllers
+package utils
 
 import actors.NotificationActor.Server
 import actors.RepeatActor.Repeat

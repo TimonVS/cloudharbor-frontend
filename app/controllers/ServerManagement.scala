@@ -9,7 +9,7 @@ import play.api.Play.current
 import play.api.libs.json.Json
 import play.api.libs.ws.WS
 import play.api.mvc.{Controller, Results}
-import utils.WsUtils
+import utils.{Secured, ServerManagementNotifications, WsUtils}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -52,10 +52,6 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
       case None =>
         Future.successful(Redirect(routes.Application.app("profile")))
     }
-  }
-
-  def cloudInfo(apiKey: String): (String, String) = {
-    "Cloud-Info" -> apiKey
   }
 
   /**
@@ -118,6 +114,10 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
       case None =>
         Future.successful(Redirect(routes.Application.app("profile")))
     }
+  }
+
+  def cloudInfo(apiKey: String): (String, String) = {
+    "Cloud-Info" -> apiKey
   }
 
   def createServer = withAuthAsync { implicit user => implicit request =>
