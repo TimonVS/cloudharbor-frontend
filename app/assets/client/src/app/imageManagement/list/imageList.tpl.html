@@ -13,9 +13,19 @@
                 </div>
             </ch-panel-body>
             <div class="list-group" ng-if="server.images.length">
-                <a ng-repeat="image in server.images" href="" class="list-group-item">
+                <a ng-repeat="image in server.images | limitTo:pagination.limit:pagination.from" href="" class="list-group-item">
                     <span ng-bind="::image.RepoTags[0]"></span>
                 </a>
+            </div>
+            <div class="panel-body" ng-if="server.images.length > pagination.limit">
+                <div class="row panel-pagination-controls">
+                    <div class="col-xs-8 col-sm-10">
+                        <ch-pagination total-items="{{ server.images.length }}" items-per-page="{{ pagination.limit }}" on-page-change="changePage(pageNumber)"></ch-pagination>
+                    </div>
+                    <div class="col-xs-4 col-sm-2">
+                        <select class="pager form-control pull-right" ng-options="range for range in pagination.ranges" ng-model="pagination.limit"></select>
+                    </div>
+                </div>
             </div>
         </ch-panel>
     </div>
@@ -37,9 +47,18 @@
         </div>
 
         <div class="list-group" ng-if="server.images.length">
-            <a ng-repeat="image in server.images" href="" class="list-group-item">
+            <a ng-repeat="image in server.images | limitTo:pagination.limit:pagination.from" href="" class="list-group-item">
                 <span ng-bind="::image.RepoTags[0]"></span>
             </a>
+        </div>
+
+        <div class="row panel-pagination-controls" ng-if="server.images.length > pagination.limit">
+            <div class="col-xs-8 col-sm-10">
+                <ch-pagination total-items="{{ server.images.length }}" items-per-page="{{ pagination.limit }}" on-page-change="changePage(pageNumber)"></ch-pagination>
+            </div>
+            <div class="col-xs-4 col-sm-2">
+                <select class="pager form-control pull-right" ng-options="range for range in pagination.ranges" ng-model="pagination.limit"></select>
+            </div>
         </div>
     </div>
 </div>
