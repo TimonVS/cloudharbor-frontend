@@ -1,6 +1,14 @@
 package controllers.docker
 
+import java.net.ConnectException
+
+import controllers.docker.ImagesManagement._
+import play.api.Play.current
+import play.api.libs.ws.WS
 import utils.Secured
+
+import scala.concurrent.ExecutionContext.Implicits.global
+
 
 /**
  * Created by ThomasWorkBook on 17/04/15.
@@ -18,6 +26,16 @@ object ContainerManagement extends DockerManagement with Secured {
 
   def listContainers(serverUrl: String) =
     forwardGetWithAuth(s"http://$managementUrl/containers", serverUrl, dockerInfo, CONTAINER_MANAGEMENT)
+
+  def createContainer(serverUrl: String) = withAuthAsync { implicit user => implicit request =>
+    WS.url(s"http://$managementUrl/containers/create")
+      .post(request.body.asJson.get)
+      .map(forwardResponse)
+      .recover {
+      case _: ConnectException => InternalServerError(unavailableJsonMessage(IMAGES_MANAGEMENT))
+      case _ => InternalServerError(unexpectedError)
+    }
+  }
 
   def listContainers(serverUrls: Seq[String]) = play.mvc.Results.TODO
 
