@@ -10,6 +10,9 @@ angular
         views: {
           'content': {
             templateUrl: 'app/dashboard/dashboard.tpl.html'
+          },
+          'header': {
+            template: '<ch-header title="Dashboard">'
           }
         }
       })
