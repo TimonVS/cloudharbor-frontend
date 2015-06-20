@@ -1,11 +1,11 @@
 package controllers
 
-import models.Notifications.{DBNotification, Notification}
+import models.Notifications.DBNotification
 import models._
-import play.api.data._
-import play.api.data.Forms._
 import play.api.libs.json.Json
 import play.api.mvc.Controller
+import utils.Secured
+
 import scala.concurrent.Future
 
 /**

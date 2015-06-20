@@ -1,20 +1,19 @@
 package controllers.docker
 
 import actors.NotificationActor.{Container, Error}
-import controllers.Secured
 import models.Notifications.{ContainerNotification, ErrorNotification}
 import play.api.Play.current
 import play.api.libs.iteratee.Iteratee
 import play.api.libs.json.Json
 import play.api.libs.ws.WS
-import utils.WsUtils
+import utils.Secured
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * Created by Rudie on 8-6-2015.
  */
-object DeployManagement extends DockerManagement with WsUtils with Secured {
+object DeployManagement extends DockerManagement with Secured {
 
   val DEPLOY_MANAGEMENT = "Deploy Management"
 

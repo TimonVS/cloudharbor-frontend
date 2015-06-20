@@ -5,6 +5,7 @@ import play.api.libs.EventSource
 import play.api.libs.iteratee.Concurrent
 import play.api.libs.json.Json
 import play.api.mvc.Controller
+import utils.Secured
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

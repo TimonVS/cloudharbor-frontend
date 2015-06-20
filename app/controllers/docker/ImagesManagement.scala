@@ -3,37 +3,32 @@ package controllers.docker
 import java.net.ConnectException
 
 import actors.NotificationActor.Image
-import controllers.Secured
 import models.Notifications.ImageNotification
 import play.api.Play._
 import play.api.libs.iteratee.{Enumerator, Iteratee}
 import play.api.libs.ws.WS
-import utils.WsUtils
+import utils.Secured
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * Created by Rudie on 4-6-2015.
  */
-object ImagesManagement extends DockerManagement with Secured with WsUtils {
+object ImagesManagement extends DockerManagement with Secured {
 
   val IMAGES_MANAGEMENT = "Images Management"
 
-  def listImages(serverUrl: String) = withAuthAsync { implicit user => implicit request =>
-    forwardGet(s"http://$managementUrl/images", serverUrl, dockerInfo, IMAGES_MANAGEMENT)
-  }
+  def listImages(serverUrl: String) =
+    forwardGetWithAuth(s"http://$managementUrl/images", serverUrl, dockerInfo, IMAGES_MANAGEMENT)
 
-  def inspectImage(serverUrl: String, imageName: String) = withAuthAsync { implicit user => implicit request =>
-    forwardGet(s"http://$managementUrl/images/$imageName", serverUrl, dockerInfo, IMAGES_MANAGEMENT)
-  }
+  def inspectImage(serverUrl: String, imageName: String) =
+    forwardGetWithAuth(s"http://$managementUrl/images/$imageName", serverUrl, dockerInfo, IMAGES_MANAGEMENT)
 
-  def historyImage(serverUrl: String, imageName: String) = withAuthAsync { implicit user => implicit request =>
-    forwardGet(s"http://$managementUrl/images/$imageName/history", serverUrl, dockerInfo, IMAGES_MANAGEMENT)
-  }
+  def historyImage(serverUrl: String, imageName: String) =
+    forwardGetWithAuth(s"http://$managementUrl/images/$imageName/history", serverUrl, dockerInfo, IMAGES_MANAGEMENT)
 
-  def removeImage(serverUrl: String, imageName: String) = withAuthAsync { implicit user => implicit request =>
-    forwardDelete(s"http://$managementUrl/images/$imageName", serverUrl, dockerInfo, IMAGES_MANAGEMENT)
-  }
+  def removeImage(serverUrl: String, imageName: String) =
+    forwardDeleteWithAuth(s"http://$managementUrl/images/$imageName", serverUrl, dockerInfo, IMAGES_MANAGEMENT)
 
   def createImage(serverUrl: String, imageName: String) = withAuthAsync { implicit user => implicit request =>
     def ok(enumerator: Enumerator[Array[Byte]]) = {
