@@ -36,8 +36,8 @@ GET           /management/images/:name/history                   controllers.doc
 POST          /management/images/:name/push/:repo                controllers.docker.ImagesManagement.pushImage(serverUrl: String, repo: String, name: String)
 
 # ContainerManagement
-GET           /management/containers/:serverUrl                  controllers.docker.ContainerManagement.listContainers(serverUrl: String)
-POST        /management/containers/:serverUrl          controllers.docker.ContainerManagement.createContainer(serverUrl: String)
+GET         /management/containers        controllers.docker.ContainerManagement.listContainers(serverUrl: String)
+POST        /management/containers        controllers.docker.ContainerManagement.createContainer(serverUrl: String, name: Option[String] ?= None)
 GET           /management/containers/:containerId                controllers.docker.ContainerManagement.show(serverUrl: String, containerId: String)
 POST          /management/containers/:containerId/start          controllers.docker.ContainerManagement.startContainer(serverUrl: String, containerId: String)
 POST          /management/containers/:containerId/stop           controllers.docker.ContainerManagement.stopContainer(serverUrl: String, containerId: String)
