@@ -1,6 +1,16 @@
-<div class="list-group">
-    <a ng-repeat="image in server.images" href="" class="list-group-item"
-       ng-click="selectImage(image)" ng-class="{ 'active': image === selected }">
-        <span ng-bind="::image.RepoTags[0]"></span>
-    </a>
+<div style="margin: 20px 0;">
+    <div class="list-group">
+        <a ng-repeat="image in server.images | limitTo:pagination.limit:pagination.from" href="" class="list-group-item"
+           ng-click="selectImage(image)" ng-class="{ 'active': image === selected }">
+            <span ng-bind="::image.RepoTags[0]"></span>
+        </a>
+    </div>
+    <div class="row panel-pagination-controls" ng-if="server.images.length > pagination.limit">
+        <div class="col-xs-8 col-sm-10">
+            <ch-pagination total-items="{{ server.images.length }}" items-per-page="{{ pagination.limit }}" on-page-change="changePage(pageNumber)"></ch-pagination>
+        </div>
+        <div class="col-xs-4 col-sm-2">
+            <select class="pager form-control pull-right" ng-options="range for range in pagination.ranges" ng-model="pagination.limit"></select>
+        </div>
+    </div>
 </div>
