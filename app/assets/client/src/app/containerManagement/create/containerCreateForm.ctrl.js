@@ -32,10 +32,6 @@ function containerCreateFormCtrl ($scope, $modalInstance, server, Container) {
 
     var request = {
       image: vm.container.image.RepoTags[0], // name
-      macAddress: '',
-      networkDisabled: false,
-      cpuShares: vm.container.cpuShares,
-      cpuset: ''
     }
 
     var container = new Container(request)
