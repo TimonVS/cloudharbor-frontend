@@ -30,10 +30,15 @@ function imageList ($modal, $log) {
 
       // Function assignment
       $scope.createImage = createImage
+      $scope.getImages = getImages
 
       // ------------------------------------------------------------------
       // Actions
       // ------------------------------------------------------------------
+
+      function getImages (server) {
+        sever.getImages()
+      }
 
       function createImage (server) {
         var modalInstance = $modal.open({

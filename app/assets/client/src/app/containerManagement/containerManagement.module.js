@@ -36,7 +36,7 @@ angular
             controllerAs: 'vm'
           },
           'header@content': {
-            template: '<ch-header title="Container: {{ ::vm.container.name }}">',
+            template: '<ch-header title="Container: {{ ::vm.container.Name }}">',
             controller: 'containerDetailCtrl',
             controllerAs: 'vm'
           }
