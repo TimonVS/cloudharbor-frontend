@@ -22,6 +22,8 @@ trait WsUtils {
 
   val unexpectedError = Json.obj("error" -> "Sorry, but an unexpected error occurred")
 
+  def optToUrlParam[T](param: String, opt: Option[T]) = opt.map(opt => s"&$param=${opt.toString}").getOrElse("")
+
   def forwardGet[T](url: String, headerContent: T, createHeader: T => (String, String), service: String) =
     WS.url(url)
       .withHeaders(createHeader(headerContent))
@@ -31,6 +33,8 @@ trait WsUtils {
       case _: ConnectException => Results.InternalServerError(unavailableJsonMessage(service))
       case _ => Results.InternalServerError(unexpectedError)
     }
+
+  def unavailableJsonMessage(service: String) = Json.obj("error" -> s"Sorry, but the $service is currently not available")
 
   def forwardResponseWithNotification(response: WSResponse, notification: => NotificationActorMessages): Result = {
     if (response.status == OK) notificationActor ! notification
@@ -49,8 +53,6 @@ trait WsUtils {
         case _: ConnectException => Results.InternalServerError(unavailableJsonMessage(service))
         case _ => Results.InternalServerError(unexpectedError)
     }
-
-  def unavailableJsonMessage(service: String) = Json.obj("error" -> s"Sorry, but the $service is currently not available")
 
   def forwardDelete[T](url: String, headerContent: T, createHeader: T => (String, String), service: String) =
     WS.url(url)
