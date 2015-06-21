@@ -2,7 +2,7 @@
 
 function ContainerFactory ($resource) {
 
-  var Container = $resource('/management/containers/:id/:ip/:action', { id: '@Id' }, {
+  var Container = $resource('/management/containers/:id/:ip/:action/:deployImageName', { id: '@Id' }, {
     query: {
       method: 'GET',
       isArray: true
@@ -13,7 +13,7 @@ function ContainerFactory ($resource) {
     },
     deploy: {
       method: 'POST',
-      params: { name: 'hello-world', tag: 'latest', action: 'deploy' }
+      params: { deployImageName: 'test-page', repo: 'ksdn117', tag: 'latest', action: 'deploy' }
     },
     start: {
       method: 'POST',
