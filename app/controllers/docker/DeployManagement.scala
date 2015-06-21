@@ -18,7 +18,7 @@ object DeployManagement extends DockerManagement with Secured {
   val DEPLOY_MANAGEMENT = "Deploy Management"
 
   def deploy(serverUrl: String, imageName: String, imageTag: Option[String], imageRepo: Option[String]) = withAuth { implicit user => implicit request => {
-    val url = s"http://$managementUrl/images/$imageName${optToUrlParam("repo", imageRepo)}${optToUrlParam("tag", imageTag)}"
+    val url = s"http://$managementUrl/images/$imageName?${optToUrlParam("repo", imageRepo)}${optToUrlParam("tag", imageTag)}"
 
     WS.url(url).withHeaders(dockerInfo(serverUrl)).withMethod("POST").stream().flatMap {
       case (response, enumerator) => enumerator |>>> Iteratee.skipToEof
