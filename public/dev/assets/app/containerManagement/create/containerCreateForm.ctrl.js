@@ -1,6 +1,6 @@
 'use strict';
 
-function containerCreateFormCtrl ($scope, $modalInstance, server, Container) {
+function containerCreateFormCtrl ($scope, $modalInstance, server, Container, lodash) {
 
   // ------------------------------------------------------------------
   // Initialization
@@ -21,6 +21,30 @@ function containerCreateFormCtrl ($scope, $modalInstance, server, Container) {
   // Actions
   // ------------------------------------------------------------------
 
+  function splitCommands (command) {
+    var commands = command.split(' ')
+    var result = []
+    var begin = 0
+
+    commands.forEach(function (cmd, index) {
+      if (cmd.charAt(0) === '"') {
+        begin = index
+        return
+      }
+      else if (cmd.charAt(cmd.length - 1) === '"') {
+        result.push(commands.slice(begin, index + 1).join(' '))
+        begin = 0
+        return
+      }
+      else if (begin) return
+      result.push(cmd)
+    })
+
+    vm.commands = result
+
+    return result
+  }
+
   function cancel () {
     $modalInstance.dismiss('cancel');
   }
@@ -32,17 +56,29 @@ function containerCreateFormCtrl ($scope, $modalInstance, server, Container) {
 
     var request = {
       Image: vm.container.image.RepoTags[0],
-      Cmd: ['/bin/sh', '-c', 'while true; do echo hello world; sleep 1; done']
+      cpuShares: vm.container.cpuShares,
+      memory: vm.container.memory
+    }
+
+    if (vm.container.command) {
+      angular.extend(request, splitCommands(vm.container.command))
     }
 
     var container = new Container(request)
 
-    container.$create({ serverUrl: server.getIp() })
+    var params = { serverUrl: server.getIp() }
+
+    if (vm.container.name) {
+      params = angular.extend(params, { name: vm.container.name })
+    }
+
+    container.$create(params)
       .then(function (data) {
         vm.busy = false
         $modalInstance.close(data)
       })
       .catch(function (error) {
+        vm.error = error.data.error
         vm.busy = false
       })
   }
