@@ -34,6 +34,7 @@ function containerDetail (container, Container, $stateParams) {
   // Function assignment
   vm.startContainer = startContainer
   vm.stopContainer = stopContainer
+  vm.top = top
 
   // ------------------------------------------------------------------
   // Actions
@@ -55,6 +56,13 @@ function containerDetail (container, Container, $stateParams) {
 
   function pauseContainer () {
 
+  }
+
+  function top () {
+    Container.top(params).$promise
+      .then(function (data) {
+        console.log(data)
+      })
   }
 
   // ------------------------------------------------------------------

@@ -55,9 +55,10 @@ function containerList ($modal, $log, Container) {
         })
 
         modalInstance.result.then(function (data) {
-          console.log(data)
-          var container = Container.get({ id: data.Id, serverUrl: server.getIp() })
-          server.containers.unshift(container)
+          if (data) {
+            var container = Container.get({ id: data.Id, serverUrl: server.getIp() })
+            server.containers.unshift(container)
+          }
         }, function () {
           $log.info('Modal dismissed at: ' + new Date())
         })

@@ -6,6 +6,7 @@ import actors.NotificationActor.{Error, Image}
 import models.Notifications.{ErrorNotification, ImageNotification}
 import play.api.Play._
 import play.api.libs.iteratee.{Enumerator, Iteratee}
+import play.api.libs.json.Json
 import play.api.libs.ws.WS
 import utils.Secured
 
@@ -34,13 +35,14 @@ object ImagesManagement extends DockerManagement with Secured {
     val url = s"http://$managementUrl/images/$imageName?${optToUrlParam("repo", repo)}${optToUrlParam("tag", tag)}"
 
     def ok(enumerator: Enumerator[Array[Byte]]) = {
-      (enumerator.map(new String(_)) |>>> Iteratee.fold(true)((r, c) => r & !c.contains("error")))
+      (enumerator.map(new String(_)) |>>> Iteratee.fold(true){(r, c) =>
+        r & !c.contains("error")})
         .foreach { success =>
         if (success) notificationActor ! Image(user.id, ImageNotification(imageName, "Image is created"))
         else notificationActor ! Error(user.id, ErrorNotification("Image could not be created"))
       }
 
-      Ok("Image is being created")
+      Ok(Json.obj("success" -> "Image is being created"))
     }
 
     WS.url(url)
@@ -59,7 +61,7 @@ object ImagesManagement extends DockerManagement with Secured {
 
   def pushImage(serverUrl: String, repositoryName: String, imageName: String) = withAuthAsync { implicit user => implicit request =>
     def ok(enumerator: Enumerator[Array[Byte]]) = {
-      Ok("Image is being pushed")
+      Ok(Json.obj("success" -> "Image is being pushed"))
     }
 
     WS.url(s"http://$managementUrl/images/$imageName/push/$repositoryName")
