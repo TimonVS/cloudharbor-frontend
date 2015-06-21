@@ -46,7 +46,7 @@ function ServerFactory ($resource, serverCache, Container, DockerImage) {
 
       this.containers = []
 
-      this.containers = Container.query({ id: this.getIp() }).$promise
+      this.containers = Container.query({ serverUrl: this.getIp() }).$promise
         .then(function (data) {
           self.containers = data
         })

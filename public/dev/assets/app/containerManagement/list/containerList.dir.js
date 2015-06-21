@@ -30,10 +30,15 @@ function containerList ($modal, $log) {
 
       // Function assignment
       $scope.createContainer = createContainer
+      $scope.getContainers = getContainers
 
       // ------------------------------------------------------------------
       // Actions
       // ------------------------------------------------------------------
+
+      function getContainers (server) {
+        server.getContainers()
+      }
 
       function createContainer (server) {
         var modalInstance = $modal.open({
@@ -49,8 +54,8 @@ function containerList ($modal, $log) {
           }
         })
 
-        modalInstance.result.then(function () {
-
+        modalInstance.result.then(function (data) {
+          console.log(data)
         }, function () {
           $log.info('Modal dismissed at: ' + new Date())
         })

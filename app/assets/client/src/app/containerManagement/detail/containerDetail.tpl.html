@@ -1,1 +1,51 @@
-{{ container.name }}
+<div class="row">
+    <div class="col-sm-4 col-md-3">
+        <div class="server-actions" style="margin-bottom: 20px;">
+            <ch-progress-button ng-if="!vm.container.State.Running" action="vm.startContainer()" size="sm" icon="mdi-play">Start container</ch-progress-button>
+            <ch-progress-button ng-if="vm.container.State.Running" action="vm.stopContainer()" size="sm" icon="mdi-stop">Stop container</ch-progress-button>
+            <ch-progress-button action="vm.rebootContainer()" size="sm" icon="mdi-refresh">Reboot container</ch-progress-button>
+            <ch-progress-button action="vm.deleteContainer()" size="sm" type="danger" icon="mdi-delete">Delete container</ch-progress-button>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    Container details
+                </h4>
+            </div>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <span class="mdi mdi-layers"></span>
+                    {{ vm.container.Config.Image }}
+                </li>
+                <li class="list-group-item">
+                    <span class="mdi mdi-xml"></span>
+                    <span ng-repeat="cmd in vm.container.Config.Cmd" ng-bind="cmd"></span>
+                </li>
+                <li class="list-group-item">
+                    <span class="mdi mdi-clock"></span>
+                    <span>{{ vm.container.Created | timeAgo }}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="col-sm-8 col-md-9">
+        <ch-panel>
+            <ch-panel-heading>
+                <h4 class="panel-title">Processes</h4>
+            </ch-panel-heading>
+            <ch-panel-body>
+                <div class="table-responsive">
+                    <table class="table table-hover servers-table">
+                        <tr class="header-row">
+                            <th ng-repeat="title in vm.processes.Titles" ng-bind="title"></th>
+                        </tr>
+                        <tr ng-repeat="process in vm.processes.Processes">
+                            <td ng-repeat="item in process track by $index" ng-bind="item"></td>
+                        </tr>
+                    </table>
+                </div>
+            </ch-panel-body>
+        </ch-panel>
+    </div>
+</div>

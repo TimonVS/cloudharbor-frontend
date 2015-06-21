@@ -31,7 +31,8 @@ function containerCreateFormCtrl ($scope, $modalInstance, server, Container) {
     vm.busy = true
 
     var request = {
-      image: vm.container.image.RepoTags[0], // name
+      Image: vm.container.image.RepoTags[0],
+      Cmd: ['/bin/sh', '-c', 'while true; do echo hello world; sleep 1; done']
     }
 
     var container = new Container(request)
@@ -39,8 +40,7 @@ function containerCreateFormCtrl ($scope, $modalInstance, server, Container) {
     container.$create({ serverUrl: server.getIp() })
       .then(function (data) {
         vm.busy = false
-        $modalInstance.close()
-        $scope.$emit('containerCreated', data)
+        $modalInstance.close(data)
       })
       .catch(function (error) {
         vm.busy = false
