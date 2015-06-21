@@ -13,7 +13,7 @@ function ContainerFactory ($resource) {
     },
     deploy: {
       method: 'POST',
-      params: { deployImageName: 'test-page', repo: 'ksdn117', tag: 'latest', action: 'deploy' }
+      params: { deployImageName: '@deployImageName', repo: '@repo', tag: 'latest', action: 'deploy' }
     },
     start: {
       method: 'POST',
@@ -22,6 +22,10 @@ function ContainerFactory ($resource) {
     stop: {
       method: 'POST',
       params: { action: 'stop', serverUrl: '@serverUrl', id: '@id' }
+    },
+    top: {
+      method: 'GET',
+      params: { action: 'top', serverUrl: '@serverUrl', id: '@id' }
     }
   })
 

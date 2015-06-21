@@ -8,13 +8,20 @@
         </alert>
         <form name="vm.form" novalidate>
             <tabset>
-                <tab heading="Existing images">
+                <tab heading="Existing images" select="vm.tab = 'images'">
                     <image-select ng-model="vm.container.image" server="vm.server"></image-select>
                 </tab>
-                <tab heading="Docker Hub">
-                    <ch-image-search ng-model="vm.container.dockerhubimage"></ch-image-search>
+                <tab heading="Docker Hub" select="vm.tab = 'dockerhub'">
+                    <div style="margin: 20px 0;">
+                        <ch-image-search ng-model="vm.container.dockerHubImage"></ch-image-search>
+                    </div>
                 </tab>
-                <tab heading="DockerFile"></tab>
+                <tab heading="DockerFile">
+                    <div style="margin: 20px 0;">
+                        This feature is not ready yet! Watch this awesome (random) gif while you're waiting :).
+                        <img style="margin-top: 20px; margin-left: auto; margin-right: auto;" class="img-responsive" src="http://thecatapi.com/api/images/get?format=src&type=gif" alt=""/>
+                    </div>
+                </tab>
             </tabset>
 
             <div class="form-group" ng-class="{ 'has-error' : vm.form.containerName.$invalid && !vm.form.containerName.$pristine }">

@@ -54,39 +54,56 @@ function containerCreateFormCtrl ($scope, $http, $modalInstance, server, Contain
 
     vm.busy = true
 
+    var params = { serverUrl: server.getIp() }
+
     var request = {
       cpuShares: vm.container.cpuShares,
       memory: vm.container.memory
     }
 
-    if (vm.container.image) {
+    if (vm.tab === 'images') {
       angular.extend(request, { Image: vm.container.image.RepoTags[0] })
     }
-    else if (vm.container.dockerHubImage) {
-      angular.extend(request, { Image: vm.container.dockerHubImage.name })
+    else if (vm.tab === 'dockerhub') {
+      var image = vm.container.dockerHubImage.name.split('/')
+      var repo = image[0]
+      var name = image[1]
+
+      angular.extend(params, { deployImageName: name, repo: repo })
     }
 
     if (vm.container.command) {
       angular.extend(request, splitCommands(vm.container.command))
     }
 
-    var container = new Container(request)
-
-    var params = { serverUrl: server.getIp() }
-
     if (vm.container.name) {
       params = angular.extend(params, { name: vm.container.name })
     }
 
-    container.$create(params)
-      .then(function (data) {
-        vm.busy = false
-        $modalInstance.close(data)
-      })
-      .catch(function (error) {
-        vm.error = error.data.error
-        vm.busy = false
-      })
+    var container = new Container(request)
+
+    if (vm.tab === 'images') {
+      container.$create(params)
+        .then(function (data) {
+          vm.busy = false
+          $modalInstance.close(data)
+        })
+        .catch(function (error) {
+          vm.error = error.data.error
+          vm.busy = false
+        })
+    }
+    else if (vm.tab === 'dockerhub') {
+      container.$deploy(params)
+        .then(function (data) {
+          vm.busy = false
+          $modalInstance.close()
+        })
+        .catch(function (error) {
+          vm.error = error.data.error
+          vm.busy = false
+        })
+    }
   }
 
   // ------------------------------------------------------------------
