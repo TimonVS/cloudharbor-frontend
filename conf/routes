@@ -23,9 +23,9 @@ POST          /user/logout                                       controllers.Use
 GET           /notifications                                     controllers.Notifications.notifications
 
 # Management
-GET         /management/ping                           controllers.docker.Management.ping
-GET         /management/docker/ping                    controllers.docker.Management.pingDockerRemoteApi(serverUrl: String)
-POST        /management/containers/deploy/:name        controllers.docker.DeployManagement.deploy(serverUrl: String, name: String, repo: Option[String] ?= None, tag: Option[String] ?= None)
+GET           /management/ping                                   controllers.docker.Management.ping
+GET           /management/docker/ping                            controllers.docker.Management.pingDockerRemoteApi(serverUrl: String)
+POST          /management/containers/deploy/:name                controllers.docker.DeployManagement.deploy(serverUrl: String, name: String, repo: Option[String] ?= None, tag: Option[String] ?= None)
 
 # ImagesManagement
 GET           /management/images                                 controllers.docker.ImagesManagement.listImages(serverUrl: String)
@@ -36,8 +36,8 @@ GET           /management/images/:name/history                   controllers.doc
 POST          /management/images/:name/push/:repo                controllers.docker.ImagesManagement.pushImage(serverUrl: String, repo: String, name: String)
 
 # ContainerManagement
-GET         /management/containers        controllers.docker.ContainerManagement.listContainers(serverUrl: String)
-POST        /management/containers        controllers.docker.ContainerManagement.createContainer(serverUrl: String, name: Option[String] ?= None)
+GET           /management/containers                             controllers.docker.ContainerManagement.listContainers(serverUrl: String)
+POST          /management/containers                             controllers.docker.ContainerManagement.createContainer(serverUrl: String, name: Option[String] ?= None)
 GET           /management/containers/:containerId                controllers.docker.ContainerManagement.show(serverUrl: String, containerId: String)
 POST          /management/containers/:containerId/start          controllers.docker.ContainerManagement.startContainer(serverUrl: String, containerId: String)
 POST          /management/containers/:containerId/stop           controllers.docker.ContainerManagement.stopContainer(serverUrl: String, containerId: String)
@@ -46,6 +46,7 @@ POST          /management/containers/:containerId/pause          controllers.doc
 POST          /management/containers/:containerId/unpause        controllers.docker.ContainerManagement.unPauseContainer(serverUrl: String, containerId: String)
 POST          /management/containers/:containerId/rename         controllers.docker.ContainerManagement.renameContainer(serverUrl: String, containerId: String, newName: String)
 POST          /management/containers/:containerId/remove         controllers.docker.ContainerManagement.removeContainer(serverUrl: String, containerId: String, deleteVolumes: Boolean, force: Boolean)
+GET           /management/containers/:containerId/top            controllers.docker.ContainerManagement.top(serverUrl: String, containerId: String)
 
 # ServerManagementController
 GET           /servermanagement/ping                             controllers.ServerManagement.ping
