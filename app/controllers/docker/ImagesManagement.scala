@@ -2,8 +2,8 @@ package controllers.docker
 
 import java.net.ConnectException
 
-import actors.NotificationActor.Image
-import models.Notifications.ImageNotification
+import actors.NotificationActor.{Error, Image}
+import models.Notifications.{ErrorNotification, ImageNotification}
 import play.api.Play._
 import play.api.libs.iteratee.{Enumerator, Iteratee}
 import play.api.libs.ws.WS
@@ -30,13 +30,20 @@ object ImagesManagement extends DockerManagement with Secured {
   def removeImage(serverUrl: String, imageName: String) =
     forwardDeleteWithAuth(s"http://$managementUrl/images/$imageName", serverUrl, dockerInfo, IMAGES_MANAGEMENT)
 
-  def createImage(serverUrl: String, imageName: String) = withAuthAsync { implicit user => implicit request =>
+  def createImage(serverUrl: String, imageName: String, repo: Option[String], tag: Option[String]) = withAuthAsync { implicit user => implicit request =>
+    val url = s"http://$managementUrl/images/$imageName?${optToUrlParam("repo", repo)}${optToUrlParam("tag", tag)}"
+
     def ok(enumerator: Enumerator[Array[Byte]]) = {
-      (enumerator |>>> Iteratee.skipToEof).foreach(_ => notificationActor ! Image(user.id, ImageNotification(imageName, "")))
+      (enumerator.map(new String(_)) |>>> Iteratee.fold(true)((r, c) => r & !c.contains("error")))
+        .foreach { success =>
+        if (success) notificationActor ! Image(user.id, ImageNotification(imageName, "Image is created"))
+        else notificationActor ! Error(user.id, ErrorNotification("Image could not be created"))
+      }
+
       Ok("Image is being created")
     }
 
-    WS.url(s"http://$managementUrl/images/$imageName")
+    WS.url(url)
       .withHeaders(dockerInfo(serverUrl))
       .withMethod("POST")
       .stream()

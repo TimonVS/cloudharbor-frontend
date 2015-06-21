@@ -30,7 +30,7 @@ POST        /management/containers/deploy/:name        controllers.docker.Deploy
 # ImagesManagement
 GET           /management/images                                 controllers.docker.ImagesManagement.listImages(serverUrl: String)
 GET           /management/images/:name                           controllers.docker.ImagesManagement.inspectImage(serverUrl: String, name: String)
-POST          /management/images/:name                           controllers.docker.ImagesManagement.createImage(serverUrl: String, name: String)
+POST        /management/images/:name        controllers.docker.ImagesManagement.createImage(serverUrl: String, name: String, repo: Option[String] ?= None, tag: Option[String] ?= None)
 DELETE        /management/images/:name                           controllers.docker.ImagesManagement.removeImage(serverUrl: String, name: String)
 GET           /management/images/:name/history                   controllers.docker.ImagesManagement.historyImage(serverUrl: String, name: String)
 POST          /management/images/:name/push/:repo                controllers.docker.ImagesManagement.pushImage(serverUrl: String, repo: String, name: String)
