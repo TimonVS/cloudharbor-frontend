@@ -1,6 +1,6 @@
 'use strict';
 
-function containerCreateFormCtrl ($scope, $modalInstance, server, Container, lodash) {
+function containerCreateFormCtrl ($scope, $http, $modalInstance, server, Container) {
 
   // ------------------------------------------------------------------
   // Initialization
@@ -55,16 +55,22 @@ function containerCreateFormCtrl ($scope, $modalInstance, server, Container, lod
     vm.busy = true
 
     var request = {
-      Image: vm.container.image.RepoTags[0],
       cpuShares: vm.container.cpuShares,
       memory: vm.container.memory
+    }
+
+    if (vm.container.image) {
+      angular.extend(request, { Image: vm.container.image.RepoTags[0] })
+    }
+    else if (vm.container.dockerHubImage) {
+      angular.extend(request, { Image: vm.container.dockerHubImage.name })
     }
 
     if (vm.container.command) {
       angular.extend(request, splitCommands(vm.container.command))
     }
 
-    var container = new Container(request)
+    var container = new Container()
 
     var params = { serverUrl: server.getIp() }
 
@@ -72,7 +78,7 @@ function containerCreateFormCtrl ($scope, $modalInstance, server, Container, lod
       params = angular.extend(params, { name: vm.container.name })
     }
 
-    container.$create(params)
+    container.$deploy(params)
       .then(function (data) {
         vm.busy = false
         $modalInstance.close(data)

@@ -9,10 +9,10 @@
         <form name="vm.form" novalidate>
             <tabset>
                 <tab heading="Existing images">
-                    <image-select ng-model="vm.container.image" server="vm.server" required></image-select>
+                    <image-select ng-model="vm.container.image" server="vm.server"></image-select>
                 </tab>
                 <tab heading="Docker Hub">
-                    <!--<ch-image-search ng-model="vm.container.image"></ch-image-search>-->
+                    <ch-image-search ng-model="vm.container.dockerhubimage"></ch-image-search>
                 </tab>
                 <tab heading="DockerFile"></tab>
             </tabset>
