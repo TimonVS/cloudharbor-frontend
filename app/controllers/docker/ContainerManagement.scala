@@ -29,6 +29,7 @@ object ContainerManagement extends DockerManagement with Secured {
 
   def createContainer(serverUrl: String) = withAuthAsync { implicit user => implicit request =>
     WS.url(s"http://$managementUrl/containers/create")
+      .withHeaders(dockerInfo(serverUrl))
       .post(request.body.asJson.get)
       .map(forwardResponse)
       .recover {
