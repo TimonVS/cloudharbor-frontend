@@ -70,7 +70,7 @@ function containerCreateFormCtrl ($scope, $http, $modalInstance, server, Contain
       angular.extend(request, splitCommands(vm.container.command))
     }
 
-    var container = new Container()
+    var container = new Container(request)
 
     var params = { serverUrl: server.getIp() }
 
@@ -78,7 +78,7 @@ function containerCreateFormCtrl ($scope, $http, $modalInstance, server, Contain
       params = angular.extend(params, { name: vm.container.name })
     }
 
-    container.$deploy(params)
+    container.$create(params)
       .then(function (data) {
         vm.busy = false
         $modalInstance.close(data)
