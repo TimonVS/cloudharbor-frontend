@@ -1,6 +1,6 @@
 'use strict'
 
-function containerList ($modal, $log, Container) {
+function containerList ($modal, Container) {
   return {
     restrict: 'AE',
     scope: {
@@ -60,7 +60,6 @@ function containerList ($modal, $log, Container) {
             server.containers.unshift(container)
           }
         }, function () {
-          $log.info('Modal dismissed at: ' + new Date())
         })
       }
     }

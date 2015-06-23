@@ -29,6 +29,14 @@ function CloudServiceFactory ($resource) {
       transformResponse: function (data) {
         return angular.fromJson(data).sshKeys
       }
+    },
+    apiKey: {
+      method: 'GET',
+      params: { action: 'api-key' }
+    },
+    addInfo: {
+      method: 'POST',
+      params: { action: 'add-info' }
     }
   })
 
