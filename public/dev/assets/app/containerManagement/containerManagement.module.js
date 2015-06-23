@@ -27,4 +27,24 @@ angular
           }
         }
       })
+      .state('containers.detail', {
+        url: '/detail/:serverUrl/:id',
+        views: {
+          'content@content': {
+            templateUrl: 'app/containerManagement/detail/containerDetail.tpl.html',
+            controller: 'containerDetailCtrl',
+            controllerAs: 'vm'
+          },
+          'header@content': {
+            template: '<ch-header title="Container: {{ ::vm.container.Name }}">',
+            controller: 'containerDetailCtrl',
+            controllerAs: 'vm'
+          }
+        },
+        resolve: {
+          container: function ($stateParams, Container) {
+            return Container.get({ id: $stateParams.id, serverUrl: $stateParams.serverUrl }).$promise
+          }
+        }
+      })
   })

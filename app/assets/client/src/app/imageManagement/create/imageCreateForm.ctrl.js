@@ -1,6 +1,6 @@
 'use strict';
 
-function imageCreateFormCtrl ($scope, $modalInstance, server, DockerImage) {
+function imageCreateFormCtrl ($scope, $modalInstance, server, DockerImage, notifications) {
 
   // ------------------------------------------------------------------
   // Initialization
@@ -17,6 +17,8 @@ function imageCreateFormCtrl ($scope, $modalInstance, server, DockerImage) {
   vm.form = {}
   vm.image = {}
 
+  var params = { serverUrl: server.getIp() }
+
   // ------------------------------------------------------------------
   // Actions
   // ------------------------------------------------------------------
@@ -30,13 +32,23 @@ function imageCreateFormCtrl ($scope, $modalInstance, server, DockerImage) {
 
     vm.busy = true
 
-    var request = {
-      name: vm.image.image.name,
+    var image = new DockerImage()
+
+    var img = vm.image.image.name.split('/')
+    var repo = img[0]
+    var name = img[1]
+
+    // in case of an image without a repo
+    if (!img[1]) {
+      name = img[0]
+      repo = 'library'
     }
 
-    var image = new DockerImage(request)
+    var extendedParams = { name: name, repo: repo}
 
-    image.$create({ serverUrl: server.getIp() })
+    angular.extend(params, extendedParams)
+
+    image.$create(params)
       .then(function (data) {
         vm.busy = false
         $modalInstance.close(data)
@@ -45,11 +57,6 @@ function imageCreateFormCtrl ($scope, $modalInstance, server, DockerImage) {
         vm.busy = false
       })
   }
-
-  // ------------------------------------------------------------------
-  // Events
-  // ------------------------------------------------------------------
-
 
 }
 

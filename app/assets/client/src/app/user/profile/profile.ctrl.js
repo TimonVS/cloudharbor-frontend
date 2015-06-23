@@ -1,6 +1,6 @@
 'use strict'
 
-function profileCtrl (user) {
+function profileCtrl (user, flash) {
   var vm = this
 
   vm.user = user
@@ -10,7 +10,13 @@ function profileCtrl (user) {
   function submit (form) {
     if (form.$invalid) return
 
-    return vm.user.$save()
+    return vm.user.$save().$promise
+      .then(function (data) {
+        flash('success', 'Profile updated succesfully')
+      })
+      .catch(function (error) {
+        flash('danger', error.data.error)
+      })
   }
 }
 

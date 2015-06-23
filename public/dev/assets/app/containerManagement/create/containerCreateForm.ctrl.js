@@ -1,6 +1,6 @@
 'use strict';
 
-function containerCreateFormCtrl ($scope, $modalInstance, server, Container) {
+function containerCreateFormCtrl ($scope, $http, $modalInstance, server, Container) {
 
   // ------------------------------------------------------------------
   // Initialization
@@ -21,6 +21,28 @@ function containerCreateFormCtrl ($scope, $modalInstance, server, Container) {
   // Actions
   // ------------------------------------------------------------------
 
+  function splitCommands (command) {
+    var commands = command.split(' ')
+    var result = []
+    var begin = 0
+
+    commands.forEach(function (cmd, index) {
+      if (cmd.charAt(0) === '"') {
+        begin = index
+        return
+      }
+      else if (cmd.charAt(cmd.length - 1) === '"') {
+        result.push(commands.slice(begin, index + 1).join(' ').split('"')[1])
+        begin = 0
+        return
+      }
+      else if (begin) return
+      result.push(cmd)
+    })
+
+    return result
+  }
+
   function cancel () {
     $modalInstance.dismiss('cancel');
   }
@@ -30,25 +52,57 @@ function containerCreateFormCtrl ($scope, $modalInstance, server, Container) {
 
     vm.busy = true
 
+    var params = { serverUrl: server.getIp() }
+
     var request = {
-      image: vm.container.image.RepoTags[0], // name
-      macAddress: '',
-      networkDisabled: false,
       cpuShares: vm.container.cpuShares,
-      cpuset: ''
+      memory: vm.container.memory
+    }
+
+    if (vm.tab === 'images') {
+      angular.extend(request, { Image: vm.container.image.RepoTags[0] })
+    }
+    else if (vm.tab === 'dockerhub') {
+      var image = vm.container.dockerHubImage.name.split('/')
+      var repo = image[0]
+      var name = image[1]
+
+      angular.extend(params, { deployImageName: name, repo: repo })
+    }
+
+    if (vm.container.command) {
+      var command = splitCommands(vm.container.command)
+      angular.extend(request, { Cmd: command })
+    }
+
+    if (vm.container.name) {
+      params = angular.extend(params, { name: vm.container.name })
     }
 
     var container = new Container(request)
 
-    container.$create({ serverUrl: server.getIp() })
-      .then(function (data) {
-        vm.busy = false
-        $modalInstance.close()
-        $scope.$emit('containerCreated', data)
-      })
-      .catch(function (error) {
-        vm.busy = false
-      })
+    if (vm.tab === 'images') {
+      container.$create(params)
+        .then(function (data) {
+          vm.busy = false
+          $modalInstance.close(data)
+        })
+        .catch(function (error) {
+          vm.error = error.data.error
+          vm.busy = false
+        })
+    }
+    else if (vm.tab === 'dockerhub') {
+      container.$deploy(params)
+        .then(function (data) {
+          vm.busy = false
+          $modalInstance.close()
+        })
+        .catch(function (error) {
+          vm.error = error.data.error
+          vm.busy = false
+        })
+    }
   }
 
   // ------------------------------------------------------------------

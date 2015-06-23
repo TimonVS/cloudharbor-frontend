@@ -4,7 +4,8 @@ function DockerImageFactory ($resource) {
 
   var DockerImage = $resource('/management/images/:name/:action', { name: '@name' }, {
     create: {
-      method: 'POST'
+      method: 'POST',
+      params: { name: '@name', repo: '@repo', tag: 'latest' }
     }
   })
 

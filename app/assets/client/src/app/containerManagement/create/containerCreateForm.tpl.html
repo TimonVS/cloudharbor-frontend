@@ -3,39 +3,56 @@
         <h3 class="modal-title">Create container</h3>
     </div>
     <div class="modal-body">
+        <alert ng-if="vm.error" type="danger">
+            {{ vm.error }}
+        </alert>
         <form name="vm.form" novalidate>
             <tabset>
-                <tab heading="Existing images">
+                <tab heading="Existing images" select="vm.tab = 'images'">
                     <image-select ng-model="vm.container.image" server="vm.server"></image-select>
                 </tab>
-                <tab heading="Docker Hub">
-                    <!--<ch-image-search ng-model="vm.container.image"></ch-image-search>-->
+                <tab heading="Docker Hub" select="vm.tab = 'dockerhub'">
+                    <div style="margin: 20px 0;">
+                        <ch-image-search ng-model="vm.container.dockerHubImage"></ch-image-search>
+                    </div>
                 </tab>
-                <tab heading="DockerFile"></tab>
+                <tab heading="DockerFile">
+                    <div style="margin: 20px 0;">
+                        This feature is not ready yet! Watch this awesome (random) gif while you're waiting :).
+                        <img style="margin-top: 20px; margin-left: auto; margin-right: auto;" class="img-responsive" src="http://thecatapi.com/api/images/get?format=src&type=gif" alt=""/>
+                    </div>
+                </tab>
             </tabset>
 
             <div class="form-group" ng-class="{ 'has-error' : vm.form.containerName.$invalid && !vm.form.containerName.$pristine }">
                 <label for="containerName">Container name</label>
                 <input type="text" class="form-control" name="containerName" id="containerName" placeholder="Enter container name"
-                       ng-model="vm.container.name" ng-pattern="/[a-zA-Z\.\-0-9]+/g" required>
+                       ng-model="vm.container.name" ng-pattern="/[a-zA-Z\.\-0-9]+/g">
                 <div ng-show="!vm.form.containerName.$pristine && vm.form.containerName.$error">
                     <p ng-show="vm.form.containerName.$error.pattern">Your container name must only contain alphanumeric characters, dashes, and periods.</p>
                 </div>
+                <p class="help-block">Enter a name for your container, leaving this empty will result in a randomly generated name.</p>
+            </div>
+
+            <div class="form-group">
+                <label for="cpuShares">Command</label>
+                <input type="text" class="form-control" name="command" id="command" placeholder="Enter a command"
+                       ng-model="vm.container.command">
             </div>
 
             <div class="form-group">
                 <label for="cpuShares">CPU shares</label>
                 <input type="number" class="form-control" name="cpuShares" id="cpuShares" placeholder="Enter amount of CPU shares"
-                       ng-model="vm.container.cpuShares" required>
+                       ng-model="vm.container.cpuShares" min="0">
             </div>
 
             <div class="form-group">
                 <label for="memoryLimit">Memory limit</label>
                 <input type="number" class="form-control" name="memoryLimit" id="memoryLimit" placeholder="Enter memory limit"
-                       ng-model="vm.container.memory" required>
+                       ng-model="vm.container.memory" min="0">
             </div>
 
-            <div class="form-group">
+            <!--<div class="form-group">
                 <div class="checkbox">
                     <label for="autorestartEnabled">
                         <input type="checkbox" name="autorestartEnabled" id="autorestartEnabled"
@@ -47,13 +64,13 @@
 
             <div class="form-group">
                 <div class="checkbox">
-                    <label for="ipv6Enabled">
-                        <input type="checkbox" name="autodestroyEnabled" id="ipv6Enabled"
+                    <label for="autoDestroyEnabled">
+                        <input type="checkbox" name="autodestroyEnabled" id="autoDestroyEnabled"
                                ng-model="vm.form.autodestroy">
                         Enable autodestroy
                     </label>
                 </div>
-            </div>
+            </div>-->
         </form>
     </div>
     <div class="modal-footer">

@@ -52,6 +52,8 @@
             </a>
         </div>
 
+        <ch-spinner ng-show="busy"></ch-spinner>
+
         <div class="row panel-pagination-controls" ng-if="server.images.length > pagination.limit">
             <div class="col-xs-8 col-sm-10">
                 <ch-pagination total-items="{{ server.images.length }}" items-per-page="{{ pagination.limit }}" on-page-change="changePage(pageNumber)"></ch-pagination>
