@@ -32,15 +32,13 @@ function containerCreateFormCtrl ($scope, $http, $modalInstance, server, Contain
         return
       }
       else if (cmd.charAt(cmd.length - 1) === '"') {
-        result.push(commands.slice(begin, index + 1).join(' '))
+        result.push(commands.slice(begin, index + 1).join(' ').split('"')[1])
         begin = 0
         return
       }
       else if (begin) return
       result.push(cmd)
     })
-
-    vm.commands = result
 
     return result
   }
@@ -73,7 +71,8 @@ function containerCreateFormCtrl ($scope, $http, $modalInstance, server, Contain
     }
 
     if (vm.container.command) {
-      angular.extend(request, splitCommands(vm.container.command))
+      var command = splitCommands(vm.container.command)
+      angular.extend(request, { Cmd: command })
     }
 
     if (vm.container.name) {

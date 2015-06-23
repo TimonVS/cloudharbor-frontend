@@ -1,6 +1,6 @@
 'use strict'
 
-function imageList ($modal, $log) {
+function imageList ($modal, notifications) {
   return {
     restrict: 'AE',
     scope: {
@@ -37,7 +37,7 @@ function imageList ($modal, $log) {
       // ------------------------------------------------------------------
 
       function getImages (server) {
-        sever.getImages()
+        server.getImages()
       }
 
       function createImage (server) {
@@ -57,9 +57,21 @@ function imageList ($modal, $log) {
         modalInstance.result.then(function (data) {
           console.log(data)
         }, function () {
-          $log.info('Modal dismissed at: ' + new Date())
+          $scope.busy = true
         })
       }
+
+      // ------------------------------------------------------------------
+      // Events
+      // ------------------------------------------------------------------
+
+      notifications.get('notification', function (event, notification) {
+        if (notification.message.body === 'Image is created') {
+          var image = { RepoTags: [notification.message.name + ':latest'] }
+          $scope.server.images.unshift(image)
+          $scope.busy = false
+        }
+      })
 
     }
   }

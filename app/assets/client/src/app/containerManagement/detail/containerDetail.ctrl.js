@@ -1,6 +1,6 @@
 'use strict'
 
-function containerDetail (container, Container, $stateParams) {
+function containerDetail ($stateParams, container, Container, flash) {
 
   // ------------------------------------------------------------------
   // Initialization
@@ -11,30 +11,12 @@ function containerDetail (container, Container, $stateParams) {
   vm.container = container
   var params = { id: container.Id, serverUrl: $stateParams.serverUrl }
 
-  vm.processes = {
-    'Titles': [
-      'USER',
-      'PID',
-      '%CPU',
-      '%MEM',
-      'VSZ',
-      'RSS',
-      'TTY',
-      'STAT',
-      'START',
-      'TIME',
-      'COMMAND'
-    ],
-    'Processes': [
-      ['root','20147','0.0','0.1','18060','1864','pts/4','S','10:06','0:00','bash'],
-      ['root','20271','0.0','0.0','4312','352','pts/4','S+','10:07','0:00','sleep']
-    ]
-  }
-
   // Function assignment
   vm.startContainer = startContainer
   vm.stopContainer = stopContainer
-  vm.top = top
+  vm.refreshTop = top
+
+  top()
 
   // ------------------------------------------------------------------
   // Actions
@@ -44,24 +26,30 @@ function containerDetail (container, Container, $stateParams) {
     return Container.start(params).$promise
       .then(function (data) {
         console.log(data)
+        flash('success', data.success)
       })
       .catch(function (error) {
         console.log(error)
+        flash('danger', error.data.error)
       })
   }
 
   function stopContainer () {
-
-  }
-
-  function pauseContainer () {
-
+    return Container.stop(params).$promise
+      .then(function (data) {
+        console.log(data)
+        flash('success', data.success)
+      })
+      .catch(function (error) {
+        console.log(error)
+        flash('danger', error.error)
+      })
   }
 
   function top () {
-    Container.top(params).$promise
+    return Container.top(params).$promise
       .then(function (data) {
-        console.log(data)
+        vm.processes = data
       })
   }
 
