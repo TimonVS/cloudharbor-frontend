@@ -15,7 +15,7 @@ function profileCtrl (user, flash) {
         flash('success', 'Profile updated succesfully')
       })
       .catch(function (error) {
-        flash('danger', error.data.error)
+        vm.error = error.data.error
       })
   }
 }
