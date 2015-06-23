@@ -17,10 +17,10 @@ class RepeatActor extends Actor with ActorLogging {
   import context._
 
   override def receive = {
-    case message@Repeat(action, done, interval) =>
+    case message@Repeat(action, onDone, onError, interval) =>
       action().onComplete {
-        case Success(result) => if (result) done() else system.scheduler.scheduleOnce(interval, self, message)
-        case Failure(error) => Logger.trace(error.getMessage, error)
+        case Success(result) => if (result) onDone() else system.scheduler.scheduleOnce(interval, self, message)
+        case Failure(error) => onError(error)
       }
   }
 }
@@ -30,6 +30,9 @@ object RepeatActor {
 
   def props: Props = Props[RepeatActor]
 
-  case class Repeat(action: () => Future[Boolean], done: () => Unit, interval: FiniteDuration = FiniteDuration(5, "sec"))
+  case class Repeat(action: () => Future[Boolean],
+                    onDone: () => Unit,
+                    onError: Throwable => Unit = error => Logger.trace(error.getMessage, error),
+                    interval: FiniteDuration = FiniteDuration(5, "sec"))
 
 }
