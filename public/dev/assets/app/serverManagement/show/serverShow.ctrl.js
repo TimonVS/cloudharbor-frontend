@@ -1,6 +1,6 @@
 'use strict';
 
-function serverShowCtrl ($state, $timeout, Server, server, Dialog, notifications, Container) {
+function serverShowCtrl ($state, $timeout, Server, server, Dialog, notifications, flash) {
 
   // ------------------------------------------------------------------
   // Initialization
@@ -23,31 +23,31 @@ function serverShowCtrl ($state, $timeout, Server, server, Dialog, notifications
 
   function startServer () {
     return Server.start({ id: server.id }).$promise
-      .then(function (data) {
-        vm.server.status = data.status
+      .then(function () {
+        vm.server.status = 'Active'
       })
       .catch(function (error) {
-        console.log(error)
+        flash('danger', error.error)
       })
   }
 
   function stopServer () {
     return Server.stop({ id: server.id }).$promise
-      .then(function (data) {
-        vm.server.status = 'off'
+      .then(function () {
+        vm.server.status = 'Off'
       })
       .catch(function (error) {
-        console.log(error)
+        flash('danger', error.error)
       })
   }
 
   function rebootServer () {
     return Server.reboot({ id: server.id }).$promise
-      .then(function (data) {
-        vm.server.status = data.status
+      .then(function () {
+        vm.server.status = 'Active'
       })
       .catch(function (error) {
-        console.log(error)
+        flash('danger', error.error)
       })
   }
 
@@ -57,11 +57,11 @@ function serverShowCtrl ($state, $timeout, Server, server, Dialog, notifications
       action: 'Delete server'
     }).then(function () {
       Server.delete({ id: server.id }).$promise
-        .then(function (data) {
+        .then(function () {
           $state.go('servers.overview')
         })
         .catch(function (error) {
-          console.log(error)
+          flash('danger', error.error)
         })
     })
   }
