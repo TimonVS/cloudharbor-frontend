@@ -1,6 +1,8 @@
+<alert type="danger" ng-if="vm.error" ng-bind="::vm.error"></alert>
+
 <form name="vm.form" novalidate>
     <div class="form-group" ng-class="{ 'has-error' : vm.form.username.$invalid && !vm.form.username.$pristine }">
-        <label for="username">username</label>
+        <label for="username">Username</label>
         <input type="text" class="form-control" name="username" id="username" placeholder="Enter username"
                ng-model="vm.user.username" required>
     </div>
