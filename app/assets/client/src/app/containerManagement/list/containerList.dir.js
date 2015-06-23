@@ -1,6 +1,6 @@
 'use strict'
 
-function containerList ($modal, $log) {
+function containerList ($modal, $log, Container) {
   return {
     restrict: 'AE',
     scope: {
@@ -30,10 +30,15 @@ function containerList ($modal, $log) {
 
       // Function assignment
       $scope.createContainer = createContainer
+      $scope.getContainers = getContainers
 
       // ------------------------------------------------------------------
       // Actions
       // ------------------------------------------------------------------
+
+      function getContainers (server) {
+        server.getContainers()
+      }
 
       function createContainer (server) {
         var modalInstance = $modal.open({
@@ -49,8 +54,11 @@ function containerList ($modal, $log) {
           }
         })
 
-        modalInstance.result.then(function () {
-
+        modalInstance.result.then(function (data) {
+          if (data) {
+            var container = Container.get({ id: data.Id, serverUrl: server.getIp() })
+            server.containers.unshift(container)
+          }
         }, function () {
           $log.info('Modal dismissed at: ' + new Date())
         })

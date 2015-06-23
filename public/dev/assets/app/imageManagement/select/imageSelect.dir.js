@@ -17,6 +17,17 @@ function imageSelect () {
 
       scope.server.getImages()
 
+      // Pagination
+      scope.pagination = {
+        from: 0,
+        limit: 10,
+        ranges: [10, 25, 50, 100]
+      }
+
+      scope.changePage = function (pageNum) {
+        scope.pagination.from = (pageNum - 1) * scope.pagination.limit
+      }
+
       // ------------------------------------------------------------------
       // Actions
       // ------------------------------------------------------------------

@@ -29,6 +29,9 @@ function apiKeysCtrl ($http) {
       .then(function (response) {
         console.log(response)
       })
+      .catch(function (error) {
+
+      })
   }
 
 }
