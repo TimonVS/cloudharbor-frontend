@@ -1,6 +1,6 @@
 'use strict'
 
-function apiKeysCtrl ($http) {
+function apiKeysCtrl ($http, CloudService, flash) {
 
   // ------------------------------------------------------------------
   // Initialization
@@ -18,19 +18,22 @@ function apiKeysCtrl ($http) {
   // ------------------------------------------------------------------
 
   function activate () {
-    $http.get('/servermanagement/api-key')
-      .then(function (response) {
-        vm.apiKey = response.data.success
+    CloudService.apiKey().$promise
+      .then(function (data) {
+        vm.apiKey = data.success
+      })
+      .catch(function () {
+        flash('error', 'Something went wrong while retrieving the data')
       })
   }
 
   function updateApiKey () {
-    return $http.post('/servermanagement/add-info', { apiKey: 'b3f089e499e30801bdca182867f8b82971cf9dd12b2346e0534301a8e3423d67' })
-      .then(function (response) {
-        console.log(response)
+    return CloudService.addInfo({ apiKey: vm.apiKey }).$promise
+      .then(function (data) {
+        flash('success', 'API key successfully updated')
       })
       .catch(function (error) {
-
+        vm.error = error.data.error
       })
   }
 
