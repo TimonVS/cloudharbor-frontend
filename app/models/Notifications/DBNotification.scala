@@ -1,7 +1,7 @@
 package models.Notifications
 
 import models.Notifications.NotificationType.NotificationType
-import models.{ServerSettings, StandardQueries}
+import models.StandardQueries
 import org.joda.time.DateTime
 import play.api.libs.json.JsValue
 import scalikejdbc._
@@ -57,6 +57,7 @@ object DBNotification extends SQLSyntaxSupport[DBNotification] with StandardQuer
     }.map(result).list().apply()
   }
 
+  /** Created by Rudie de Smit */
   def create(userId: Int, message: JsValue, notificationType: NotificationType): DBNotification =
     create(userId, message.toString, DateTime.now, notificationType.toString)
 

@@ -18,9 +18,15 @@ trait Secured extends WsUtils {
     }
   }
 
+  /** Created by Rudie de Smit */
   def forwardGetWithAuth[T](url: String, headerContent: T, createHeader: T => (String, String), service: String) =
     withAuthAsync { implicit user => implicit request => forwardGet(url, headerContent, createHeader, service) }
 
+  /** Created by Rudie de Smit */
+  def forwardPostWithAuth[T](url: String, headerContent: T, createHeader: T => (String, String), service: String) =
+    withAuthAsync { implicit user => implicit request => forwardPost(url, headerContent, createHeader, service) }
+
+  /** Created by Rudie de Smit */
   def withAuthAsync(f: => User => Request[AnyContent] => Future[Result]) = {
     Security.Authenticated(user, onUnauthorized) { user =>
       Action.async(request => f(user)(request))
@@ -35,9 +41,7 @@ trait Secured extends WsUtils {
 
   def onUnauthorized(request: RequestHeader) = Results.Redirect(routes.Auth.login)
 
-  def forwardPostWithAuth[T](url: String, headerContent: T, createHeader: T => (String, String), service: String) =
-    withAuthAsync { implicit user => implicit request => forwardPost(url, headerContent, createHeader, service) }
-
+  /** Created by Rudie de Smit */
   def forwardDeleteWithAuth[T](url: String, headerContent: T, createHeader: T => (String, String), service: String) =
     withAuthAsync { implicit user => implicit request => forwardDelete(url, headerContent, createHeader, service) }
 

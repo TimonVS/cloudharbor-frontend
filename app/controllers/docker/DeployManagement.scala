@@ -11,6 +11,8 @@ import utils.Secured
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
+ * Api-gateway for deploy related calls.
+ *
  * Created by Rudie on 8-6-2015.
  */
 object DeployManagement extends DockerManagement with Secured {

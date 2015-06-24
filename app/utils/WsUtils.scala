@@ -24,6 +24,10 @@ trait WsUtils {
 
   def optToUrlParam[T](param: String, opt: Option[T]) = opt.map(opt => s"&$param=${opt.toString}").getOrElse("")
 
+  /**
+   * Forwards a HTTP GET request
+   * Created by Rudie de Smit
+   */
   def forwardGet[T](url: String, headerContent: T, createHeader: T => (String, String), service: String) =
     WS.url(url)
       .withHeaders(createHeader(headerContent))
@@ -34,16 +38,16 @@ trait WsUtils {
       case _ => Results.InternalServerError(unexpectedError)
     }
 
-  def unavailableJsonMessage(service: String) = Json.obj("error" -> s"Sorry, but the $service is currently not available")
-
+  /** Created by Rudie de Smit */
   def forwardResponseWithNotification(response: WSResponse, notification: => NotificationActorMessages): Result = {
     if (response.status == OK) notificationActor ! notification
     forwardResponse(response)
   }
 
-  def forwardResponse(response: WSResponse): Result =
-    Results.Status(response.status)(response.body)
-
+  /**
+   * Forwards a HTTP POST request
+   * Created by Rudie de Smit
+   */
   def forwardPost[T](url: String, headerContent: T, createHeader: T => (String, String), service: String) =
     WS.url(url)
       .withHeaders(createHeader(headerContent))
@@ -54,6 +58,10 @@ trait WsUtils {
         case _ => Results.InternalServerError(unexpectedError)
     }
 
+  /**
+   * Forwards a HTTP DELETE request
+   * Created by Rudie de Smit
+   */
   def forwardDelete[T](url: String, headerContent: T, createHeader: T => (String, String), service: String) =
     WS.url(url)
       .withHeaders(createHeader(headerContent))
@@ -63,4 +71,9 @@ trait WsUtils {
       case _: ConnectException => Results.InternalServerError(unavailableJsonMessage(service))
       case _ => Results.InternalServerError(unexpectedError)
     }
+
+  def unavailableJsonMessage(service: String) = Json.obj("error" -> s"Sorry, but the $service is currently not available")
+
+  def forwardResponse(response: WSResponse): Result =
+    Results.Status(response.status)(response.body)
 }

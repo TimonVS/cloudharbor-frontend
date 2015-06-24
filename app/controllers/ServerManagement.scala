@@ -24,6 +24,7 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
   val SERVER_MANAGEMENT = "Server Management"
 
 
+  /** Created by Rudie de Smit */
   def ping = withAuthAsync { implicit user => implicit request =>
     WS.url(s"http://$serverManagementUrl/ping")
       .get()
@@ -73,6 +74,10 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
     }
   }
 
+  def cloudInfo(apiKey: String): (String, String) = {
+    "Cloud-Info" -> apiKey
+  }
+
   /**
    * Ajax post for pausing a server
    */
@@ -114,10 +119,6 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
       case None =>
         Future.successful(Redirect(routes.Application.app("profile")))
     }
-  }
-
-  def cloudInfo(apiKey: String): (String, String) = {
-    "Cloud-Info" -> apiKey
   }
 
   def createServer = withAuthAsync { implicit user => implicit request =>

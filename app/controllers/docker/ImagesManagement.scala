@@ -12,6 +12,8 @@ import utils.Secured
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
+ * Api-gateway for all Docker image related calls.
+ *
  * Created by Rudie on 4-6-2015.
  */
 object ImagesManagement extends DockerManagement with Secured {
@@ -30,6 +32,10 @@ object ImagesManagement extends DockerManagement with Secured {
   def removeImage(serverUrl: String, imageName: String) =
     forwardDeleteWithAuth(s"http://$managementUrl/images/$imageName", serverUrl, dockerInfo, IMAGES_MANAGEMENT)
 
+  /**
+   * Forwards the create image request through the underlying micro service
+   * and sends a notification when the image is created.
+   */
   def createImage(serverUrl: String, imageName: String, repo: Option[String], tag: Option[String]) = withAuthAsync { implicit user => implicit request =>
     val url = s"http://$managementUrl/images/$imageName?${optToUrlParam("repo", repo)}${optToUrlParam("tag", tag)}"
 

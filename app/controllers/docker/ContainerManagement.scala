@@ -21,6 +21,7 @@ object ContainerManagement extends DockerManagement with Secured {
 
   val CONTAINER_MANAGEMENT = "Container Management"
 
+  /** Created by Rudie de Smit */
   def show(serverUrl: String, containerId: String) =
     forwardGetWithAuth(s"http://$managementUrl/containers/$containerId", serverUrl, dockerInfo, CONTAINER_MANAGEMENT)
 
@@ -30,6 +31,7 @@ object ContainerManagement extends DockerManagement with Secured {
   def top(serverUrl: String, containerId: String) =
     forwardGetWithAuth(s"http://$managementUrl/containers/$containerId/top", serverUrl, dockerInfo, CONTAINER_MANAGEMENT)
 
+  /** Created by Rudie de Smit */
   def createContainer(serverUrl: String, name: Option[String]) = withAuthAsync { implicit user => implicit request =>
     WS.url(s"http://$managementUrl/containers/create?${optToUrlParam("name", name)}")
       .withHeaders(dockerInfo(serverUrl))
