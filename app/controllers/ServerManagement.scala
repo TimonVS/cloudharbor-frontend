@@ -1,18 +1,14 @@
 package controllers
 
-import java.net.ConnectException
-
-import actors.NotificationActor.Error
-import models.Notifications.ErrorNotification
 import models._
 import play.api.Play.current
-import play.api.libs.json.Json
-import play.api.libs.ws.WS
-import play.api.mvc.{Controller, Results}
+import play.api.libs.json.{JsValue, JsObject, Json}
+import play.api.libs.ws.{WSResponse, WS}
+import play.api.mvc.{Result, Controller, Results}
 import utils.{Secured, ServerManagementNotifications, WsUtils}
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scalaz._
+import scalaz.Scalaz._
+import scala.concurrent.{ ExecutionContext, Future}
 
 /**
  * Created by ThomasWorkBook on 17/04/15.
@@ -106,27 +102,44 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
    * Ajax POST for authenticating and saving the api key
    */
   def authenticateApiKey = withAuthAsync { implicit user => implicit request =>
-    request.body.asJson.map{ json =>
-      WS.url(s"http://$serverManagementUrl/authenticate")
-        .withHeaders(cloudInfo((json \ "apiKey").as[String]))
-        .get()
-        .map(r =>
-          r.status match{
-            case OK =>
-              ServerSettings.findByUserId(user.id) map {serverSettings =>
-                serverSettings.copy(apiKey = (json \ "apiKey").as[String]).save()
-              } getOrElse ServerSettings.create(user.id, (json \ "apiKey").as[String])
-              Ok(r.json)
-            case BAD_REQUEST =>
-              BadRequest(Json.obj("error" -> "API-Key did not work"))
-          }
-        )
-        .recover {
-          case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
-          case _ => InternalServerError(unexpectedError)
-        }
-    } getOrElse Future.successful(BadRequest(Json.obj("error" -> "API-Key needs to be provided")))
+    val serverManagementResult = for {
+      json <- request.body.asJson |> fromOption((BadRequest(jsonError("Body of request needs to be http aplication/json"))))
+      apiKey <- extractJson(json, "apiKey") |> fromEither(BadRequest(_))
+      response <- getRequest(s"http://$serverManagementUrl/authenticate", cloudInfo(apiKey)) |> fromFuture
+      serverSettings <- processResult[ServerSettings](response, saveServerSettings(user.id, apiKey) _) |> fromEither(BadRequest(_))
+    } yield Ok("API Key is succesfully authenticated")
+
+    serverManagementResult.run.map { _.merge }
   }
+
+  def extractJson(json: JsValue, field: String): JsObject \/ String =
+    (json \ field).asOpt[String] map(\/-(_)) getOrElse -\/(Json.obj("error" -> s"$field needs to be provided in json."))
+
+  def getRequest(url: String, headers: (String, String)*): Future[WSResponse] =
+    WS.url(url)
+      .withHeaders(headers: _*)
+      .get()
+
+  def processResult[T](response: WSResponse, f: WSResponse => JsObject \/ T): JsObject \/ T = f(response)
+
+  def fromOption[T](failure: => Result)(ot: Option[T]): EitherT[Future, Result, T] = EitherT(Future.successful(ot \/> failure))
+
+  def fromEither[A, B](failure: B => Result)(va: B \/ A): EitherT[Future, Result, A] = EitherT(Future.successful(va.leftMap(failure)))
+
+  def fromFuture[T](ft: Future[T]): EitherT[Future, Result, T] = EitherT(ft.map(\/.right(_)))
+
+  private def saveServerSettings(userId: Int, apiKey: String)(response: WSResponse): JsObject \/ ServerSettings =
+    response.status match {
+      case OK =>
+        val serverSettings = ServerSettings.findByUserId(userId) map { serverSettings =>
+          serverSettings.copy(apiKey = apiKey)
+        } getOrElse ServerSettings.create(userId, apiKey)
+
+        \/-(serverSettings)
+      case BAD_REQUEST => -\/(Json.obj("error" -> "API-Key was unsuccessfully authenticated."))
+    }
+
+  def jsonError(message: String): JsObject = Json.obj("error" -> message)
 
   def getServerOptions = withAuthAsync { implicit user => implicit request =>
     ServerSettings.findByUserId(user.id) match {
