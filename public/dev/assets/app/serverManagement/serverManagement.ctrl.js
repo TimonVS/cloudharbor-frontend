@@ -1,6 +1,6 @@
 'use strict';
 
-function serverManagementCtrl ($scope, $modal, $state, Server, servers, notifications) {
+function serverManagementCtrl ($scope, $modal, $state, Server, servers, notifications, flash) {
 
   // ------------------------------------------------------------------
   // Initialization
@@ -56,12 +56,13 @@ function serverManagementCtrl ($scope, $modal, $state, Server, servers, notifica
     modalInstance.result
       .then(function (data) {
         // Get server data with id and add the server to the servers array
-        Server.get({ id: data.success }).$promise.then(function (response) {
-          vm.servers.unshift(response)
-        })
-      })
-      .catch(function (error) {
-
+        Server.get({ id: data.success }).$promise
+          .then(function (response) {
+            vm.servers.unshift(response)
+          })
+          .catch(function(error) {
+            flash('danger', error)
+          })
       })
   }
 
