@@ -65,8 +65,8 @@ function serverCreateForm ($scope, $http, $modalInstance, CloudService, Server) 
         $modalInstance.close(data)
       })
       .catch(function (error) {
+        vm.error = error.data.error
         vm.busy = false
-        // todo: error handling
       })
   }
 
