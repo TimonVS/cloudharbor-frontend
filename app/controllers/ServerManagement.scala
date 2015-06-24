@@ -8,7 +8,8 @@ import play.api.mvc.{Result, Controller, Results}
 import utils.{Secured, ServerManagementNotifications, WsUtils}
 import scalaz._
 import scalaz.Scalaz._
-import scala.concurrent.{ ExecutionContext, Future}
+import scala.concurrent._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * Created by ThomasWorkBook on 17/04/15.
