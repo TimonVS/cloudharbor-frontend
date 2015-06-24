@@ -18,7 +18,8 @@ libraryDependencies ++= Seq(
   "org.scalikejdbc" %% "scalikejdbc-test"   % "2.2.5"   % "test",
   "org.mindrot" % "jbcrypt" % "0.3m",
   "org.webjars" %% "webjars-play" % "2.3.0-2",
-  "com.adrianhurt" %% "play-bootstrap3" % "0.4"
+  "com.adrianhurt" %% "play-bootstrap3" % "0.4",
+  "org.scalaz" %% "scalaz-core" % "7.1.0"
 )
 
 scalikejdbcSettings
