@@ -23,15 +23,11 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
   val serverManagementUrl = current.configuration.getString("serverManagement.url").get + ":" + current.configuration.getInt("serverManagement.port").get
   val SERVER_MANAGEMENT = "Server Management"
 
+  val messenger: Messenger = HttpMessenger
+
 
   def ping = withAuthAsync { implicit user => implicit request =>
-    WS.url(s"http://$serverManagementUrl/ping")
-      .get()
-      .map(forwardResponse)
-      .recover {
-      case _: ConnectException => InternalServerError(unavailableJsonMessage(SERVER_MANAGEMENT))
-      case _ => InternalServerError(unexpectedError)
-    }
+    messenger.ping
   }
 
   /**
@@ -39,18 +35,8 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
    */
   def servers = withAuthAsync { implicit user => implicit request =>
     ServerSettings.findByUserId(user.id) match {
-      case Some(cloudService) =>
-        WS.url(s"http://$serverManagementUrl/servers")
-          .withHeaders(cloudInfo(cloudService.apiKey))
-          .get()
-          .map(forwardResponse)
-          .recover {
-          case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
-          case _ => InternalServerError(unexpectedError)
-        }
-
-      case None =>
-        Future.successful(Redirect(routes.Application.app("profile")))
+      case Some(cloudService) => messenger.servers(cloudService)
+      case None => Future.successful(Redirect(routes.Application.app("profile")))
     }
   }
 
@@ -59,17 +45,8 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
    */
   def show(serverId: String) = withAuthAsync { implicit user => implicit request =>
     ServerSettings.findByUserId(user.id) match {
-      case Some(cloudService) =>
-        WS.url(s"http://$serverManagementUrl/servers/$serverId")
-          .withHeaders(cloudInfo(cloudService.apiKey))
-          .get()
-          .map(forwardResponse)
-          .recover {
-          case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
-          case _ => InternalServerError(unexpectedError)
-        }
-      case None =>
-        Future.successful(Redirect(routes.Application.app("profile")))
+      case Some(cloudService) => messenger.show(serverId, cloudService)
+      case None => Future.successful(Redirect(routes.Application.app("profile")))
     }
   }
 
@@ -78,10 +55,8 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
    */
   def powerOff(serverId: String) = withAuthAsync { implicit user => implicit request =>
     ServerSettings.findByUserId(user.id) match {
-      case Some(cloudService) =>
-        forwardPost(s"http://$serverManagementUrl/servers/$serverId/stop", cloudService.apiKey, cloudInfo, SERVER_MANAGEMENT)
-      case None =>
-        Future.successful(Redirect(routes.Application.app("profile")))
+      case Some(cloudService) => messenger.powerOff(serverId, cloudService)
+      case None => Future.successful(Redirect(routes.Application.app("profile")))
     }
   }
 
@@ -90,10 +65,8 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
    */
   def powerOn(serverId: String) = withAuthAsync { implicit user => implicit request =>
     ServerSettings.findByUserId(user.id) match {
-      case Some(cloudService) =>
-        forwardPost(s"http://$serverManagementUrl/servers/$serverId/start", cloudService.apiKey, cloudInfo, SERVER_MANAGEMENT)
-      case None =>
-        Future.successful(Redirect(routes.Application.app("profile")))
+      case Some(cloudService) => messenger.powerOn(serverId, cloudService)
+      case None => Future.successful(Redirect(routes.Application.app("profile")))
     }
   }
 
@@ -102,17 +75,8 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
    */
   def delete(serverId: String) = withAuthAsync { implicit user => implicit request =>
     ServerSettings.findByUserId(user.id) match{
-      case Some(cloudService) =>
-        WS.url(s"http://$serverManagementUrl/servers/$serverId/delete")
-          .withHeaders(cloudInfo(cloudService.apiKey))
-          .delete()
-          .map(forwardResponse)
-          .recover {
-          case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
-          case _ => InternalServerError(unexpectedError)
-        }
-      case None =>
-        Future.successful(Redirect(routes.Application.app("profile")))
+      case Some(cloudService) => messenger.delete(serverId, cloudService)
+      case None => Future.successful(Redirect(routes.Application.app("profile")))
     }
   }
 
@@ -122,20 +86,7 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
 
   def createServer = withAuthAsync { implicit user => implicit request =>
     ServerSettings.findByUserId(user.id) match {
-      case Some(server) =>
-        WS.url(s"http://$serverManagementUrl/servers/add")
-          .withHeaders(cloudInfo(server.apiKey))
-          .post(request.body.asJson.get)
-          .map { response => response.status match {
-          case OK => notifyServerCreated(user.id, (response.json \ "success").as[String], server.apiKey)
-          case _ => notificationActor ! Error(user.id, ErrorNotification("Server could not be created"))
-        }
-          forwardResponse(response)
-        }
-          .recover {
-            case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
-            case _ => InternalServerError(unexpectedError)
-          }
+      case Some(server) => messenger.createServer(server)
       case None => Future.successful(NotFound(Json.obj("error" -> "Api Key not found")))
     }
   }
@@ -179,48 +130,21 @@ object ServerManagement extends Controller with Secured with WsUtils with Server
 
   def getServerOptions = withAuthAsync { implicit user => implicit request =>
     ServerSettings.findByUserId(user.id) match {
-      case Some(cloudService) =>
-        WS.url(s"http://$serverManagementUrl/server-options")
-          .withHeaders(cloudInfo(cloudService.apiKey))
-          .get()
-          .map(forwardResponse)
-          .recover {
-            case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
-            case _ => InternalServerError(unexpectedError)
-          }
+      case Some(cloudService) => messenger.getServerOptions(cloudService)
       case None => Future.successful(Redirect(routes.Application.app("profile")))
     }
   }
 
   def getSSHKeys = withAuthAsync { implicit user => implicit request =>
     ServerSettings.findByUserId(user.id) match {
-      case Some(cloudService) =>
-        WS.url(s"http://$serverManagementUrl/ssh")
-          .withHeaders(cloudInfo(cloudService.apiKey))
-          .get()
-          .map(forwardResponse)
-          .recover {
-            case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
-            case _ => InternalServerError(unexpectedError)
-        }
+      case Some(cloudService) => messenger.getSSHKeys(cloudService)
       case None => Future.successful(Redirect(routes.Application.app("profile")))
     }
   }
 
   def reboot(serverId: String) = withAuthAsync { implicit user => implicit request =>
     ServerSettings.findByUserId(user.id) map { cloudService =>
-      WS.url(s"http://$serverManagementUrl/servers/$serverId/reboot")
-        .withHeaders(cloudInfo(cloudService.apiKey))
-        .post(Results.EmptyContent())
-        .map{ response => response.status match{
-            case CREATED => notifyServerRebooted(user.id, (response.json \ "id").as[BigDecimal], cloudService.apiKey, serverId)
-          }
-          forwardResponse(response)
-        }
-        .recover {
-          case _: ConnectException => BadRequest(unavailableJsonMessage(SERVER_MANAGEMENT))
-          case _ => InternalServerError(unexpectedError)
-      }
+      messenger.reboot(serverId, cloudService)
     } getOrElse Future.successful(Redirect(routes.Application.app("profile")))
   }
 }
