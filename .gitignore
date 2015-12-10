@@ -60,3 +60,4 @@ node_modules
 .sass-cache
 *.css.map
 
+application.conf
